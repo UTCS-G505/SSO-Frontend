@@ -234,7 +234,7 @@
                         <span class="file-name active">main.cpp</span>
                       </div>
                       <div class="file-item indent">
-                        <img src="@/assets/markdown.svg" alt="icon">
+                        <img src="@/assets/markdown.svg" alt="icon" />
                         <span class="file-name">README.md</span>
                       </div>
                       <div class="file-item indent">
@@ -625,6 +625,31 @@ input:disabled {
 .remember-me input[type='checkbox'] {
   width: auto;
   margin: 0;
+  appearance: none;
+  border: 2px solid #d1d5db;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.remember-me input[type='checkbox']:checked {
+  background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
+  border-color: #a0522d;
+  box-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+}
+
+.remember-me input[type='checkbox']:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .checkmark {
@@ -637,31 +662,56 @@ input:disabled {
 }
 
 .forgot-password {
-  color: #3b82f6;
+  color: #9ca3af;
   text-decoration: none;
   font-size: 14px;
 }
 
 .forgot-password:hover {
+  color: #6b7280;
   text-decoration: underline;
 }
 
 .login-btn {
   width: 100%;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  background: linear-gradient(135deg, #cd853f 0%, #a0522d 50%, #8b4513 100%);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 25px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
 }
 
 .login-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+  background: linear-gradient(135deg, #daa520 0%, #cd853f 50%, #a0522d 100%);
+}
+
+.login-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(139, 69, 19, 0.3);
 }
 
 .login-btn:disabled {
