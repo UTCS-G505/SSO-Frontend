@@ -5,6 +5,8 @@ import { useAuthStore } from '@/stores/auth'
 export interface LoginFormData {
   username: string
   password: string
+  email: string
+  confirmPassword: string
   rememberMe: boolean
 }
 
@@ -15,16 +17,38 @@ export function useLogin() {
   const formData = ref<LoginFormData>({
     username: '',
     password: '',
+    email: '',
+    confirmPassword: '',
     rememberMe: false,
   })
 
   const isLoading = ref(false)
   const error = ref('')
+  const isRegisterMode = ref(false)
 
   const validateForm = (): boolean => {
     if (!formData.value.username || !formData.value.password) {
       error.value = 'Please fill in all fields'
       return false
+    }
+
+    if (isRegisterMode.value) {
+      if (!formData.value.email) {
+        error.value = 'Email is required for registration'
+        return false
+      }
+      if (!formData.value.confirmPassword) {
+        error.value = 'Please confirm your password'
+        return false
+      }
+      if (formData.value.password !== formData.value.confirmPassword) {
+        error.value = 'Passwords do not match'
+        return false
+      }
+      if (formData.value.password.length < 6) {
+        error.value = 'Password must be at least 6 characters long'
+        return false
+      }
     }
     return true
   }
@@ -38,12 +62,38 @@ export function useLogin() {
     error.value = ''
 
     try {
-      await authStore.login(formData.value.username, formData.value.password)
+      if (isRegisterMode.value) {
+        await authStore.register(
+          formData.value.username,
+          formData.value.password,
+          formData.value.email,
+        )
+      } else {
+        await authStore.login(formData.value.username, formData.value.password)
+      }
       router.push('/dashboard')
     } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Login failed'
+      error.value =
+        err instanceof Error
+          ? err.message
+          : isRegisterMode.value
+            ? 'Registration failed'
+            : 'Login failed'
     } finally {
       isLoading.value = false
+    }
+  }
+
+  const toggleMode = () => {
+    isRegisterMode.value = !isRegisterMode.value
+    error.value = ''
+    // Clear form when switching modes
+    formData.value = {
+      username: '',
+      password: '',
+      email: '',
+      confirmPassword: '',
+      rememberMe: false,
     }
   }
 
@@ -55,6 +105,14 @@ export function useLogin() {
     formData.value.password = value
   }
 
+  const updateEmail = (value: string) => {
+    formData.value.email = value
+  }
+
+  const updateConfirmPassword = (value: string) => {
+    formData.value.confirmPassword = value
+  }
+
   const updateRememberMe = (value: boolean) => {
     formData.value.rememberMe = value
   }
@@ -63,9 +121,13 @@ export function useLogin() {
     formData,
     isLoading,
     error,
+    isRegisterMode,
     login,
+    toggleMode,
     updateUsername,
     updatePassword,
+    updateEmail,
+    updateConfirmPassword,
     updateRememberMe,
   }
 }

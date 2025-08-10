@@ -1,14 +1,14 @@
 <template>
   <div class="form-group">
-    <label for="password">Password</label>
+    <label :for="inputId">{{ label }}</label>
     <div class="password-input">
       <input
-        id="password"
+        :id="inputId"
         :value="modelValue"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         :type="showPassword ? 'text' : 'password'"
         required
-        placeholder="Type your password"
+        :placeholder="placeholder"
         :disabled="disabled"
       />
       <button type="button" class="password-toggle" @click="togglePassword">
@@ -20,21 +20,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import EyeIcon from '@/components/icons/EyeIcon.vue'
 import EyeOffIcon from '@/components/icons/EyeOffIcon.vue'
 
 interface Props {
   modelValue: string
   disabled?: boolean
+  label?: string
+  placeholder?: string
+  id?: string
 }
 
-defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  label: 'Password',
+  placeholder: 'Type your password',
+  id: 'password',
+})
+
 defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
 const showPassword = ref(false)
+
+const inputId = computed(() => props.id || 'password')
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value

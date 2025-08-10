@@ -8,8 +8,14 @@
     </div>
 
     <div class="form-section">
-      <h1>Login</h1>
-      <p class="subtitle">Access CS resources: classroom booking, locker requests, and more.</p>
+      <h1>{{ isRegisterMode ? 'Create Account' : 'Login' }}</h1>
+      <p class="subtitle">
+        {{
+          isRegisterMode
+            ? 'Join UTCS SSO to access CS resources: classroom booking, locker requests, and more.'
+            : 'Access CS resources: classroom booking, locker requests, and more.'
+        }}
+      </p>
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
@@ -20,7 +26,20 @@
             @input="updateUsername"
             type="text"
             required
-            placeholder="U11216028"
+            :placeholder="isRegisterMode ? 'U11216028' : 'U11216028'"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <div v-if="isRegisterMode" class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            :value="formData.email"
+            @input="updateEmail"
+            type="email"
+            required
+            placeholder="your.email@example.com"
             :disabled="isLoading"
           />
         </div>
@@ -29,9 +48,23 @@
           :model-value="formData.password"
           @update:model-value="updatePassword"
           :disabled="isLoading"
+          :label="isRegisterMode ? 'Password' : 'Password'"
+          :placeholder="isRegisterMode ? 'Minimum 6 characters' : 'Enter your password'"
+          id="password"
         />
 
-        <div class="form-options">
+        <div v-if="isRegisterMode">
+          <PasswordInput
+            :model-value="formData.confirmPassword"
+            @update:model-value="updateConfirmPassword"
+            :disabled="isLoading"
+            label="Confirm Password"
+            placeholder="Confirm your password"
+            id="confirm-password"
+          />
+        </div>
+
+        <div class="form-options" v-if="!isRegisterMode">
           <label class="remember-me">
             <input type="checkbox" :checked="formData.rememberMe" @change="updateRememberMe" />
             Remember me
@@ -40,11 +73,33 @@
         </div>
 
         <button type="submit" class="login-btn" :disabled="isLoading">
-          {{ isLoading ? 'Logging in...' : 'Login' }}
+          {{
+            isLoading
+              ? isRegisterMode
+                ? 'Creating Account...'
+                : 'Logging in...'
+              : isRegisterMode
+                ? 'Create Account'
+                : 'Login'
+          }}
         </button>
 
         <div v-if="error" class="error-message">
           {{ error }}
+        </div>
+
+        <div class="mode-toggle">
+          <p>
+            {{ isRegisterMode ? 'Already have an account?' : "Don't have an account?" }}
+            <button
+              type="button"
+              @click="handleToggleMode"
+              class="toggle-btn"
+              :disabled="isLoading"
+            >
+              {{ isRegisterMode ? 'Login here' : 'Register here' }}
+            </button>
+          </p>
         </div>
       </form>
     </div>
@@ -57,6 +112,8 @@ import PasswordInput from './PasswordInput.vue'
 interface LoginFormData {
   username: string
   password: string
+  email: string
+  confirmPassword: string
   rememberMe: boolean
 }
 
@@ -64,13 +121,17 @@ interface Props {
   formData: LoginFormData
   isLoading: boolean
   error: string
+  isRegisterMode: boolean
 }
 
 interface Emits {
   'update:username': [value: string]
   'update:password': [value: string]
+  'update:email': [value: string]
+  'update:confirm-password': [value: string]
   'update:rememberMe': [value: boolean]
   submit: [data: LoginFormData]
+  'toggle-mode': []
 }
 
 const props = defineProps<Props>()
@@ -84,12 +145,24 @@ const updatePassword = (value: string) => {
   emit('update:password', value)
 }
 
+const updateEmail = (event: Event) => {
+  emit('update:email', (event.target as HTMLInputElement).value)
+}
+
+const updateConfirmPassword = (value: string) => {
+  emit('update:confirm-password', value)
+}
+
 const updateRememberMe = (event: Event) => {
   emit('update:rememberMe', (event.target as HTMLInputElement).checked)
 }
 
 const handleSubmit = () => {
   emit('submit', props.formData)
+}
+
+const handleToggleMode = () => {
+  emit('toggle-mode')
 }
 </script>
 
@@ -293,6 +366,38 @@ input:disabled {
   border: 1px solid #fecaca;
   text-align: center;
   font-size: 14px;
+}
+
+.mode-toggle {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.mode-toggle p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: #cd853f;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  margin-left: 4px;
+  transition: color 0.2s ease;
+}
+
+.toggle-btn:hover:not(:disabled) {
+  color: #a0522d;
+}
+
+.toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

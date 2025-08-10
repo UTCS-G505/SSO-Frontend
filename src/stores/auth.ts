@@ -16,8 +16,13 @@ export const useAuthStore = defineStore('auth', () => {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // Demo credentials check
-    if (username === 'U11216028' && password === 'password123') {
+    // Check if user exists in registered users
+    const registeredUsers = getRegisteredUsers()
+    const existingUser = registeredUsers.find(
+      (u) => u.username === username && u.password === password,
+    )
+
+    if (existingUser) {
       user.value = {
         username,
         sessionId: generateSessionId(),
@@ -29,6 +34,39 @@ export const useAuthStore = defineStore('auth', () => {
     } else {
       throw new Error('Invalid credentials')
     }
+  }
+
+  // Simulate API call for registration
+  const register = async (username: string, password: string, email: string): Promise<void> => {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+    // Check if user already exists
+    const registeredUsers = getRegisteredUsers()
+    const existingUser = registeredUsers.find((u) => u.username === username)
+
+    if (existingUser) {
+      throw new Error('Username already exists')
+    }
+
+    // Validate username format (should start with U followed by 8 digits)
+    if (!/^U\d{8}$/.test(username)) {
+      throw new Error('Username must be in format U12345678')
+    }
+
+    // Add new user to registered users
+    const newUser = { username, password, email, registeredAt: new Date().toISOString() }
+    registeredUsers.push(newUser)
+    localStorage.setItem('sso-registered-users', JSON.stringify(registeredUsers))
+
+    // Auto-login after successful registration
+    user.value = {
+      username,
+      sessionId: generateSessionId(),
+      loginTime: new Date().toISOString(),
+    }
+
+    localStorage.setItem('sso-user', JSON.stringify(user.value))
   }
 
   const logout = async (): Promise<void> => {
@@ -53,10 +91,22 @@ export const useAuthStore = defineStore('auth', () => {
     return Math.random().toString(36).substring(2) + Date.now().toString(36)
   }
 
+  // Helper function to get registered users from localStorage
+  const getRegisteredUsers = (): Array<{
+    username: string
+    password: string
+    email: string
+    registeredAt: string
+  }> => {
+    const stored = localStorage.getItem('sso-registered-users')
+    return stored ? JSON.parse(stored) : []
+  }
+
   return {
     user,
     isAuthenticated,
     login,
+    register,
     logout,
     initializeAuth,
   }

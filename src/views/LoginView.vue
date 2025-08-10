@@ -6,10 +6,14 @@
         :form-data="formData"
         :is-loading="isLoading"
         :error="error"
+        :is-register-mode="isRegisterMode"
         @update:username="updateUsername"
         @update:password="updatePassword"
+        @update:email="updateEmail"
+        @update:confirm-password="updateConfirmPassword"
         @update:remember-me="updateRememberMe"
         @submit="handleLogin"
+        @toggle-mode="toggleMode"
       />
 
       <!-- Right side - Marketing content -->
@@ -23,8 +27,19 @@ import LoginForm from '@/components/login/LoginForm.vue'
 import VSCodeMockup from '@/components/login/VSCodeMockup.vue'
 import { useLogin } from '@/composables/useLogin'
 
-const { formData, isLoading, error, login, updateUsername, updatePassword, updateRememberMe } =
-  useLogin()
+const {
+  formData,
+  isLoading,
+  error,
+  isRegisterMode,
+  login,
+  toggleMode,
+  updateUsername,
+  updatePassword,
+  updateEmail,
+  updateConfirmPassword,
+  updateRememberMe,
+} = useLogin()
 
 const handleLogin = () => {
   login()
