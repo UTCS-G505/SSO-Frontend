@@ -206,65 +206,6 @@
 
                   <!-- VS Code Sidebar -->
                   <div class="sidebar">
-                    <!-- <div class="sidebar-header">
-                      <span class="explorer-title">EXPLORER</span>
-                      <div class="explorer-actions">
-                        <svg
-                          class="explorer-action"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
-                        <svg
-                          class="explorer-action"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"
-                          />
-                        </svg>
-                        <svg
-                          class="explorer-action"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                          <path d="M21 3v5h-5" />
-                          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                          <path d="M3 21v-5h5" />
-                        </svg>
-                        <svg
-                          class="explorer-action"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <circle cx="12" cy="12" r="1" />
-                          <circle cx="19" cy="12" r="1" />
-                          <circle cx="5" cy="12" r="1" />
-                        </svg>
-                      </div>
-                    </div> -->
                     <div class="file-tree">
                       <div class="folder">
                         <svg
@@ -280,85 +221,25 @@
                         </svg>
                         <span class="folder-name">utcs-project</span>
                       </div>
-                      <div class="file-item indent">
-                        <!-- <img src="@/assets/cpp.svg" alt="icon" /> -->
-                        <svg
-                          class="file-icon cpp-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
-                        <span class="file-name active">main.cpp</span>
-                      </div>
-                      <div class="file-item indent">
-                        <svg
-                          class="file-icon md-icon"
-                          width="100"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
-                        <span class="file-name">README.md</span>
-                      </div>
-                      <div class="file-item indent">
-                        <svg
-                          class="file-icon h-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
-                        <span class="file-name">utils.h</span>
-                      </div>
                       <div class="folder indent">
-                        <svg
-                          class="folder-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path d="m9 18 6-6-6-6" />
-                        </svg>
+                        <img src="@/assets/folder.svg" alt="icon" />
                         <span class="folder-name">src</span>
                       </div>
                       <div class="folder indent">
-                        <svg
-                          class="folder-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path d="m9 18 6-6-6-6" />
-                        </svg>
+                        <img src="@/assets/folder.svg" alt="icon" />
                         <span class="folder-name">build</span>
+                      </div>
+                      <div class="file-item indent">
+                        <img src="@/assets/cpp.svg" alt="icon" />
+                        <span class="file-name active">main.cpp</span>
+                      </div>
+                      <div class="file-item indent">
+                        <img src="@/assets/markdown.svg" alt="icon">
+                        <span class="file-name">README.md</span>
+                      </div>
+                      <div class="file-item indent">
+                        <img src="@/assets/c.svg" alt="icon" />
+                        <span class="file-name">utils.h</span>
                       </div>
                     </div>
                   </div>
@@ -368,38 +249,12 @@
                     <!-- Tab Bar -->
                     <div class="tab-bar">
                       <div class="tab active">
-                        <svg
-                          class="tab-icon cpp-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
+                        <img src="@/assets/cpp.svg" alt="icon" />
                         <span class="tab-name">main.cpp</span>
                         <span class="tab-close">×</span>
                       </div>
                       <div class="tab">
-                        <svg
-                          class="tab-icon h-icon"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path
-                            d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"
-                          />
-                          <polyline points="14,2 14,8 20,8" />
-                        </svg>
+                        <img src="@/assets/c.svg" alt="icon" />
                         <span class="tab-name">utils.h</span>
                         <span class="tab-close">×</span>
                       </div>
@@ -599,7 +454,7 @@ const handleLogin = async () => {
   flex-direction: column;
   justify-content: center;
   max-width: 500px;
-  background: #F7F0D8;
+  background: #f7f0d8;
   border-radius: 16px 0 0 16px;
 }
 
