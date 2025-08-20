@@ -1,63 +1,99 @@
 <template>
   <div class="dashboard-container">
-    <header class="dashboard-header">
-      <div class="header-content">
-        <h1>北市大資科系 SSO Dashboard</h1>
-        <div class="user-info">
-          <span>歡迎, {{ authStore.user?.username }}</span>
-          <button @click="handleLogout" class="logout-btn">Logout</button>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <Grid class="logo-icon" />
+          <span>UTCS SSO</span>
         </div>
       </div>
-    </header>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item active">
+            <a href="#" class="nav-link">
+              <Grid class="nav-icon" />
+              Applications
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <Clock class="nav-icon" />
+              Activity Log
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <HelpCircle class="nav-icon" />
+              Help
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
 
-    <main class="dashboard-main">
-      <div class="dashboard-content">
-        <div class="welcome-section">
-          <h2>歡迎來到 SSO Dashboard</h2>
-          <p>You have successfully authenticated through Single Sign-On.</p>
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="search-container">
+          <Search class="search-icon" />
+          <input type="text" placeholder="Search for applications" class="search-input" />
         </div>
-
-        <div class="apps-grid">
-          <h3>Connected Applications</h3>
-          <div class="apps-container">
-            <div class="app-card" v-for="app in connectedApps" :key="app.id">
-              <div class="app-icon">
-                <i :class="app.icon"></i>
+        <div class="user-menu">
+          <div class="user-dropdown" @click="toggleDropdown">
+            <div class="user-info">
+              <div class="user-avatar">JD</div>
+              <div class="user-details">
+                <span class="user-name">John Doe</span>
+                <span class="user-role">Admin</span>
               </div>
-              <h4>{{ app.name }}</h4>
-              <p>{{ app.description }}</p>
-              <button
-                @click="launchApp(app)"
-                class="launch-btn"
-                :class="{ launched: app.launched }"
-              >
-                {{ app.launched ? 'Launched' : 'Launch App' }}
-              </button>
+              <svg class="dropdown-icon" :class="{ 'rotate-180': isDropdownOpen }" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </div>
+            <div class="dropdown-menu" v-show="isDropdownOpen">
+              <div class="dropdown-item" @click.stop="viewProfile">
+                <User class="dropdown-icon-small" />
+                Profile
+              </div>
+              <div class="dropdown-item" @click.stop="viewSettings">
+                <Settings class="dropdown-icon-small" />
+                Settings
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item logout" @click.stop="handleLogout">
+                <LogOut class="dropdown-icon-small" />
+                Logout
+              </div>
             </div>
           </div>
         </div>
+      </header>
 
-        <div class="user-profile">
-          <h3>User Profile</h3>
-          <div class="profile-info">
-            <div class="profile-item"><strong>學號:</strong> {{ authStore.user?.username }}</div>
-            <div class="profile-item">
-              <strong>Login Time:</strong> {{ formatDate(authStore.user?.loginTime) }}
+      <!-- Dashboard Content -->
+      <main class="dashboard-main">
+        <div class="applications-grid">
+          <div class="app-card" v-for="app in applications" :key="app.id" @click="launchApp(app)">
+            <div class="app-image">
+              <img :src="app.image" :alt="app.name" />
             </div>
-            <div class="profile-item">
-              <strong>Session ID:</strong> {{ authStore.user?.sessionId }}
+            <div class="app-info">
+              <h3>{{ app.name }}</h3>
+              <p>{{ app.description }}</p>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Grid, Clock, HelpCircle, Search, User, Settings, LogOut } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -66,53 +102,118 @@ interface App {
   id: string
   name: string
   description: string
-  icon: string
+  image: string
   url: string
   launched: boolean
 }
 
-const connectedApps = ref<App[]>([
+const applications = ref<App[]>([
   {
     id: '1',
-    name: '教室借用系統',
-    description: '借用資科系的教室',
-    icon: '🏫',
-    url: 'http://163.21.235.66/',
+    name: 'Project Management',
+    description: 'Streamline project workflows and team collaboration.',
+    image: '/images/project-management.svg',
+    url: '#',
     launched: false,
   },
   {
     id: '2',
-    name: '系櫃申請系統',
-    description: '申請資科系上的系櫃',
-    icon: '👥',
-    url: 'https://hr.example.com',
+    name: 'CRM',
+    description: 'Manage customer interactions and sales pipelines.',
+    image: '/images/crm.svg',
+    url: '#',
     launched: false,
   },
   {
     id: '3',
-    name: '設備報修系統',
-    description: '回報系上需要報修的物品',
-    icon: '📄',
-    url: 'https://docs.google.com/forms/d/e/1FAIpQLSe0aGGJC6fhdvQ1H28D-KZkQewNswIisOOAX819mQuJg1E_Xw/viewform',
+    name: 'Team Chat',
+    description: 'Facilitate internal team communication and updates.',
+    image: '/images/team-chat.svg',
+    url: '#',
+    launched: false,
+  },
+  {
+    id: '4',
+    name: 'DocuSync',
+    description: 'Centralized storage and management of company documents.',
+    image: '/images/docusync.svg',
+    url: '#',
+    launched: false,
+  },
+  {
+    id: '5',
+    name: 'Data Insights',
+    description: 'Analyze data sets and generate insights.',
+    image: '/images/data-insights.svg',
+    url: '#',
+    launched: false,
+  },
+  {
+    id: '6',
+    name: 'MarketFlow',
+    description: 'Automate marketing campaigns and track performance.',
+    image: '/images/marketflow.svg',
+    url: '#',
+    launched: false,
+  },
+  {
+    id: '7',
+    name: 'HR Central',
+    description: 'Manage employee information and HR processes.',
+    image: '/images/hr-central.svg',
+    url: '#',
+    launched: false,
+  },
+  {
+    id: '8',
+    name: 'Sales Dash',
+    description: 'Track sales metrics and team performance.',
+    image: '/images/sales-dash.svg',
+    url: '#',
     launched: false,
   },
 ])
 
+// Dropdown state
+const isDropdownOpen = ref(false)
+
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value
+}
+
+const viewProfile = () => {
+  console.log('View Profile clicked')
+  isDropdownOpen.value = false
+  // Add profile view logic here
+}
+
+const viewSettings = () => {
+  console.log('Settings clicked')
+  isDropdownOpen.value = false
+  // Add settings view logic here
+}
+
 const handleLogout = async () => {
+  isDropdownOpen.value = false
   await authStore.logout()
   router.push('/login')
 }
 
 const launchApp = (app: App) => {
-  // In a real implementation, this would redirect to the app with SSO token
   app.launched = true
   console.log(`Launching ${app.name} at ${app.url}`)
-  window.open(app.url, '_blank')
+  // In a real implementation, this would redirect to the app with SSO token
+  if (app.url !== '#') {
+    window.open(app.url, '_blank')
+  }
 }
 
-const formatDate = (dateString?: string) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleString()
+// Click outside handler to close dropdown
+const handleClickOutside = (event: Event) => {
+  const target = event.target as Element
+  if (!target.closest('.user-dropdown')) {
+    isDropdownOpen.value = false
+  }
 }
 
 onMounted(() => {
@@ -120,209 +221,380 @@ onMounted(() => {
   if (!authStore.isAuthenticated) {
     router.push('/login')
   }
+  // Add click outside listener
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  // Remove click outside listener
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <style scoped>
 .dashboard-container {
+  display: flex;
   min-height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #f0f2f5;
 }
 
-.dashboard-header {
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* Sidebar Styles */
+.sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
 }
 
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
+.sidebar-header {
+  padding: 1.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #111827;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+  color: #0d7ff2;
+}
+
+.sidebar-nav {
+  padding: 1rem;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.nav-item.active .nav-link {
+  background-color: #0d7ff2;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-header {
+  background-color: #f0f2f5;
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.header-content h1 {
-  margin: 0;
-  color: #333;
+.search-container {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background-color: #f9fafb;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notification-icon {
+  position: relative;
+  padding: 0.5rem;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.notification-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.user-info span {
-  color: #666;
-  font-weight: 500;
-}
-
-.logout-btn {
-  padding: 0.5rem 1rem;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  margin-right: 0.5rem;
 }
 
-.logout-btn:hover {
-  background-color: #c82333;
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  background-color: #f59e0b;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.user-role {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+  transition: transform 0.2s;
+}
+
+.dropdown-icon.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.user-dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  min-width: 200px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 50;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.15s;
+}
+
+.dropdown-item:hover {
+  background-color: #f9fafb;
+}
+
+.dropdown-item.logout {
+  color: #dc2626;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fef2f2;
+}
+
+.dropdown-icon-small {
+  width: 16px;
+  height: 16px;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 0.5rem 0;
+}
+
+/* Dashboard Main Content */
 .dashboard-main {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 2rem;
+  flex: 1;
 }
 
-.dashboard-content {
+/* Applications Grid */
+.applications-grid {
   display: grid;
-  gap: 2rem;
-}
-
-.welcome-section {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.welcome-section h2 {
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.welcome-section p {
-  color: #666;
-  font-size: 1.1rem;
-}
-
-.apps-grid {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.apps-grid h3 {
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-.apps-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
 }
 
 .app-card {
-  background: #f8f9fa;
+  background: #ffffff;
+  border-radius: 0.5rem;
   padding: 1.5rem;
-  border-radius: 8px;
-  text-align: center;
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid #e5e7eb;
 }
 
 .app-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.app-icon {
-  font-size: 2rem;
+.app-image {
+  width: 100%;
+  height: 120px;
   margin-bottom: 1rem;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.app-card h4 {
-  margin-bottom: 0.5rem;
-  color: #333;
+.app-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.app-card p {
-  color: #666;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+.app-info h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
 }
 
-.launch-btn {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+.app-info p {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.launch-btn:hover {
-  background-color: #0056b3;
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .applications-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.launch-btn.launched {
-  background-color: #28a745;
-  cursor: default;
-}
-
-.launch-btn.launched:hover {
-  background-color: #28a745;
-}
-
-.user-profile {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-profile h3 {
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-.profile-info {
-  display: grid;
-  gap: 1rem;
-}
-
-.profile-item {
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.profile-item strong {
-  color: #333;
+@media (max-width: 900px) {
+  .applications-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
-  .header-content {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .applications-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-header {
     padding: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .search-container {
+    order: 2;
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+
+  .user-menu {
+    order: 1;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .dashboard-main {
     padding: 1rem;
-  }
-
-  .apps-container {
-    grid-template-columns: 1fr;
-  }
-
-  .user-info {
-    flex-direction: column;
-    gap: 0.5rem;
   }
 }
 </style>
