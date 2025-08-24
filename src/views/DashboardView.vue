@@ -182,9 +182,8 @@ const toggleDropdown = () => {
 }
 
 const viewProfile = () => {
-  console.log('View Profile clicked')
   isDropdownOpen.value = false
-  // Add profile view logic here
+  router.push('/profile')
 }
 
 const viewSettings = () => {

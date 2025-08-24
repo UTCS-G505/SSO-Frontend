@@ -1,0 +1,944 @@
+<template>
+  <div class="profile-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <Grid class="logo-icon" />
+          <span>UTCS SSO</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li class="nav-item">
+            <router-link to="/dashboard" class="nav-link">
+              <Grid class="nav-icon" />
+              Applications
+            </router-link>
+          </li>
+          <li class="nav-item active">
+            <a href="#" class="nav-link">
+              <User class="nav-icon" />
+              Profile
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <Clock class="nav-icon" />
+              Activity Log
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+              <HelpCircle class="nav-icon" />
+              Help
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="header-title">
+          <h1>User Profile</h1>
+          <p>Manage your account information and preferences</p>
+        </div>
+        <div class="user-menu">
+          <div class="user-dropdown" @click="toggleDropdown">
+            <div class="user-info">
+              <div class="user-avatar">{{ userInitials }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ user?.username }}</span>
+                <span class="user-role">User</span>
+              </div>
+              <svg class="dropdown-icon" :class="{ 'rotate-180': isDropdownOpen }" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </div>
+            <div class="dropdown-menu" v-show="isDropdownOpen">
+              <div class="dropdown-item" @click.stop="goToDashboard">
+                <Grid class="dropdown-icon-small" />
+                Dashboard
+              </div>
+              <div class="dropdown-item" @click.stop="viewSettings">
+                <Settings class="dropdown-icon-small" />
+                Settings
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="dropdown-item logout" @click.stop="handleLogout">
+                <LogOut class="dropdown-icon-small" />
+                Logout
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Profile Content -->
+      <main class="profile-main">
+        <div class="profile-content">
+          <!-- Profile Header Card -->
+          <div class="profile-header-card">
+            <div class="profile-avatar-section">
+              <div class="profile-avatar-large">{{ userInitials }}</div>
+              <button class="change-avatar-btn" @click="changeAvatar">
+                <Camera class="camera-icon" />
+                Change Photo
+              </button>
+            </div>
+            <div class="profile-basic-info">
+              <h2>{{ user?.username }}</h2>
+              <p class="profile-email">{{ userProfile.email }}</p>
+              <div class="profile-status">
+                <span class="status-badge active">Active</span>
+                <span class="last-login">Last login: {{ formatDate(user?.loginTime) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile Form -->
+          <div class="profile-form-card">
+            <div class="card-header">
+              <h3>Personal Information</h3>
+              <button
+                class="edit-btn"
+                :class="{ 'save-btn': isEditing }"
+                @click="toggleEdit"
+              >
+                <Edit v-if="!isEditing" class="edit-icon" />
+                <Save v-else class="save-icon" />
+                {{ isEditing ? 'Save Changes' : 'Edit Profile' }}
+              </button>
+            </div>
+            <form @submit.prevent="saveProfile" class="profile-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="firstName">First Name</label>
+                  <input
+                    id="firstName"
+                    v-model="userProfile.firstName"
+                    type="text"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="lastName">Last Name</label>
+                  <input
+                    id="lastName"
+                    v-model="userProfile.lastName"
+                    type="text"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="email">Email Address</label>
+                  <input
+                    id="email"
+                    v-model="userProfile.email"
+                    type="email"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="phone">Phone Number</label>
+                  <input
+                    id="phone"
+                    v-model="userProfile.phone"
+                    type="tel"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="department">Department</label>
+                  <select
+                    id="department"
+                    v-model="userProfile.department"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  >
+                    <option value="">Select Department</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="sales">Sales</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="finance">Finance</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="jobTitle">Job Title</label>
+                  <input
+                    id="jobTitle"
+                    v-model="userProfile.jobTitle"
+                    type="text"
+                    :disabled="!isEditing"
+                    :class="{ 'editable': isEditing }"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group full-width">
+                <label for="bio">Bio</label>
+                <textarea
+                  id="bio"
+                  v-model="userProfile.bio"
+                  rows="4"
+                  :disabled="!isEditing"
+                  :class="{ 'editable': isEditing }"
+                  placeholder="Tell us about yourself..."
+                ></textarea>
+              </div>
+            </form>
+          </div>
+
+          <!-- Account Security Card -->
+          <div class="security-card">
+            <div class="card-header">
+              <h3>Account Security</h3>
+            </div>
+            <div class="security-content">
+              <div class="security-item">
+                <div class="security-info">
+                  <div class="security-title">Password</div>
+                  <div class="security-description">Last changed 30 days ago</div>
+                </div>
+                <button class="security-btn" @click="changePassword">Change Password</button>
+              </div>
+              <div class="security-divider"></div>
+              <div class="security-item">
+                <div class="security-info">
+                  <div class="security-title">Two-Factor Authentication</div>
+                  <div class="security-description">Add an extra layer of security</div>
+                </div>
+                <button class="security-btn secondary" @click="setup2FA">Setup 2FA</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Session Information Card -->
+          <div class="session-card">
+            <div class="card-header">
+              <h3>Session Information</h3>
+            </div>
+            <div class="session-content">
+              <div class="session-item">
+                <span class="session-label">Session ID:</span>
+                <span class="session-value">{{ user?.sessionId }}</span>
+              </div>
+              <div class="session-item">
+                <span class="session-label">Login Time:</span>
+                <span class="session-value">{{ formatDate(user?.loginTime) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import {
+  Grid,
+  User,
+  Clock,
+  HelpCircle,
+  Settings,
+  LogOut,
+  Camera,
+  Edit,
+  Save
+} from 'lucide-vue-next'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const isDropdownOpen = ref(false)
+const isEditing = ref(false)
+
+// User data from auth store
+const user = computed(() => authStore.user)
+
+// Extended user profile data (in a real app, this would come from an API)
+const userProfile = ref({
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'john.doe@company.com',
+  phone: '+1 (555) 123-4567',
+  department: 'engineering',
+  jobTitle: 'Senior Software Engineer',
+  bio: 'Passionate software engineer with 5+ years of experience in full-stack development. Love working with modern web technologies and building scalable applications.'
+})
+
+// Computed properties
+const userInitials = computed(() => {
+  if (userProfile.value.firstName && userProfile.value.lastName) {
+    return (userProfile.value.firstName[0] + userProfile.value.lastName[0]).toUpperCase()
+  }
+  return user.value?.username?.[0]?.toUpperCase() || 'U'
+})
+
+// Methods
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value
+}
+
+const goToDashboard = () => {
+  isDropdownOpen.value = false
+  router.push('/dashboard')
+}
+
+const viewSettings = () => {
+  console.log('Settings clicked')
+  isDropdownOpen.value = false
+  // Add settings view logic here
+}
+
+const handleLogout = async () => {
+  isDropdownOpen.value = false
+  await authStore.logout()
+  router.push('/login')
+}
+
+const toggleEdit = () => {
+  if (isEditing.value) {
+    saveProfile()
+  } else {
+    isEditing.value = true
+  }
+}
+
+const saveProfile = () => {
+  // In a real app, this would make an API call to save the profile
+  console.log('Saving profile:', userProfile.value)
+
+  // Simulate saving
+  setTimeout(() => {
+    isEditing.value = false
+    // Show success message (could use a toast notification)
+    alert('Profile updated successfully!')
+  }, 500)
+}
+
+const changeAvatar = () => {
+  // In a real app, this would open a file picker for avatar upload
+  console.log('Change avatar clicked')
+  alert('Avatar change functionality would be implemented here')
+}
+
+const changePassword = () => {
+  // In a real app, this would open a password change modal
+  console.log('Change password clicked')
+  alert('Password change functionality would be implemented here')
+}
+
+const setup2FA = () => {
+  // In a real app, this would open 2FA setup flow
+  console.log('Setup 2FA clicked')
+  alert('2FA setup functionality would be implemented here')
+}
+
+const formatDate = (dateString: string | undefined) => {
+  if (!dateString) return 'N/A'
+  return new Date(dateString).toLocaleString()
+}
+
+// Close dropdown when clicking outside
+onMounted(() => {
+  document.addEventListener('click', (e) => {
+    const dropdown = document.querySelector('.user-dropdown')
+    if (dropdown && !dropdown.contains(e.target as Node)) {
+      isDropdownOpen.value = false
+    }
+  })
+})
+</script>
+
+<style scoped>
+.profile-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #475569;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 0;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin-bottom: 0.5rem;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: white;
+}
+
+.nav-item.active .nav-link {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border-left-color: #3b82f6;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-header {
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.header-title p {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* User Menu Styles */
+.user-menu {
+  position: relative;
+}
+
+.user-dropdown {
+  cursor: pointer;
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.user-info:hover {
+  background-color: #f8fafc;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+.user-role {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+
+.dropdown-icon.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 180px;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.dropdown-item:hover {
+  background-color: #f9fafb;
+}
+
+.dropdown-item.logout {
+  color: #dc2626;
+}
+
+.dropdown-item.logout:hover {
+  background-color: #fef2f2;
+}
+
+.dropdown-icon-small {
+  width: 16px;
+  height: 16px;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 0.5rem 0;
+}
+
+/* Profile Content Styles */
+.profile-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.profile-content {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.profile-header-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.profile-avatar-large {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 2rem;
+}
+
+.change-avatar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.change-avatar-btn:hover {
+  background: #e2e8f0;
+}
+
+.camera-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-basic-info {
+  flex: 1;
+}
+
+.profile-basic-info h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.profile-email {
+  margin: 0 0 1rem;
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.profile-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.last-login {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* Profile Form Styles */
+.profile-form-card,
+.security-card,
+.session-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.edit-btn,
+.save-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background: #2563eb;
+}
+
+.edit-icon,
+.save-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.form-group input.editable,
+.form-group select.editable,
+.form-group textarea.editable {
+  background: white;
+  border-color: #3b82f6;
+  color: #1f2937;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Security Card Styles */
+.security-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.security-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.security-info {
+  flex: 1;
+}
+
+.security-title {
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.security-description {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.security-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #3b82f6;
+  background: #3b82f6;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.security-btn:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+.security-btn.secondary {
+  background: white;
+  color: #3b82f6;
+}
+
+.security-btn.secondary:hover {
+  background: #f0f9ff;
+}
+
+.security-divider {
+  height: 1px;
+  background: #e2e8f0;
+}
+
+/* Session Card Styles */
+.session-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+}
+
+.session-label {
+  font-weight: 500;
+  color: #374151;
+}
+
+.session-value {
+  color: #64748b;
+  font-family: monospace;
+  font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+  }
+
+  .profile-header-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .top-header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .sidebar-header .logo span,
+  .nav-link span {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 60px;
+  }
+
+  .profile-main {
+    padding: 1rem;
+  }
+}
+</style>
