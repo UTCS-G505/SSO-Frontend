@@ -16,15 +16,12 @@
         @toggle-mode="toggleMode"
       />
 
-      <!-- Right side - Marketing content -->
-      <VSCodeMockup />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import LoginForm from '@/components/login/LoginForm.vue'
-import VSCodeMockup from '@/components/login/VSCodeMockup.vue'
 import { useLogin } from '@/composables/useLogin'
 
 const {
@@ -58,9 +55,11 @@ const handleLogin = () => {
 
 .login-content {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 1200px;
-  height: 95vh;
+  max-width: 600px;
+  min-height: 600px;
   background: white;
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
   border-radius: 16px;

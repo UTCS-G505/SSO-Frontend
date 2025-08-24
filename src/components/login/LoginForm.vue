@@ -168,18 +168,18 @@ const handleToggleMode = () => {
 
 <style scoped>
 .login-card {
-  flex: 1;
-  padding: 60px;
+  width: 100%;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   max-width: 500px;
   background: #fff;
-  border-radius: 16px 0 0 16px;
+  border-radius: 16px;
 }
 
 .logo-section {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .logo {
@@ -211,15 +211,15 @@ const handleToggleMode = () => {
   color: #6b7280;
   font-size: 14px;
   line-height: 1.5;
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .login-form {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 label {
@@ -256,7 +256,7 @@ input:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .remember-me {
@@ -360,8 +360,8 @@ input:disabled {
 }
 
 .error-message {
-  margin-top: 16px;
-  padding: 12px 16px;
+  margin-top: 12px;
+  padding: 10px 14px;
   background-color: #fef2f2;
   color: #dc2626;
   border-radius: 8px;
@@ -371,7 +371,7 @@ input:disabled {
 }
 
 .mode-toggle {
-  margin-top: 24px;
+  margin-top: 16px;
   text-align: center;
 }
 
