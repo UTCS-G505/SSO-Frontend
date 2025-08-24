@@ -7,39 +7,15 @@
     <div class="main-content">
       <!-- Top Header -->
       <header class="top-header">
-        <div class="search-container">
-          <Search class="search-icon" />
-          <input type="text" placeholder="Search for applications" class="search-input" />
+        <div class="header-title">
+          <h1>Dashboard</h1>
+          <p>Access your applications and services</p>
         </div>
-        <div class="user-menu">
-          <div class="user-dropdown" @click="toggleDropdown">
-            <div class="user-info">
-              <div class="user-avatar">JD</div>
-              <div class="user-details">
-                <span class="user-name">John Doe</span>
-                <span class="user-role">Admin</span>
-              </div>
-              <svg class="dropdown-icon" :class="{ 'rotate-180': isDropdownOpen }" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 10l5 5 5-5z"/>
-              </svg>
-            </div>
-            <div class="dropdown-menu" v-show="isDropdownOpen">
-              <div class="dropdown-item" @click.stop="viewProfile">
-                <User class="dropdown-icon-small" />
-                Profile
-              </div>
-              <div class="dropdown-item" @click.stop="viewSettings">
-                <Settings class="dropdown-icon-small" />
-                Settings
-              </div>
-              <div class="dropdown-divider"></div>
-              <div class="dropdown-item logout" @click.stop="handleLogout">
-                <LogOut class="dropdown-icon-small" />
-                Logout
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserMenu
+          user-initials="JD"
+          display-name="John Doe"
+          user-role="Admin"
+        />
       </header>
 
       <!-- Dashboard Content -->
@@ -61,11 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { Search, User, Settings, LogOut } from 'lucide-vue-next'
 import NavigationSidebar from '@/components/navigation/Sidebar.vue'
+import UserMenu from '@/components/common/UserMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -146,30 +122,6 @@ const applications = ref<App[]>([
   },
 ])
 
-// Dropdown state
-const isDropdownOpen = ref(false)
-
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
-}
-
-const viewProfile = () => {
-  isDropdownOpen.value = false
-  router.push('/profile')
-}
-
-const viewSettings = () => {
-  console.log('Settings clicked')
-  isDropdownOpen.value = false
-  // Add settings view logic here
-}
-
-const handleLogout = async () => {
-  isDropdownOpen.value = false
-  await authStore.logout()
-  router.push('/login')
-}
-
 const launchApp = (app: App) => {
   app.launched = true
   console.log(`Launching ${app.name} at ${app.url}`)
@@ -179,26 +131,11 @@ const launchApp = (app: App) => {
   }
 }
 
-// Click outside handler to close dropdown
-const handleClickOutside = (event: Event) => {
-  const target = event.target as Element
-  if (!target.closest('.user-dropdown')) {
-    isDropdownOpen.value = false
-  }
-}
-
 onMounted(() => {
   // Check if user is authenticated
   if (!authStore.isAuthenticated) {
     router.push('/login')
   }
-  // Add click outside listener
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  // Remove click outside listener
-  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
@@ -218,178 +155,28 @@ onUnmounted(() => {
 }
 
 .top-header {
-  background-color: #f0f2f5;
-  padding: 1.5rem 2rem;
+  background: #f0f2f5;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.search-container {
-  position: relative;
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: #9ca3af;
-}
-
-.search-input {
-  width: 100%;
-  padding: 0.75rem 0.75rem 0.75rem 2.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  background-color: #f9fafb;
-  transition: all 0.2s;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  background-color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.notification-icon {
-  position: relative;
-  padding: 0.5rem;
-  color: #6b7280;
-  cursor: pointer;
-}
-
-.notification-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.notification-badge {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  background-color: #ef4444;
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.125rem 0.375rem;
-  border-radius: 9999px;
-  min-width: 1.25rem;
-  height: 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  background-color: #f59e0b;
-  color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #111827;
-}
-
-.user-role {
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.dropdown-icon {
-  width: 16px;
-  height: 16px;
-  color: #9ca3af;
-  transition: transform 0.2s;
-}
-
-.dropdown-icon.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.user-dropdown {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 0.5rem;
-  min-width: 200px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
   z-index: 50;
 }
 
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
+.header-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.header-title p {
+  margin: 0.25rem 0 0;
+  color: #64748b;
   font-size: 0.875rem;
-  color: #374151;
-  transition: background-color 0.15s;
-}
-
-.dropdown-item:hover {
-  background-color: #f9fafb;
-}
-
-.dropdown-item.logout {
-  color: #dc2626;
-}
-
-.dropdown-item.logout:hover {
-  background-color: #fef2f2;
-}
-
-.dropdown-icon-small {
-  width: 16px;
-  height: 16px;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #e5e7eb;
-  margin: 0.5rem 0;
 }
 
 /* Dashboard Main Content */
@@ -473,21 +260,9 @@ onUnmounted(() => {
 
   .top-header {
     padding: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 1rem;
-  }
-
-  .search-container {
-    order: 2;
-    flex: none;
-    width: 100%;
-    max-width: none;
-  }
-
-  .user-menu {
-    order: 1;
-    width: 100%;
-    justify-content: space-between;
+    align-items: flex-start;
   }
 
   .dashboard-main {

@@ -11,35 +11,11 @@
           <h1>User Profile</h1>
           <p>Manage your account information and preferences</p>
         </div>
-        <div class="user-menu">
-          <div class="user-dropdown" @click="toggleDropdown">
-            <div class="user-info">
-              <div class="user-avatar">{{ userInitials }}</div>
-              <div class="user-details">
-                <span class="user-name">{{ user?.username }}</span>
-                <span class="user-role">User</span>
-              </div>
-              <svg class="dropdown-icon" :class="{ 'rotate-180': isDropdownOpen }" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M7 10l5 5 5-5z"/>
-              </svg>
-            </div>
-            <div class="dropdown-menu" v-show="isDropdownOpen">
-              <div class="dropdown-item" @click.stop="goToDashboard">
-                <Grid class="dropdown-icon-small" />
-                Dashboard
-              </div>
-              <div class="dropdown-item" @click.stop="viewSettings">
-                <Settings class="dropdown-icon-small" />
-                Settings
-              </div>
-              <div class="dropdown-divider"></div>
-              <div class="dropdown-item logout" @click.stop="handleLogout">
-                <LogOut class="dropdown-icon-small" />
-                Logout
-              </div>
-            </div>
-          </div>
-        </div>
+        <UserMenu
+          :user-initials="userInitials"
+          :display-name="user?.username"
+          user-role="User"
+        />
       </header>
 
       <!-- Profile Content -->
@@ -216,21 +192,16 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
-  Grid,
-  Settings,
-  LogOut,
   Camera,
   Edit,
   Save
 } from 'lucide-vue-next'
 import NavigationSidebar from '@/components/navigation/Sidebar.vue'
+import UserMenu from '@/components/common/UserMenu.vue'
 
-const router = useRouter()
 const authStore = useAuthStore()
-const isDropdownOpen = ref(false)
 const isEditing = ref(false)
 
 // User data from auth store
@@ -256,27 +227,6 @@ const userInitials = computed(() => {
 })
 
 // Methods
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
-}
-
-const goToDashboard = () => {
-  isDropdownOpen.value = false
-  router.push('/dashboard')
-}
-
-const viewSettings = () => {
-  console.log('Settings clicked')
-  isDropdownOpen.value = false
-  // Add settings view logic here
-}
-
-const handleLogout = async () => {
-  isDropdownOpen.value = false
-  await authStore.logout()
-  router.push('/login')
-}
-
 const toggleEdit = () => {
   if (isEditing.value) {
     saveProfile()
@@ -322,12 +272,7 @@ const formatDate = (dateString: string | undefined) => {
 
 // Close dropdown when clicking outside
 onMounted(() => {
-  document.addEventListener('click', (e) => {
-    const dropdown = document.querySelector('.user-dropdown')
-    if (dropdown && !dropdown.contains(e.target as Node)) {
-      isDropdownOpen.value = false
-    }
-  })
+  // Event listener is now handled by UserMenu component
 })
 </script>
 
@@ -369,119 +314,6 @@ onMounted(() => {
   margin: 0.25rem 0 0;
   color: #64748b;
   font-size: 0.875rem;
-}
-
-/* User Menu Styles */
-.user-menu {
-  position: relative;
-}
-
-.user-dropdown {
-  cursor: pointer;
-  position: relative;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.user-info:hover {
-  background-color: #f0f2f5;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.125rem;
-}
-
-.user-name {
-  font-weight: 500;
-  color: #1e293b;
-  font-size: 0.875rem;
-}
-
-.user-role {
-  color: #64748b;
-  font-size: 0.75rem;
-}
-
-.dropdown-icon {
-  width: 16px;
-  height: 16px;
-  color: #64748b;
-  transition: transform 0.2s;
-}
-
-.dropdown-icon.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  min-width: 180px;
-  padding: 0.5rem 0;
-  margin-top: 0.5rem;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  color: #374151;
-  font-size: 0.875rem;
-}
-
-.dropdown-item:hover {
-  background-color: #f9fafb;
-}
-
-.dropdown-item.logout {
-  color: #dc2626;
-}
-
-.dropdown-item.logout:hover {
-  background-color: #fef2f2;
-}
-
-.dropdown-icon-small {
-  width: 16px;
-  height: 16px;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background-color: #e5e7eb;
-  margin: 0.5rem 0;
 }
 
 /* Profile Content Styles */
