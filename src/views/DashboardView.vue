@@ -156,7 +156,6 @@ onMounted(() => {
 
 .top-header {
   background: #f0f2f5;
-  border-bottom: 1px solid #e2e8f0;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
