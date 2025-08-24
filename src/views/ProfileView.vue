@@ -1,42 +1,7 @@
 <template>
   <div class="profile-container">
     <!-- Sidebar Navigation -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo">
-          <Grid class="logo-icon" />
-          <span>UTCS SSO</span>
-        </div>
-      </div>
-      <nav class="sidebar-nav">
-        <ul>
-          <li class="nav-item">
-            <router-link to="/dashboard" class="nav-link">
-              <Grid class="nav-icon" />
-              Applications
-            </router-link>
-          </li>
-          <li class="nav-item active">
-            <a href="#" class="nav-link">
-              <User class="nav-icon" />
-              Profile
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <Clock class="nav-icon" />
-              Activity Log
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <HelpCircle class="nav-icon" />
-              Help
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </aside>
+    <NavigationSidebar />
 
     <!-- Main Content Area -->
     <div class="main-content">
@@ -255,15 +220,13 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import {
   Grid,
-  User,
-  Clock,
-  HelpCircle,
   Settings,
   LogOut,
   Camera,
   Edit,
   Save
 } from 'lucide-vue-next'
+import NavigationSidebar from '@/components/navigation/Sidebar.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -373,81 +336,6 @@ onMounted(() => {
   display: flex;
   min-height: 100vh;
   background-color: #f8fafc;
-}
-
-/* Sidebar Styles */
-.sidebar {
-  width: 260px;
-  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 100;
-}
-
-.sidebar-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #475569;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.logo-icon {
-  width: 24px;
-  height: 24px;
-  color: #3b82f6;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 1.5rem 0;
-}
-
-.sidebar-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-item {
-  margin-bottom: 0.5rem;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
-  color: #cbd5e1;
-  text-decoration: none;
-  transition: all 0.2s;
-  border-left: 3px solid transparent;
-}
-
-.nav-link:hover {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: white;
-}
-
-.nav-item.active .nav-link {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  border-left-color: #3b82f6;
-}
-
-.nav-icon {
-  width: 20px;
-  height: 20px;
 }
 
 /* Main Content Styles */
@@ -898,10 +786,6 @@ onMounted(() => {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-  }
-
   .main-content {
     margin-left: 200px;
   }
@@ -924,15 +808,6 @@ onMounted(() => {
 }
 
 @media (max-width: 640px) {
-  .sidebar {
-    width: 60px;
-  }
-
-  .sidebar-header .logo span,
-  .nav-link span {
-    display: none;
-  }
-
   .main-content {
     margin-left: 60px;
   }
