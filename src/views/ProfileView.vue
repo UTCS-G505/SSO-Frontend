@@ -335,7 +335,7 @@ onMounted(() => {
 .profile-container {
   display: flex;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: #f0f2f5;
 }
 
 /* Main Content Styles */
@@ -347,7 +347,7 @@ onMounted(() => {
 }
 
 .top-header {
-  background: white;
+  background: #f0f2f5;
   border-bottom: 1px solid #e2e8f0;
   padding: 1rem 2rem;
   display: flex;
@@ -391,7 +391,7 @@ onMounted(() => {
 }
 
 .user-info:hover {
-  background-color: #f8fafc;
+  background-color: #f0f2f5;
 }
 
 .user-avatar {
