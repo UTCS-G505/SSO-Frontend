@@ -52,7 +52,7 @@ const handleLogin = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e5e7eb;
+  background: #f0f2f5;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 

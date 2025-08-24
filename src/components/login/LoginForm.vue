@@ -174,7 +174,7 @@ const handleToggleMode = () => {
   flex-direction: column;
   justify-content: center;
   max-width: 500px;
-  background: #f7f0d8;
+  background: #fff;
   border-radius: 16px 0 0 16px;
 }
 
@@ -282,9 +282,9 @@ input:disabled {
 }
 
 .remember-me input[type='checkbox']:checked {
-  background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
-  border-color: #a0522d;
-  box-shadow: 0 2px 4px rgba(139, 69, 19, 0.3);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .remember-me input[type='checkbox']:checked::after {
@@ -312,7 +312,7 @@ input:disabled {
 .login-btn {
   width: 100%;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #cd853f 0%, #a0522d 50%, #8b4513 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
   color: white;
   border: none;
   border-radius: 25px;
@@ -320,7 +320,7 @@ input:disabled {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   position: relative;
   overflow: hidden;
 }
@@ -338,8 +338,8 @@ input:disabled {
 
 .login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
-  background: linear-gradient(135deg, #daa520 0%, #cd853f 50%, #a0522d 100%);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
 }
 
 .login-btn:hover:not(:disabled)::before {
@@ -382,7 +382,7 @@ input:disabled {
 .toggle-btn {
   background: none;
   border: none;
-  color: #cd853f;
+  color: #3b82f6;
   font-weight: 600;
   cursor: pointer;
   font-size: 14px;
@@ -392,7 +392,7 @@ input:disabled {
 }
 
 .toggle-btn:hover:not(:disabled) {
-  color: #a0522d;
+  color: #1d4ed8;
 }
 
 .toggle-btn:disabled {
