@@ -2,8 +2,8 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 interface User {
-  username: string
-  sessionId: string
+  id: string
+  accessToken: string
   loginTime: string
 }
 
@@ -11,58 +11,63 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
   const isAuthenticated = computed(() => user.value !== null)
 
-  // Simulate API call for login
-  const login = async (username: string, password: string): Promise<void> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Check if user exists in registered users
-    const registeredUsers = getRegisteredUsers()
-    const existingUser = registeredUsers.find(
-      (u) => u.username === username && u.password === password,
-    )
-
-    if (existingUser) {
-      user.value = {
-        username,
-        sessionId: generateSessionId(),
-        loginTime: new Date().toISOString(),
-      }
-
-      // Store in localStorage for persistence
-      localStorage.setItem('sso-user', JSON.stringify(user.value))
-    } else {
-      throw new Error('Invalid credentials')
-    }
+  const login = async (id: string, password: string): Promise<void> => {
+    await fetch("http://localhost:8000/api/v1/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        username: id,
+        password: password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (data.code == 0) {
+          user.value = {
+            id: id,
+            accessToken: data.data.access_token,
+            loginTime: new Date().toISOString(),
+          }
+          localStorage.setItem('sso-user', JSON.stringify(user.value))
+        } else {
+          throw new Error('Invalid credentials')
+        }
+      })
+      .catch((error) => {
+        throw new Error(error.message)
+      })
   }
 
   // Simulate API call for registration
-  const register = async (username: string, password: string, email: string): Promise<void> => {
+  const register = async (id: string, password: string, email: string): Promise<void> => {
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Check if user already exists
     const registeredUsers = getRegisteredUsers()
-    const existingUser = registeredUsers.find((u) => u.username === username)
+    const existingUser = registeredUsers.find((u) => u.id === id)
 
     if (existingUser) {
-      throw new Error('Username already exists')
+      throw new Error('id already exists')
     }
 
-    // Validate username format (should start with U followed by 8 digits)
-    if (!/^U\d{8}$/.test(username)) {
-      throw new Error('Username must be in format U12345678')
+    // Validate id format (should start with U followed by 8 digits)
+    if (!/^U\d{8}$/.test(id)) {
+      throw new Error('id must be in format U12345678')
     }
 
     // Add new user to registered users
-    const newUser = { username, password, email, registeredAt: new Date().toISOString() }
+    const newUser = { id, password, email, registeredAt: new Date().toISOString() }
     registeredUsers.push(newUser)
     localStorage.setItem('sso-registered-users', JSON.stringify(registeredUsers))
 
     // Auto-login after successful registration
     user.value = {
-      username,
-      sessionId: generateSessionId(),
+      id,
+      accessToken: "abc",
       loginTime: new Date().toISOString(),
     }
 
@@ -87,13 +92,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const generateSessionId = (): string => {
-    return Math.random().toString(36).substring(2) + Date.now().toString(36)
-  }
+  // const generateSessionId = (): string => {
+  //   return Math.random().toString(36).substring(2) + Date.now().toString(36)
+  // }
 
   // Helper function to get registered users from localStorage
   const getRegisteredUsers = (): Array<{
-    username: string
+    id: string
     password: string
     email: string
     registeredAt: string
