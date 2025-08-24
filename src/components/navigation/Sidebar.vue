@@ -2,7 +2,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <Grid class="logo-icon" />
+        <img src="/src/assets/logo.png" alt="UTCS SSO" class="logo-icon" />
         <span>UTCS SSO</span>
       </div>
     </div>
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Grid, User, Clock, HelpCircle } from 'lucide-vue-next'
+import { User, Clock, HelpCircle } from 'lucide-vue-next'
 
 // Component name for ESLint
 defineOptions({
@@ -81,9 +81,9 @@ const currentRoute = computed(() => route.name as string)
 }
 
 .logo-icon {
-  width: 24px;
-  height: 24px;
-  color: #3b82f6;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
 
 .sidebar-nav {

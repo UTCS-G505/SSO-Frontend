@@ -2,7 +2,7 @@
   <div class="login-card">
     <div class="logo-section">
       <div class="logo">
-        <span class="logo-icon">🖥️</span>
+        <img src="/src/assets/logo.png" alt="UTCS SSO" class="logo-icon" />
         <span class="logo-text">UTCS SSO</span>
       </div>
     </div>
@@ -189,7 +189,9 @@ const handleToggleMode = () => {
 }
 
 .logo-icon {
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 .logo-text {
