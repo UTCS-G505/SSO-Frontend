@@ -10,7 +10,7 @@
       <ul>
         <li class="nav-item" :class="{ active: currentRoute === 'dashboard' }">
           <router-link to="/dashboard" class="nav-link">
-            <Grid class="nav-icon" />
+            <LayoutGrid class="nav-icon" />
             Applications
           </router-link>
         </li>
@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { User, Clock, HelpCircle } from 'lucide-vue-next'
+import { LayoutGrid, User, Clock, HelpCircle } from 'lucide-vue-next'
 
 // Component name for ESLint
 defineOptions({

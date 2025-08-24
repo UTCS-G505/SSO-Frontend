@@ -13,7 +13,7 @@
       </div>
       <div class="dropdown-menu" v-show="isDropdownOpen">
         <div class="dropdown-item" @click.stop="goToDashboard">
-          <Grid class="dropdown-icon-small" />
+          <LayoutGrid class="dropdown-icon-small" />
           Dashboard
         </div>
         <div class="dropdown-item" @click.stop="goToProfile">
@@ -38,7 +38,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { Grid, User, Settings, LogOut } from 'lucide-vue-next'
+import { LayoutGrid, User, Settings, LogOut } from 'lucide-vue-next'
 
 // Props
 interface Props {
