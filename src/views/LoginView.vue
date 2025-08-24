@@ -7,15 +7,18 @@
         :is-loading="isLoading"
         :error="error"
         :is-register-mode="isRegisterMode"
-        @update:username="updateUsername"
+        @update:id="updateId"
+        @update:name="updateName"
         @update:password="updatePassword"
-        @update:email="updateEmail"
+        @update:primary-email="updatePrimaryEmail"
+        @update:secondary-email="updateSecondaryEmail"
+        @update:phone-number="updatePhoneNumber"
+        @update:position="updatePosition"
         @update:confirm-password="updateConfirmPassword"
         @update:remember-me="updateRememberMe"
         @submit="handleLogin"
         @toggle-mode="toggleMode"
       />
-
     </div>
   </div>
 </template>
@@ -31,9 +34,13 @@ const {
   isRegisterMode,
   login,
   toggleMode,
-  updateUsername,
+  updateId,
+  updateName,
   updatePassword,
-  updateEmail,
+  updatePrimaryEmail,
+  updateSecondaryEmail,
+  updatePhoneNumber,
+  updatePosition,
   updateConfirmPassword,
   updateRememberMe,
 } = useLogin()
@@ -51,6 +58,8 @@ const handleLogin = () => {
   justify-content: center;
   background: #f0f2f5;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-content {
@@ -67,6 +76,10 @@ const handleLogin = () => {
 }
 
 @media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+
   .login-content {
     flex-direction: column;
     height: auto;

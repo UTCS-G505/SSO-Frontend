@@ -19,27 +19,76 @@
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="id">ID</label>
           <input
-            id="username"
-            :value="formData.username"
-            @input="updateUsername"
+            id="id"
+            :value="formData.id"
+            @input="updateId"
             type="text"
             required
-            :placeholder="isRegisterMode ? 'U11216028' : 'U11216028'"
+            placeholder="Enter your ID"
             :disabled="isLoading"
           />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="email">Email</label>
+          <label for="name">Name</label>
           <input
-            id="email"
-            :value="formData.email"
-            @input="updateEmail"
+            id="name"
+            :value="formData.name"
+            @input="updateName"
+            type="text"
+            required
+            placeholder="Enter your full name"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <div v-if="isRegisterMode" class="form-group">
+          <label for="primary-email">Primary Email</label>
+          <input
+            id="primary-email"
+            :value="formData.primary_email"
+            @input="updatePrimaryEmail"
             type="email"
             required
-            placeholder="your.email@example.com"
+            placeholder="your.primary@example.com"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <div v-if="isRegisterMode" class="form-group">
+          <label for="secondary-email">Secondary Email</label>
+          <input
+            id="secondary-email"
+            :value="formData.secondary_email"
+            @input="updateSecondaryEmail"
+            type="email"
+            placeholder="your.secondary@example.com (optional)"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <div v-if="isRegisterMode" class="form-group">
+          <label for="phone-number">Phone Number</label>
+          <input
+            id="phone-number"
+            :value="formData.phone_number"
+            @input="updatePhoneNumber"
+            type="tel"
+            placeholder="Enter your phone number"
+            :disabled="isLoading"
+          />
+        </div>
+
+        <div v-if="isRegisterMode" class="form-group">
+          <label for="position">Position</label>
+          <input
+            id="position"
+            :value="formData.position"
+            @input="updatePosition"
+            type="text"
+            placeholder="Enter your position/role"
             :disabled="isLoading"
           />
         </div>
@@ -110,10 +159,14 @@
 import PasswordInput from './PasswordInput.vue'
 
 interface LoginFormData {
-  username: string
+  id: string
+  name: string
   password: string
-  email: string
   confirmPassword: string
+  primary_email: string
+  secondary_email: string
+  phone_number: string
+  position: string
   rememberMe: boolean
 }
 
@@ -125,9 +178,13 @@ interface Props {
 }
 
 interface Emits {
-  'update:username': [value: string]
+  'update:id': [value: string]
+  'update:name': [value: string]
   'update:password': [value: string]
-  'update:email': [value: string]
+  'update:primary-email': [value: string]
+  'update:secondary-email': [value: string]
+  'update:phone-number': [value: string]
+  'update:position': [value: string]
   'update:confirm-password': [value: string]
   'update:rememberMe': [value: boolean]
   submit: [data: LoginFormData]
@@ -137,16 +194,32 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const updateUsername = (event: Event) => {
-  emit('update:username', (event.target as HTMLInputElement).value)
+const updateId = (event: Event) => {
+  emit('update:id', (event.target as HTMLInputElement).value)
+}
+
+const updateName = (event: Event) => {
+  emit('update:name', (event.target as HTMLInputElement).value)
 }
 
 const updatePassword = (value: string) => {
   emit('update:password', value)
 }
 
-const updateEmail = (event: Event) => {
-  emit('update:email', (event.target as HTMLInputElement).value)
+const updatePrimaryEmail = (event: Event) => {
+  emit('update:primary-email', (event.target as HTMLInputElement).value)
+}
+
+const updateSecondaryEmail = (event: Event) => {
+  emit('update:secondary-email', (event.target as HTMLInputElement).value)
+}
+
+const updatePhoneNumber = (event: Event) => {
+  emit('update:phone-number', (event.target as HTMLInputElement).value)
+}
+
+const updatePosition = (event: Event) => {
+  emit('update:position', (event.target as HTMLInputElement).value)
 }
 
 const updateConfirmPassword = (value: string) => {

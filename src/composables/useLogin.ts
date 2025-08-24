@@ -3,10 +3,14 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 export interface LoginFormData {
-  username: string
+  id: string
+  name: string
   password: string
-  email: string
   confirmPassword: string
+  primary_email: string
+  secondary_email: string
+  phone_number: string
+  position: string
   rememberMe: boolean
 }
 
@@ -15,10 +19,14 @@ export function useLogin() {
   const authStore = useAuthStore()
 
   const formData = ref<LoginFormData>({
-    username: '',
+    id: '',
+    name: '',
     password: '',
-    email: '',
     confirmPassword: '',
+    primary_email: '',
+    secondary_email: '',
+    phone_number: '',
+    position: '',
     rememberMe: false,
   })
 
@@ -27,14 +35,18 @@ export function useLogin() {
   const isRegisterMode = ref(false)
 
   const validateForm = (): boolean => {
-    if (!formData.value.username || !formData.value.password) {
+    if (!formData.value.id || !formData.value.password) {
       error.value = 'Please fill in all fields'
       return false
     }
 
     if (isRegisterMode.value) {
-      if (!formData.value.email) {
-        error.value = 'Email is required for registration'
+      if (!formData.value.primary_email) {
+        error.value = 'Primary email is required for registration'
+        return false
+      }
+      if (!formData.value.name) {
+        error.value = 'Name is required for registration'
         return false
       }
       if (!formData.value.confirmPassword) {
@@ -64,12 +76,12 @@ export function useLogin() {
     try {
       if (isRegisterMode.value) {
         await authStore.register(
-          formData.value.username,
+          formData.value.id,
           formData.value.password,
-          formData.value.email,
+          formData.value.primary_email,
         )
       } else {
-        await authStore.login(formData.value.username, formData.value.password)
+        await authStore.login(formData.value.id, formData.value.password)
       }
       router.push('/dashboard')
     } catch (err) {
@@ -89,24 +101,44 @@ export function useLogin() {
     error.value = ''
     // Clear form when switching modes
     formData.value = {
-      username: '',
+      id: '',
+      name: '',
       password: '',
-      email: '',
       confirmPassword: '',
+      primary_email: '',
+      secondary_email: '',
+      phone_number: '',
+      position: '',
       rememberMe: false,
     }
-  }
-
-  const updateUsername = (value: string) => {
-    formData.value.username = value
   }
 
   const updatePassword = (value: string) => {
     formData.value.password = value
   }
 
-  const updateEmail = (value: string) => {
-    formData.value.email = value
+  const updateId = (value: string) => {
+    formData.value.id = value
+  }
+
+  const updateName = (value: string) => {
+    formData.value.name = value
+  }
+
+  const updatePrimaryEmail = (value: string) => {
+    formData.value.primary_email = value
+  }
+
+  const updateSecondaryEmail = (value: string) => {
+    formData.value.secondary_email = value
+  }
+
+  const updatePhoneNumber = (value: string) => {
+    formData.value.phone_number = value
+  }
+
+  const updatePosition = (value: string) => {
+    formData.value.position = value
   }
 
   const updateConfirmPassword = (value: string) => {
@@ -124,9 +156,13 @@ export function useLogin() {
     isRegisterMode,
     login,
     toggleMode,
-    updateUsername,
+    updateId,
+    updateName,
     updatePassword,
-    updateEmail,
+    updatePrimaryEmail,
+    updateSecondaryEmail,
+    updatePhoneNumber,
+    updatePosition,
     updateConfirmPassword,
     updateRememberMe,
   }
