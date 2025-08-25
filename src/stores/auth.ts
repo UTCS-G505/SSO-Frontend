@@ -12,10 +12,10 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => user.value !== null)
 
   const login = async (id: string, password: string): Promise<void> => {
-    await fetch("http://localhost:8000/api/v1/auth/login", {
-      method: "POST",
+    await fetch('http://localhost:8000/api/v1/auth/login', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: new URLSearchParams({
         username: id,
@@ -39,8 +39,16 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error(error.message)
       })
   }
-  
-  const register = async (id: string, name: string, password: string, primary_email: string, secondary_email: string, phone_number: string, position: string): Promise<void> => {
+
+  const register = async (
+    id: string,
+    name: string,
+    password: string,
+    primary_email: string,
+    secondary_email: string,
+    phone_number: string,
+    position: string,
+  ): Promise<void> => {
     // console.log("id: " + id);
     // console.log("name: " + name);
     // console.log("password: " + password);
@@ -69,7 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
       .then((data) => {
         console.log(data)
         if (data.code == 0) {
-          return;
+          return
         } else {
           throw new Error('Registration failed')
         }

@@ -44,7 +44,7 @@ import { LayoutGrid, User, Clock, HelpCircle } from 'lucide-vue-next'
 
 // Component name for ESLint
 defineOptions({
-  name: 'NavigationSidebar'
+  name: 'NavigationSidebar',
 })
 
 const route = useRoute()

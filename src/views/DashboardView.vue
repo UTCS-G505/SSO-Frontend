@@ -11,11 +11,7 @@
           <h1>Dashboard</h1>
           <p>Access your applications and services</p>
         </div>
-        <UserMenu
-          user-initials="JD"
-          display-name="John Doe"
-          user-role="Admin"
-        />
+        <UserMenu user-initials="JD" display-name="John Doe" user-role="Admin" />
       </header>
 
       <!-- Dashboard Content -->

@@ -11,11 +11,7 @@
           <h1>User Profile</h1>
           <p>Manage your account information and preferences</p>
         </div>
-        <UserMenu
-          :user-initials="userInitials"
-          :display-name="user?.id"
-          user-role="User"
-        />
+        <UserMenu :user-initials="userInitials" :display-name="user?.id" user-role="User" />
       </header>
 
       <!-- Profile Content -->
@@ -44,11 +40,7 @@
           <div class="profile-form-card">
             <div class="card-header">
               <h3>Personal Information</h3>
-              <button
-                class="edit-btn"
-                :class="{ 'save-btn': isEditing }"
-                @click="toggleEdit"
-              >
+              <button class="edit-btn" :class="{ 'save-btn': isEditing }" @click="toggleEdit">
                 <Edit v-if="!isEditing" class="edit-icon" />
                 <Save v-else class="save-icon" />
                 {{ isEditing ? 'Save Changes' : 'Edit Profile' }}
@@ -63,7 +55,7 @@
                     v-model="userProfile.firstName"
                     type="text"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   />
                 </div>
                 <div class="form-group">
@@ -73,7 +65,7 @@
                     v-model="userProfile.lastName"
                     type="text"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   />
                 </div>
               </div>
@@ -86,7 +78,7 @@
                     v-model="userProfile.email"
                     type="email"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   />
                 </div>
                 <div class="form-group">
@@ -96,7 +88,7 @@
                     v-model="userProfile.phone"
                     type="tel"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   />
                 </div>
               </div>
@@ -108,7 +100,7 @@
                     id="department"
                     v-model="userProfile.department"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   >
                     <option value="">Select Department</option>
                     <option value="engineering">Engineering</option>
@@ -125,7 +117,7 @@
                     v-model="userProfile.jobTitle"
                     type="text"
                     :disabled="!isEditing"
-                    :class="{ 'editable': isEditing }"
+                    :class="{ editable: isEditing }"
                   />
                 </div>
               </div>
@@ -137,7 +129,7 @@
                   v-model="userProfile.bio"
                   rows="4"
                   :disabled="!isEditing"
-                  :class="{ 'editable': isEditing }"
+                  :class="{ editable: isEditing }"
                   placeholder="Tell us about yourself..."
                 ></textarea>
               </div>
@@ -193,11 +185,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import {
-  Camera,
-  Edit,
-  Save
-} from 'lucide-vue-next'
+import { Camera, Edit, Save } from 'lucide-vue-next'
 import NavigationSidebar from '@/components/navigation/Sidebar.vue'
 import UserMenu from '@/components/common/UserMenu.vue'
 
@@ -215,7 +203,7 @@ const userProfile = ref({
   phone: '+1 (555) 123-4567',
   department: 'engineering',
   jobTitle: 'Senior Software Engineer',
-  bio: 'Passionate software engineer with 5+ years of experience in full-stack development. Love working with modern web technologies and building scalable applications.'
+  bio: 'Passionate software engineer with 5+ years of experience in full-stack development. Love working with modern web technologies and building scalable applications.',
 })
 
 // Computed properties

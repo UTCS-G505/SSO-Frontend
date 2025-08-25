@@ -7,8 +7,13 @@
           <span class="user-name">{{ displayName }}</span>
           <span class="user-role">{{ userRole }}</span>
         </div>
-        <svg class="dropdown-icon" :class="{ 'rotate-180': isDropdownOpen }" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M7 10l5 5 5-5z"/>
+        <svg
+          class="dropdown-icon"
+          :class="{ 'rotate-180': isDropdownOpen }"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path d="M7 10l5 5 5-5z" />
         </svg>
       </div>
       <div class="dropdown-menu" v-show="isDropdownOpen">
@@ -50,12 +55,12 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   userInitials: 'U',
   displayName: 'User',
-  userRole: 'User'
+  userRole: 'User',
 })
 
 // Component name for ESLint
 defineOptions({
-  name: 'UserMenu'
+  name: 'UserMenu',
 })
 
 const router = useRouter()
