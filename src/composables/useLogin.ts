@@ -32,6 +32,7 @@ export function useLogin() {
 
   const isLoading = ref(false)
   const error = ref('')
+  const success = ref('')
   const isRegisterMode = ref(false)
 
   const validateForm = (): boolean => {
@@ -72,18 +73,40 @@ export function useLogin() {
 
     isLoading.value = true
     error.value = ''
+    success.value = ''
 
     try {
       if (isRegisterMode.value) {
         await authStore.register(
           formData.value.id,
+          formData.value.name,
           formData.value.password,
           formData.value.primary_email,
+          formData.value.secondary_email,
+          formData.value.phone_number,
+          formData.value.position,
         )
+        // After successful registration, switch to login mode
+        isRegisterMode.value = false
+        // Clear form data except for id which user can use to login
+        const userId = formData.value.id
+        formData.value = {
+          id: userId,
+          name: '',
+          password: '',
+          confirmPassword: '',
+          primary_email: '',
+          secondary_email: '',
+          phone_number: '',
+          position: '',
+          rememberMe: false,
+        }
+        // Show success message
+        success.value = 'Registration successful! Please login with your credentials.'
       } else {
         await authStore.login(formData.value.id, formData.value.password)
+        router.push('/dashboard')
       }
-      router.push('/dashboard')
     } catch (err) {
       error.value =
         err instanceof Error
@@ -99,6 +122,7 @@ export function useLogin() {
   const toggleMode = () => {
     isRegisterMode.value = !isRegisterMode.value
     error.value = ''
+    success.value = ''
     // Clear form when switching modes
     formData.value = {
       id: '',
@@ -153,6 +177,7 @@ export function useLogin() {
     formData,
     isLoading,
     error,
+    success,
     isRegisterMode,
     login,
     toggleMode,

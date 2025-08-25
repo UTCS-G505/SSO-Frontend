@@ -137,6 +137,10 @@
           {{ error }}
         </div>
 
+        <div v-if="success" class="success-message">
+          {{ success }}
+        </div>
+
         <div class="mode-toggle">
           <p>
             {{ isRegisterMode ? 'Already have an account?' : "Don't have an account?" }}
@@ -174,6 +178,7 @@ interface Props {
   formData: LoginFormData
   isLoading: boolean
   error: string
+  success: string
   isRegisterMode: boolean
 }
 
@@ -439,6 +444,17 @@ input:disabled {
   color: #dc2626;
   border-radius: 8px;
   border: 1px solid #fecaca;
+  text-align: center;
+  font-size: 14px;
+}
+
+.success-message {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background-color: #f0fdf4;
+  color: #166534;
+  border-radius: 8px;
+  border: 1px solid #bbf7d0;
   text-align: center;
   font-size: 14px;
 }

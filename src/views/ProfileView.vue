@@ -13,7 +13,7 @@
         </div>
         <UserMenu
           :user-initials="userInitials"
-          :display-name="user?.username"
+          :display-name="user?.id"
           user-role="User"
         />
       </header>
@@ -31,7 +31,7 @@
               </button>
             </div>
             <div class="profile-basic-info">
-              <h2>{{ user?.username }}</h2>
+              <h2>{{ user?.id }}</h2>
               <p class="profile-email">{{ userProfile.email }}</p>
               <div class="profile-status">
                 <span class="status-badge active">Active</span>
@@ -176,7 +176,7 @@
             <div class="session-content">
               <div class="session-item">
                 <span class="session-label">Session ID:</span>
-                <span class="session-value">{{ user?.sessionId }}</span>
+                <span class="session-value">{{ user?.accessToken }}</span>
               </div>
               <div class="session-item">
                 <span class="session-label">Login Time:</span>
@@ -223,7 +223,7 @@ const userInitials = computed(() => {
   if (userProfile.value.firstName && userProfile.value.lastName) {
     return (userProfile.value.firstName[0] + userProfile.value.lastName[0]).toUpperCase()
   }
-  return user.value?.username?.[0]?.toUpperCase() || 'U'
+  return user.value?.id?.[0]?.toUpperCase() || 'U'
 })
 
 // Methods

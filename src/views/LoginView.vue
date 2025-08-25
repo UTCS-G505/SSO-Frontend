@@ -6,6 +6,7 @@
         :form-data="formData"
         :is-loading="isLoading"
         :error="error"
+        :success="success"
         :is-register-mode="isRegisterMode"
         @update:id="updateId"
         @update:name="updateName"
@@ -31,6 +32,7 @@ const {
   formData,
   isLoading,
   error,
+  success,
   isRegisterMode,
   login,
   toggleMode,

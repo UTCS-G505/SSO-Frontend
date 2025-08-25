@@ -24,7 +24,6 @@ export const useAuthStore = defineStore('auth', () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         if (data.code == 0) {
           user.value = {
             id: id,
@@ -40,38 +39,44 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error(error.message)
       })
   }
+  
+  const register = async (id: string, name: string, password: string, primary_email: string, secondary_email: string, phone_number: string, position: string): Promise<void> => {
+    // console.log("id: " + id);
+    // console.log("name: " + name);
+    // console.log("password: " + password);
+    // console.log("primary_email: " + primary_email);
+    // console.log("secondary_email: " + secondary_email);
+    // console.log("phone_number: " + phone_number);
+    // console.log("position: " + position);
 
-  // Simulate API call for registration
-  const register = async (id: string, password: string, email: string): Promise<void> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Check if user already exists
-    const registeredUsers = getRegisteredUsers()
-    const existingUser = registeredUsers.find((u) => u.id === id)
-
-    if (existingUser) {
-      throw new Error('id already exists')
-    }
-
-    // Validate id format (should start with U followed by 8 digits)
-    if (!/^U\d{8}$/.test(id)) {
-      throw new Error('id must be in format U12345678')
-    }
-
-    // Add new user to registered users
-    const newUser = { id, password, email, registeredAt: new Date().toISOString() }
-    registeredUsers.push(newUser)
-    localStorage.setItem('sso-registered-users', JSON.stringify(registeredUsers))
-
-    // Auto-login after successful registration
-    user.value = {
-      id,
-      accessToken: "abc",
-      loginTime: new Date().toISOString(),
-    }
-
-    localStorage.setItem('sso-user', JSON.stringify(user.value))
+    await fetch('http://localhost:8000/api/v1/auth/register', {
+      method: 'POST',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: id,
+        name: name,
+        password: password,
+        primary_email: primary_email,
+        secondary_email: secondary_email,
+        phone_number: phone_number,
+        position: position,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        if (data.code == 0) {
+          return;
+        } else {
+          throw new Error('Registration failed')
+        }
+      })
+      .catch((error) => {
+        throw new Error(error.message)
+      })
   }
 
   const logout = async (): Promise<void> => {
@@ -96,16 +101,16 @@ export const useAuthStore = defineStore('auth', () => {
   //   return Math.random().toString(36).substring(2) + Date.now().toString(36)
   // }
 
-  // Helper function to get registered users from localStorage
-  const getRegisteredUsers = (): Array<{
-    id: string
-    password: string
-    email: string
-    registeredAt: string
-  }> => {
-    const stored = localStorage.getItem('sso-registered-users')
-    return stored ? JSON.parse(stored) : []
-  }
+  // // Helper function to get registered users from localStorage
+  // const getRegisteredUsers = (): Array<{
+  //   id: string
+  //   password: string
+  //   email: string
+  //   registeredAt: string
+  // }> => {
+  //   const stored = localStorage.getItem('sso-registered-users')
+  //   return stored ? JSON.parse(stored) : []
+  // }
 
   return {
     user,
