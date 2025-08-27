@@ -34,13 +34,12 @@ export const useAuthStore = defineStore('auth', () => {
           accessToken: data.data.access_token,
           loginTime: new Date().toISOString(),
         }
-        localStorage.setItem('sso-user', JSON.stringify(user.value))
       } else {
         throw new Error('Invalid credentials')
       }
-    } catch (err) {
-      console.error('Error logging in:', err)
-      throw new Error('Login failed')
+    } catch {
+      // console.error('Error logging in:', err)
+      throw new Error('Invalid credentials')
     }
   }
 
@@ -77,15 +76,29 @@ export const useAuthStore = defineStore('auth', () => {
       if (data.code !== 0) {
         throw new Error('Registration failed')
       }
-    } catch (err) {
-      console.error('Error creating user:', err)
+    } catch {
+      // console.error('Error creating user:', err)
       throw new Error('Register failed')
     }
   }
 
   const logout = async (): Promise<void> => {
-    user.value = null
-    localStorage.removeItem('sso-user')
+    try {
+      const response = await axios.post('http://localhost:8000/api/v1/auth/logout', null, {
+        headers: {
+          Authorization: `Bearer ${user.value?.accessToken}`,
+        },
+      })
+      if (response.data.code === 0) {
+        console.log(user.value)
+        user.value = null
+      } else {
+        throw new Error('Logout failed')
+      }
+    } catch {
+      // console.error('Error logging out:', err)
+      throw new Error('Logout failed')
+    }
   }
 
   // Check if user is already logged in (from localStorage)
