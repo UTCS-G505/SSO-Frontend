@@ -24,6 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
+          withCredentials: true
         },
       )
 
@@ -69,6 +70,7 @@ export const useAuthStore = defineStore('auth', () => {
             accept: 'application/json',
             'Content-Type': 'application/json',
           },
+          withCredentials: true
         },
       )
 
