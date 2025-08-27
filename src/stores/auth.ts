@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 interface User {
   id: string
@@ -12,32 +13,35 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => user.value !== null)
 
   const login = async (id: string, password: string): Promise<void> => {
-    await fetch('http://localhost:8000/api/v1/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        username: id,
-        password: password,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.code == 0) {
-          user.value = {
-            id: id,
-            accessToken: data.data.access_token,
-            loginTime: new Date().toISOString(),
-          }
-          localStorage.setItem('sso-user', JSON.stringify(user.value))
-        } else {
-          throw new Error('Invalid credentials')
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/auth/login',
+        new URLSearchParams({
+          username: id,
+          password: password,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      )
+
+      const data = response.data
+      if (data.code == 0) {
+        user.value = {
+          id: id,
+          accessToken: data.data.access_token,
+          loginTime: new Date().toISOString(),
         }
-      })
-      .catch((error) => {
-        throw new Error(error.message)
-      })
+        localStorage.setItem('sso-user', JSON.stringify(user.value))
+      } else {
+        throw new Error('Invalid credentials')
+      }
+    } catch (err) {
+      console.error('Error logging in:', err)
+      throw new Error('Login failed')
+    }
   }
 
   const register = async (
@@ -49,42 +53,34 @@ export const useAuthStore = defineStore('auth', () => {
     phone_number: string,
     position: string,
   ): Promise<void> => {
-    // console.log("id: " + id);
-    // console.log("name: " + name);
-    // console.log("password: " + password);
-    // console.log("primary_email: " + primary_email);
-    // console.log("secondary_email: " + secondary_email);
-    // console.log("phone_number: " + phone_number);
-    // console.log("position: " + position);
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/v1/auth/register',
+        {
+          id: id,
+          name: name,
+          password: password,
+          primary_email: primary_email,
+          secondary_email: secondary_email,
+          phone_number: phone_number,
+          position: position,
+        },
+        {
+          headers: {
+            accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      )
 
-    await fetch('http://localhost:8000/api/v1/auth/register', {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id: id,
-        name: name,
-        password: password,
-        primary_email: primary_email,
-        secondary_email: secondary_email,
-        phone_number: phone_number,
-        position: position,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data)
-        if (data.code == 0) {
-          return
-        } else {
-          throw new Error('Registration failed')
-        }
-      })
-      .catch((error) => {
-        throw new Error(error.message)
-      })
+      const data = response.data
+      if (data.code !== 0) {
+        throw new Error('Registration failed')
+      }
+    } catch (err) {
+      console.error('Error creating user:', err)
+      throw new Error('Register failed')
+    }
   }
 
   const logout = async (): Promise<void> => {
@@ -104,21 +100,6 @@ export const useAuthStore = defineStore('auth', () => {
       }
     }
   }
-
-  // const generateSessionId = (): string => {
-  //   return Math.random().toString(36).substring(2) + Date.now().toString(36)
-  // }
-
-  // // Helper function to get registered users from localStorage
-  // const getRegisteredUsers = (): Array<{
-  //   id: string
-  //   password: string
-  //   email: string
-  //   registeredAt: string
-  // }> => {
-  //   const stored = localStorage.getItem('sso-registered-users')
-  //   return stored ? JSON.parse(stored) : []
-  // }
 
   return {
     user,
