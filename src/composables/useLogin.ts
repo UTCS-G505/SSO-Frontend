@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
 
 export interface LoginFormData {
   id: string
@@ -105,7 +106,13 @@ export function useLogin() {
         success.value = 'Registration successful! Please login with your credentials.'
       } else {
         await authStore.login(formData.value.id, formData.value.password)
-        router.push('/dashboard')
+
+        if (authStore.id && authStore.accessToken) {
+          await useUserStore().getProfile()
+          router.push('/dashboard')
+        } else {
+          throw new Error('Login failed - no auth data received')
+        }
       }
     } catch (err) {
       error.value =
