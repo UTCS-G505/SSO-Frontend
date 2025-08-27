@@ -184,7 +184,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/authStore'
 import { Camera, Edit, Save } from 'lucide-vue-next'
 import NavigationSidebar from '@/components/navigation/Sidebar.vue'
 import UserMenu from '@/components/common/UserMenu.vue'
