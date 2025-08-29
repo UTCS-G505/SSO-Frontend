@@ -6,7 +6,7 @@
         <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
         <span class="brand-name">University SSO</span>
       </div>
-      <UserMenu :user-initials="userInitials" :display-name="user?.id || ''" user-role="User" />
+      <UserMenu :user-initials="userInitials" :display-name="userProfile?.name || ''" user-role="User" />
     </header>
 
     <!-- Profile Section -->
@@ -182,6 +182,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
 import {
   Edit,
   Save,
@@ -197,22 +198,21 @@ import {
 import UserMenu from '@/components/common/UserMenu.vue'
 
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const isEditing = ref(false)
 
-// User data from auth store (compose object from state fields)
-const user = computed(() => ({
+const userAuth = computed(() => ({
   id: authStore.id,
   accessToken: authStore.accessToken,
   loginTime: authStore.loginTime,
 }))
 
-// Extended user profile data (in a real app, this would come from an API)
 const userProfile = ref({
-  name: 'John Doe',
-  primary_email: 'john.doe@university.edu',
-  secondary_email: 'john.backup@gmail.com',
-  phone_number: '+1 (555) 123-4567',
-  position: 'Student',
+  name: userStore.name,
+  primary_email: userStore.primary_email,
+  secondary_email: userStore.secondary_email,
+  phone_number: userStore.phone_number,
+  position: userStore.position,
 })
 
 // Password change form state
@@ -230,14 +230,13 @@ const passwordMismatch = computed(
     passwordForm.value.confirmPassword.length > 0,
 )
 
-// Computed properties
 const userInitials = computed(() => {
   if (userProfile.value.name) {
     const parts = userProfile.value.name.trim().split(/\s+/)
     if (parts.length === 1) return parts[0][0].toUpperCase()
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
   }
-  return user.value?.id?.[0]?.toUpperCase() || 'U'
+  return userAuth.value?.id?.[0]?.toUpperCase() || 'U'
 })
 
 // Methods
