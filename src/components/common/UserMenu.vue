@@ -4,8 +4,8 @@
       <div class="user-info">
         <div class="user-avatar icon-avatar"><PawPrint class="PawPrint-icon" /></div>
         <div class="user-details">
-          <span class="user-name">{{ displayName }}</span>
-          <span class="user-role">{{ userRole }}</span>
+          <span class="user-name">{{ userDisplayName }}</span>
+          <span class="user-role">{{ userRoleName }}</span>
         </div>
         <svg
           class="dropdown-icon"
@@ -36,23 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
+import { useUserStore } from '@/stores/userStore'
+import { getRoleName } from '@/types/userRoles'
 import { LayoutGrid, User, LogOut, PawPrint } from 'lucide-vue-next'
-
-// Props
-interface Props {
-  userInitials?: string
-  displayName?: string
-  userRole?: string
-}
-
-withDefaults(defineProps<Props>(), {
-  userInitials: 'U',
-  displayName: 'User',
-  userRole: 'User',
-})
 
 // Component name for ESLint
 defineOptions({
@@ -62,7 +51,14 @@ defineOptions({
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 const isDropdownOpen = ref(false)
+
+// Computed properties for user display
+const userDisplayName = computed(() => userStore.name || 'User')
+const userRoleName = computed(() =>
+  userStore.role !== null ? getRoleName(userStore.role) : 'User',
+)
 
 // Methods
 const toggleDropdown = () => {
@@ -127,7 +123,7 @@ onMounted(() => {
 .user-avatar {
   width: 40px;
   height: 40px;
-  background: #BFD7EA;
+  background: #bfd7ea;
   /* background: linear-gradient(135deg, #fbbf24, #f59e0b, #f97316); */
   border-radius: 50%;
   display: flex;

@@ -6,12 +6,8 @@
         <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
         <span class="brand-name">University SSO</span>
       </div>
-      <!-- Use committed store values, not the draft form -->
-      <UserMenu
-        :user-initials="committedInitials"
-        :display-name="committedName"
-        :user-role="committedRole"
-      />
+      <!-- UserMenu now handles user data internally -->
+      <UserMenu />
     </header>
 
     <!-- Profile Section -->
@@ -198,7 +194,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
 import { getRoleName } from '@/types/userRoles'
 import {
@@ -216,7 +211,6 @@ import {
 } from 'lucide-vue-next'
 import UserMenu from '@/components/common/UserMenu.vue'
 
-const authStore = useAuthStore()
 const userStore = useUserStore()
 const isEditing = ref(false)
 
@@ -228,20 +222,6 @@ const userProfile = ref({
   phone_number: userStore.phone_number,
   position: userStore.position,
   role: userStore.role,
-})
-
-// Committed values from the store for display components
-const committedName = computed(() => userStore.name || '')
-const committedRole = computed(() =>
-  userStore.role !== null ? getRoleName(userStore.role) : 'User',
-)
-const committedInitials = computed(() => {
-  if (userStore.name) {
-    const parts = userStore.name.trim().split(/\s+/)
-    if (parts.length === 1) return parts[0][0].toUpperCase()
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-  }
-  return (authStore.id && authStore.id[0].toUpperCase()) || 'U'
 })
 
 // Password change form state

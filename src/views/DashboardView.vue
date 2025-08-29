@@ -7,7 +7,7 @@
         <span class="brand-name">University SSO</span>
       </div>
       <div class="brand-right">
-        <UserMenu :user-initials="userInitials" :display-name="userProfile?.name || ''" user-role="User" />
+        <UserMenu />
       </div>
     </header>
 
@@ -35,16 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import { useUserStore } from '@/stores/userStore'
 import UserMenu from '@/components/common/UserMenu.vue'
 import { BookOpen, GraduationCap, Mail, User, Calendar, CreditCard } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
-const userStore = useUserStore()
 
 import type { FunctionalComponent } from 'vue'
 
@@ -56,29 +54,6 @@ interface AppCard {
   url: string
   launched: boolean
 }
-
-const userAuth = computed(() => ({
-  id: authStore.id,
-  accessToken: authStore.accessToken,
-  loginTime: authStore.loginTime,
-}))
-
-const userProfile = ref({
-  name: userStore.name,
-  primary_email: userStore.primary_email,
-  secondary_email: userStore.secondary_email,
-  phone_number: userStore.phone_number,
-  position: userStore.position,
-})
-
-const userInitials = computed(() => {
-  if (userProfile.value.name) {
-    const parts = userProfile.value.name.trim().split(/\s+/)
-    if (parts.length === 1) return parts[0][0].toUpperCase()
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-  }
-  return userAuth.value?.id?.[0]?.toUpperCase() || 'U'
-})
 
 const applications = ref<AppCard[]>([
   {
