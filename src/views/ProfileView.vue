@@ -1,215 +1,241 @@
 <template>
-  <div class="profile-container">
-    <!-- Sidebar Navigation -->
-    <NavigationSidebar />
+  <div class="profile-shell">
+    <!-- Brand / Top Bar -->
+    <header class="brand-bar">
+      <div class="brand-left">
+        <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
+        <span class="brand-name">University SSO</span>
+      </div>
+      <UserMenu :user-initials="userInitials" :display-name="user?.id || ''" user-role="User" />
+    </header>
 
-    <!-- Main Content Area -->
-    <div class="main-content">
-      <!-- Top Header -->
-      <header class="top-header">
-        <div class="header-title">
-          <h1>User Profile</h1>
-          <p>Manage your account information and preferences</p>
-        </div>
-        <UserMenu :user-initials="userInitials" :display-name="user?.id" user-role="User" />
-      </header>
-
-      <!-- Profile Content -->
-      <main class="profile-main">
-        <div class="profile-content">
-          <!-- Profile Header Card -->
-          <div class="profile-header-card">
-            <div class="profile-avatar-section">
-              <div class="profile-avatar-large">{{ userInitials }}</div>
-              <button class="change-avatar-btn" @click="changeAvatar">
-                <Camera class="camera-icon" />
-                Change Photo
-              </button>
-            </div>
-            <div class="profile-basic-info">
-              <h2>{{ user?.id }}</h2>
-              <p class="profile-email">{{ userProfile.email }}</p>
-              <div class="profile-status">
-                <span class="status-badge active">Active</span>
-                <span class="last-login">Last login: {{ formatDate(user?.loginTime) }}</span>
-              </div>
-            </div>
+    <!-- Profile Section -->
+    <main class="profile-section">
+      <h2 class="section-title">Profile</h2>
+      <div class="profile-content">
+        <!-- Profile Form -->
+        <div class="profile-form-card">
+          <div class="card-header">
+            <h3 class="with-icon"><UserIcon class="header-icon" /> Personal Information</h3>
+            <button class="edit-btn" :class="{ 'save-btn': isEditing }" @click="toggleEdit">
+              <Edit v-if="!isEditing" class="edit-icon" />
+              <Save v-else class="save-icon" />
+              {{ isEditing ? 'Save Changes' : 'Edit Profile' }}
+            </button>
           </div>
-
-          <!-- Profile Form -->
-          <div class="profile-form-card">
-            <div class="card-header">
-              <h3>Personal Information</h3>
-              <button class="edit-btn" :class="{ 'save-btn': isEditing }" @click="toggleEdit">
-                <Edit v-if="!isEditing" class="edit-icon" />
-                <Save v-else class="save-icon" />
-                {{ isEditing ? 'Save Changes' : 'Edit Profile' }}
-              </button>
-            </div>
-            <form @submit.prevent="saveProfile" class="profile-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="firstName">First Name</label>
-                  <input
-                    id="firstName"
-                    v-model="userProfile.firstName"
-                    type="text"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="lastName">Last Name</label>
-                  <input
-                    id="lastName"
-                    v-model="userProfile.lastName"
-                    type="text"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="email">Email Address</label>
-                  <input
-                    id="email"
-                    v-model="userProfile.email"
-                    type="email"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="phone">Phone Number</label>
-                  <input
-                    id="phone"
-                    v-model="userProfile.phone"
-                    type="tel"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="department">Department</label>
-                  <select
-                    id="department"
-                    v-model="userProfile.department"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  >
-                    <option value="">Select Department</option>
-                    <option value="engineering">Engineering</option>
-                    <option value="marketing">Marketing</option>
-                    <option value="sales">Sales</option>
-                    <option value="hr">Human Resources</option>
-                    <option value="finance">Finance</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="jobTitle">Job Title</label>
-                  <input
-                    id="jobTitle"
-                    v-model="userProfile.jobTitle"
-                    type="text"
-                    :disabled="!isEditing"
-                    :class="{ editable: isEditing }"
-                  />
-                </div>
-              </div>
-
+          <form @submit.prevent="saveProfile" class="profile-form">
+            <div class="form-row">
               <div class="form-group full-width">
-                <label for="bio">Bio</label>
-                <textarea
-                  id="bio"
-                  v-model="userProfile.bio"
-                  rows="4"
+                <label for="name" class="icon-label"
+                  ><UserIcon class="field-icon" /> <span>Full Name</span></label
+                >
+                <input
+                  id="name"
+                  v-model="userProfile.name"
+                  type="text"
                   :disabled="!isEditing"
                   :class="{ editable: isEditing }"
-                  placeholder="Tell us about yourself..."
-                ></textarea>
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="primaryEmail" class="icon-label"
+                  ><Mail class="field-icon" /> <span>Primary Email</span></label
+                >
+                <input
+                  id="primaryEmail"
+                  v-model="userProfile.primary_email"
+                  type="email"
+                  :disabled="!isEditing"
+                  :class="{ editable: isEditing }"
+                />
+              </div>
+              <div class="form-group">
+                <label for="secondaryEmail" class="icon-label"
+                  ><MailPlus class="field-icon" /> <span>Secondary Email</span></label
+                >
+                <input
+                  id="secondaryEmail"
+                  v-model="userProfile.secondary_email"
+                  type="email"
+                  :disabled="!isEditing"
+                  :class="{ editable: isEditing }"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="phone" class="icon-label"
+                  ><Phone class="field-icon" /> <span>Phone Number</span></label
+                >
+                <input
+                  id="phone"
+                  v-model="userProfile.phone_number"
+                  type="tel"
+                  :disabled="!isEditing"
+                  :class="{ editable: isEditing }"
+                />
+              </div>
+              <div class="form-group">
+                <label for="position" class="icon-label"
+                  ><Briefcase class="field-icon" /> <span>Position</span></label
+                >
+                <input
+                  id="position"
+                  v-model="userProfile.position"
+                  type="text"
+                  :disabled="!isEditing"
+                  :class="{ editable: isEditing }"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Security / Change Password -->
+        <div class="security-form-card">
+          <div class="card-header security-header">
+            <div class="security-title-wrap">
+              <h3 class="with-icon"><Shield class="header-icon" /> Security</h3>
+              <p class="muted">Update your password regularly to keep your account secure.</p>
+            </div>
+            <button class="secondary-btn" type="button" @click="togglePasswordSection">
+              {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
+            </button>
+          </div>
+          <transition name="fade-height">
+            <form
+              v-if="showPasswordForm"
+              class="password-form"
+              @submit.prevent="submitPasswordChange"
+            >
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="currentPassword" class="icon-label"
+                    ><Lock class="field-icon" /> <span>Current Password</span></label
+                  >
+                  <input
+                    id="currentPassword"
+                    v-model="passwordForm.currentPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    :class="{ editable: true }"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="newPassword" class="icon-label"
+                    ><KeyRound class="field-icon" /> <span>New Password</span></label
+                  >
+                  <input
+                    id="newPassword"
+                    v-model="passwordForm.newPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    @input="evaluateStrength"
+                    :class="{ editable: true }"
+                    required
+                  />
+                  <div class="password-strength">
+                    <div class="strength-bar" :data-level="passwordStrength.level"></div>
+                    <span class="strength-label">{{ passwordStrength.label }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="confirmPassword" class="icon-label"
+                    ><KeyRound class="field-icon" /> <span>Confirm New Password</span></label
+                  >
+                  <input
+                    id="confirmPassword"
+                    v-model="passwordForm.confirmPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    :class="{ editable: true, error: passwordMismatch }"
+                    required
+                  />
+                  <p v-if="passwordMismatch" class="error-text">Passwords do not match.</p>
+                </div>
+                <div class="form-group submit-col">
+                  <label class="invisible-label">Submit</label>
+                  <button
+                    class="change-pass-btn"
+                    type="submit"
+                    :disabled="passwordMismatch || !passwordStrength.valid"
+                  >
+                    Update Password
+                  </button>
+                </div>
               </div>
             </form>
-          </div>
-
-          <!-- Account Security Card -->
-          <div class="security-card">
-            <div class="card-header">
-              <h3>Account Security</h3>
-            </div>
-            <div class="security-content">
-              <div class="security-item">
-                <div class="security-info">
-                  <div class="security-title">Password</div>
-                  <div class="security-description">Last changed 30 days ago</div>
-                </div>
-                <button class="security-btn" @click="changePassword">Change Password</button>
-              </div>
-              <div class="security-divider"></div>
-              <div class="security-item">
-                <div class="security-info">
-                  <div class="security-title">Two-Factor Authentication</div>
-                  <div class="security-description">Add an extra layer of security</div>
-                </div>
-                <button class="security-btn secondary" @click="setup2FA">Setup 2FA</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Session Information Card -->
-          <div class="session-card">
-            <div class="card-header">
-              <h3>Session Information</h3>
-            </div>
-            <div class="session-content">
-              <div class="session-item">
-                <span class="session-label">Session ID:</span>
-                <span class="session-value">{{ user?.accessToken }}</span>
-              </div>
-              <div class="session-item">
-                <span class="session-label">Login Time:</span>
-                <span class="session-value">{{ formatDate(user?.loginTime) }}</span>
-              </div>
-            </div>
-          </div>
+          </transition>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
-import { Camera, Edit, Save } from 'lucide-vue-next'
-import NavigationSidebar from '@/components/navigation/Sidebar.vue'
+import {
+  Edit,
+  Save,
+  User as UserIcon,
+  Mail,
+  MailPlus,
+  Phone,
+  Briefcase,
+  Shield,
+  Lock,
+  KeyRound,
+} from 'lucide-vue-next'
 import UserMenu from '@/components/common/UserMenu.vue'
 
 const authStore = useAuthStore()
 const isEditing = ref(false)
 
-// User data from auth store
-const user = computed(() => authStore.user)
+// User data from auth store (compose object from state fields)
+const user = computed(() => ({
+  id: authStore.id,
+  accessToken: authStore.accessToken,
+  loginTime: authStore.loginTime,
+}))
 
 // Extended user profile data (in a real app, this would come from an API)
 const userProfile = ref({
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'john.doe@company.com',
-  phone: '+1 (555) 123-4567',
-  department: 'engineering',
-  jobTitle: 'Senior Software Engineer',
-  bio: 'Passionate software engineer with 5+ years of experience in full-stack development. Love working with modern web technologies and building scalable applications.',
+  name: 'John Doe',
+  primary_email: 'john.doe@university.edu',
+  secondary_email: 'john.backup@gmail.com',
+  phone_number: '+1 (555) 123-4567',
+  position: 'Student',
 })
+
+// Password change form state
+const showPasswordForm = ref(false)
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+
+const passwordStrength = ref({ level: 0, label: 'Weak', valid: false })
+const passwordMismatch = computed(
+  () =>
+    passwordForm.value.newPassword !== passwordForm.value.confirmPassword &&
+    passwordForm.value.confirmPassword.length > 0,
+)
 
 // Computed properties
 const userInitials = computed(() => {
-  if (userProfile.value.firstName && userProfile.value.lastName) {
-    return (userProfile.value.firstName[0] + userProfile.value.lastName[0]).toUpperCase()
+  if (userProfile.value.name) {
+    const parts = userProfile.value.name.trim().split(/\s+/)
+    if (parts.length === 1) return parts[0][0].toUpperCase()
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
   }
   return user.value?.id?.[0]?.toUpperCase() || 'U'
 })
@@ -235,27 +261,36 @@ const saveProfile = () => {
   }, 500)
 }
 
-const changeAvatar = () => {
-  // In a real app, this would open a file picker for avatar upload
-  console.log('Change avatar clicked')
-  alert('Avatar change functionality would be implemented here')
+const togglePasswordSection = () => {
+  showPasswordForm.value = !showPasswordForm.value
+  if (!showPasswordForm.value) {
+    passwordForm.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
+    passwordStrength.value = { level: 0, label: 'Weak', valid: false }
+  }
 }
 
-const changePassword = () => {
-  // In a real app, this would open a password change modal
-  console.log('Change password clicked')
-  alert('Password change functionality would be implemented here')
+const evaluateStrength = () => {
+  const pwd = passwordForm.value.newPassword
+  let level = 0
+  if (pwd.length >= 8) level++
+  if (/[A-Z]/.test(pwd)) level++
+  if (/[a-z]/.test(pwd)) level++
+  if (/\d/.test(pwd)) level++
+  if (/[^A-Za-z0-9]/.test(pwd)) level++
+  const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Excellent']
+  passwordStrength.value = {
+    level,
+    label: labels[level] || 'Very Weak',
+    valid: level >= 3,
+  }
 }
 
-const setup2FA = () => {
-  // In a real app, this would open 2FA setup flow
-  console.log('Setup 2FA clicked')
-  alert('2FA setup functionality would be implemented here')
-}
-
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleString()
+const submitPasswordChange = () => {
+  if (passwordMismatch.value || !passwordStrength.value.valid) return
+  // Placeholder for API call
+  console.log('Password change request:', passwordForm.value)
+  alert('Password updated (demo).')
+  togglePasswordSection()
 }
 
 // Close dropdown when clicking outside
@@ -265,64 +300,256 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-container {
-  display: flex;
+/* Shell */
+.profile-shell {
   min-height: 100vh;
-  background-color: #f0f2f5;
-}
-
-/* Main Content Styles */
-.main-content {
-  flex: 1;
-  margin-left: 260px;
   display: flex;
   flex-direction: column;
+  background: #f5f6f8;
 }
 
-.top-header {
-  background: #f0f2f5;
-  padding: 1rem 2rem;
+/* Brand Bar (reuse style philosophy from dashboard) */
+.brand-bar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 30;
 }
 
-.header-title h1 {
-  margin: 0;
-  font-size: 1.5rem;
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* Profile Section */
+.profile-section {
+  flex: 1;
+  padding: 2rem 2.25rem 3rem;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.section-title {
+  margin: 0 0 1.75rem;
+  font-size: 1.375rem;
   font-weight: 600;
   color: #1e293b;
 }
 
-.header-title p {
-  margin: 0.25rem 0 0;
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-/* Profile Content Styles */
-.profile-main {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
+/* Content Wrapper */
 .profile-content {
-  max-width: 900px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
-
-.profile-header-card {
-  background: white;
+/* Cards */
+.profile-header-card,
+.profile-form-card,
+.security-card,
+.session-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.security-form-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.75rem 2rem 2.25rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.security-form-card:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 55%);
+  pointer-events: none;
+}
+
+.security-header {
+  align-items: flex-start;
+}
+.security-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.security-title-wrap .muted {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.secondary-btn {
+  padding: 0.55rem 1.1rem;
+  background: #f1f5f9;
+  border: 1px solid #d8dee6;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition:
+    background 0.18s,
+    color 0.18s,
+    box-shadow 0.18s;
+}
+.secondary-btn:hover {
+  background: #e2e8f0;
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+}
+.password-form .form-row {
+  grid-template-columns: 1fr 1fr;
+}
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.strength-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #f87171 0%,
+    #fb923c 25%,
+    #facc15 50%,
+    #4ade80 75%,
+    #22c55e 100%
+  );
+  filter: grayscale(0.4) brightness(0.85);
+  position: relative;
+  overflow: hidden;
+}
+.strength-bar:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  mix-blend-mode: overlay;
+  opacity: 0.2;
+}
+.strength-bar[data-level='0'] {
+  clip-path: inset(0 100% 0 0);
+}
+.strength-bar[data-level='1'] {
+  clip-path: inset(0 80% 0 0);
+}
+.strength-bar[data-level='2'] {
+  clip-path: inset(0 60% 0 0);
+}
+.strength-bar[data-level='3'] {
+  clip-path: inset(0 40% 0 0);
+}
+.strength-bar[data-level='4'] {
+  clip-path: inset(0 20% 0 0);
+}
+.strength-bar[data-level='5'] {
+  clip-path: inset(0 0 0 0);
+}
+.strength-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.change-pass-btn {
+  width: 100%;
+  padding: 0.9rem 1.2rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  cursor: pointer;
+  transition:
+    transform 0.18s,
+    box-shadow 0.18s,
+    background 0.18s;
+}
+.change-pass-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+}
+.change-pass-btn:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.submit-col {
+  display: flex;
+  align-items: flex-end;
+}
+.invisible-label {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.7rem;
+  margin: 0.25rem 0 0;
+}
+.form-group input.error {
+  border-color: #dc2626;
+}
+
+/* Fade & height transition */
+.fade-height-enter-active,
+.fade-height-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.fade-height-enter-from,
+.fade-height-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.profile-header-card {
   display: flex;
   gap: 2rem;
   align-items: center;
@@ -412,14 +639,7 @@ onMounted(() => {
 }
 
 /* Profile Form Styles */
-.profile-form-card,
-.security-card,
-.session-card {
-  background: white;
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+/* Already consolidated into card above */
 
 .card-header {
   display: flex;
@@ -435,6 +655,29 @@ onMounted(() => {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1e293b;
+}
+
+.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.header-icon {
+  width: 18px;
+  height: 18px;
+  color: #3b82f6;
+}
+.icon-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+  color: #374151;
+}
+.field-icon {
+  width: 14px;
+  height: 14px;
+  color: #64748b;
 }
 
 .edit-btn,
@@ -520,119 +763,118 @@ onMounted(() => {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Security Card Styles */
-.security-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.security-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.security-info {
-  flex: 1;
-}
-
-.security-title {
-  font-weight: 500;
-  color: #1e293b;
-  margin-bottom: 0.25rem;
-}
-
-.security-description {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-.security-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #3b82f6;
-  background: #3b82f6;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.875rem;
-}
-
-.security-btn:hover {
-  background: #2563eb;
-  border-color: #2563eb;
-}
-
-.security-btn.secondary {
-  background: white;
-  color: #3b82f6;
-}
-
-.security-btn.secondary:hover {
-  background: #f0f9ff;
-}
-
-.security-divider {
-  height: 1px;
-  background: #e2e8f0;
-}
-
-/* Session Card Styles */
-.session-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.session-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 0;
-}
-
-.session-label {
-  font-weight: 500;
-  color: #374151;
-}
-
-.session-value {
-  color: #64748b;
-  font-family: monospace;
-  font-size: 0.875rem;
-}
+/* Removed security & session sections */
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .main-content {
-    margin-left: 200px;
-  }
-
+@media (max-width: 900px) {
   .profile-header-card {
     flex-direction: column;
     text-align: center;
   }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .top-header {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
 }
 
 @media (max-width: 640px) {
-  .main-content {
-    margin-left: 60px;
+  .profile-section {
+    padding: 1.25rem 1.25rem 2rem;
   }
+  .section-title {
+    margin-bottom: 1.25rem;
+  }
+  .profile-header-card {
+    padding: 1.5rem;
+  }
+  .profile-form-card,
+  .security-form-card {
+    padding: 1.25rem 1rem 1.5rem;
+    border-radius: 10px;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  /* Keep security toggle full width, but restore edit/save to top-right layout */
+  .secondary-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .profile-form-card .card-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .profile-form-card .edit-btn,
+  .profile-form-card .save-btn {
+    width: auto;
+    justify-content: center;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.7rem;
+  }
+  .profile-form {
+    gap: 1.25rem;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  .password-form .form-row {
+    grid-template-columns: 1fr;
+  }
+  .submit-col {
+    align-items: stretch;
+  }
+  .change-pass-btn {
+    margin-top: 0.25rem;
+  }
+  .form-group label {
+    font-size: 0.75rem;
+  }
+  .form-group input {
+    font-size: 0.8rem;
+  }
+  .strength-label {
+    font-size: 0.55rem;
+  }
+  .secondary-btn {
+    font-size: 0.7rem;
+  }
+  .edit-btn,
+  .save-btn {
+    font-size: 0.75rem;
+    padding: 0.65rem 1rem;
+  }
+  .profile-form-card h3,
+  .security-form-card h3 {
+    font-size: 1rem;
+  }
+  .section-title {
+    font-size: 1.1rem;
+  }
+  .brand-bar {
+    padding: 0 1rem;
+  }
+}
 
-  .profile-main {
-    padding: 1rem;
+@media (max-width: 420px) {
+  .profile-section {
+    padding: 1rem 0.85rem 1.5rem;
+  }
+  .profile-form-card,
+  .security-form-card {
+    padding: 1rem 0.85rem 1.25rem;
+  }
+  .edit-btn,
+  .save-btn,
+  .secondary-btn {
+    font-size: 0.7rem;
+  }
+  .form-group input {
+    padding: 0.6rem 0.65rem;
+  }
+  .change-pass-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.7rem;
   }
 }
 </style>
