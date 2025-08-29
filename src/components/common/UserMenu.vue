@@ -2,7 +2,7 @@
   <div class="user-menu">
     <div class="user-dropdown" @click="toggleDropdown">
       <div class="user-info">
-        <div class="user-avatar">{{ userInitials }}</div>
+        <div class="user-avatar icon-avatar"><PawPrint class="PawPrint-icon" /></div>
         <div class="user-details">
           <span class="user-name">{{ displayName }}</span>
           <span class="user-role">{{ userRole }}</span>
@@ -39,7 +39,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import { LayoutGrid, User, LogOut } from 'lucide-vue-next'
+import { LayoutGrid, User, LogOut, PawPrint } from 'lucide-vue-next'
 
 // Props
 interface Props {
@@ -127,7 +127,8 @@ onMounted(() => {
 .user-avatar {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  background: #BFD7EA;
+  /* background: linear-gradient(135deg, #fbbf24, #f59e0b, #f97316); */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -135,6 +136,12 @@ onMounted(() => {
   color: white;
   font-weight: 600;
   font-size: 0.875rem;
+}
+
+.icon-avatar .PawPrint-icon {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
 }
 
 .user-details {
