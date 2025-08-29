@@ -25,10 +25,6 @@
           <User class="dropdown-icon-small" />
           Profile
         </div>
-        <div class="dropdown-item" @click.stop="viewSettings">
-          <Settings class="dropdown-icon-small" />
-          Settings
-        </div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-item logout" @click.stop="handleLogout">
           <LogOut class="dropdown-icon-small" />
@@ -43,7 +39,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import { LayoutGrid, User, Settings, LogOut } from 'lucide-vue-next'
+import { LayoutGrid, User, LogOut } from 'lucide-vue-next'
 
 // Props
 interface Props {
@@ -85,12 +81,6 @@ const goToProfile = () => {
   if (route.name !== 'profile') {
     router.push('/profile')
   }
-}
-
-const viewSettings = () => {
-  console.log('Settings clicked')
-  isDropdownOpen.value = false
-  // Add settings view logic here
 }
 
 const handleLogout = async () => {
