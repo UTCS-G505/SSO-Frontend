@@ -1,34 +1,36 @@
 <template>
-  <div class="dashboard-container">
-    <!-- Sidebar Navigation -->
-    <NavigationSidebar />
+  <div class="dashboard-shell">
+    <!-- Top Brand Bar -->
+    <header class="brand-bar">
+      <div class="brand-left">
+        <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
+        <span class="brand-name">University SSO</span>
+      </div>
+      <div class="brand-right">
+        <UserMenu user-initials="AL" display-name="Alex" user-role="User" />
+      </div>
+    </header>
 
-    <!-- Main Content Area -->
-    <div class="main-content">
-      <!-- Top Header -->
-      <header class="top-header">
-        <div class="header-title">
-          <h1>Dashboard</h1>
-          <p>Access your applications and services</p>
-        </div>
-        <UserMenu user-initials="JD" display-name="John Doe" user-role="Admin" />
-      </header>
-
-      <!-- Dashboard Content -->
-      <main class="dashboard-main">
-        <div class="applications-grid">
-          <div class="app-card" v-for="app in applications" :key="app.id" @click="launchApp(app)">
-            <div class="app-image">
-              <img :src="app.image" :alt="app.name" />
-            </div>
-            <div class="app-info">
-              <h3>{{ app.name }}</h3>
-              <p>{{ app.description }}</p>
-            </div>
+    <!-- Applications Section -->
+    <main class="apps-section">
+      <h2 class="section-title">Applications</h2>
+      <div class="apps-grid">
+        <div
+          class="app-card"
+          v-for="app in applications"
+          :key="app.id"
+          role="button"
+          tabindex="0"
+          @click="launchApp(app)"
+          @keydown.enter.prevent="launchApp(app)"
+        >
+          <div class="app-icon" :style="{ backgroundColor: app.bg }">
+            <component :is="app.icon" class="icon" />
           </div>
+          <div class="app-name">{{ app.name }}</div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -36,89 +38,61 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import NavigationSidebar from '@/components/navigation/Sidebar.vue'
 import UserMenu from '@/components/common/UserMenu.vue'
+import { BookOpen, GraduationCap, Mail, User, Calendar, CreditCard } from 'lucide-vue-next'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-interface App {
+import type { FunctionalComponent } from 'vue'
+
+interface AppCard {
   id: string
   name: string
-  description: string
-  image: string
+  icon: FunctionalComponent
+  bg: string
   url: string
   launched: boolean
 }
 
-const applications = ref<App[]>([
+const applications = ref<AppCard[]>([
   {
-    id: '1',
-    name: 'Project Management',
-    description: 'Streamline project workflows and team collaboration.',
-    image: '/images/project-management.svg',
+    id: 'lib',
+    name: 'Library Resources',
+    icon: BookOpen,
+    bg: '#e0ecff',
     url: '#',
     launched: false,
   },
   {
-    id: '2',
-    name: 'CRM',
-    description: 'Manage customer interactions and sales pipelines.',
-    image: '/images/crm.svg',
+    id: 'course',
+    name: 'Course Management',
+    icon: GraduationCap,
+    bg: '#dcfce7',
+    url: '#',
+    launched: false,
+  },
+  { id: 'email', name: 'Email', icon: Mail, bg: '#fee2e2', url: '#', launched: false },
+  { id: 'portal', name: 'Student Portal', icon: User, bg: '#fef3c7', url: '#', launched: false },
+  {
+    id: 'calendar',
+    name: 'Academic Calendar',
+    icon: Calendar,
+    bg: '#ede9fe',
     url: '#',
     launched: false,
   },
   {
-    id: '3',
-    name: 'Team Chat',
-    description: 'Facilitate internal team communication and updates.',
-    image: '/images/team-chat.svg',
-    url: '#',
-    launched: false,
-  },
-  {
-    id: '4',
-    name: 'DocuSync',
-    description: 'Centralized storage and management of company documents.',
-    image: '/images/docusync.svg',
-    url: '#',
-    launched: false,
-  },
-  {
-    id: '5',
-    name: 'Data Insights',
-    description: 'Analyze data sets and generate insights.',
-    image: '/images/data-insights.svg',
-    url: '#',
-    launched: false,
-  },
-  {
-    id: '6',
-    name: 'MarketFlow',
-    description: 'Automate marketing campaigns and track performance.',
-    image: '/images/marketflow.svg',
-    url: '#',
-    launched: false,
-  },
-  {
-    id: '7',
-    name: 'HR Central',
-    description: 'Manage employee information and HR processes.',
-    image: '/images/hr-central.svg',
-    url: '#',
-    launched: false,
-  },
-  {
-    id: '8',
-    name: 'Sales Dash',
-    description: 'Track sales metrics and team performance.',
-    image: '/images/sales-dash.svg',
+    id: 'tuition',
+    name: 'Tuition & Fees',
+    icon: CreditCard,
+    bg: '#e0e7ff',
     url: '#',
     launched: false,
   },
 ])
 
-const launchApp = (app: App) => {
+const launchApp = (app: AppCard) => {
   app.launched = true
   console.log(`Launching ${app.name} at ${app.url}`)
   // In a real implementation, this would redirect to the app with SSO token
@@ -136,142 +110,127 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.dashboard-container {
-  display: flex;
+/* Shell */
+.dashboard-shell {
   min-height: 100vh;
-  background-color: #f0f2f5;
-}
-
-/* Main Content Styles */
-.main-content {
-  flex: 1;
-  margin-left: 260px;
   display: flex;
   flex-direction: column;
+  background: #f5f6f8;
 }
 
-.top-header {
-  background: #f0f2f5;
-  padding: 1rem 2rem;
+/* Brand Bar */
+.brand-bar {
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 20;
 }
 
-.header-title h1 {
-  margin: 0;
-  font-size: 1.5rem;
+.brand-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* Section */
+.apps-section {
+  flex: 1;
+  padding: 2rem 2.25rem 3rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.section-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.375rem;
   font-weight: 600;
   color: #1e293b;
 }
 
-.header-title p {
-  margin: 0.25rem 0 0;
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
-/* Dashboard Main Content */
-.dashboard-main {
-  padding: 2rem;
-  flex: 1;
-}
-
-/* Applications Grid */
-.applications-grid {
+/* Grid */
+.apps-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.75rem;
 }
 
 .app-card {
   background: #ffffff;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.2s;
   border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s,
+    border-color 0.18s;
+  user-select: none;
+}
+
+.app-card:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .app-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #d1d5db;
 }
 
-.app-image {
-  width: 100%;
-  height: 120px;
-  margin-bottom: 1rem;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.app-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1e293b;
 }
 
-.app-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.icon {
+  width: 26px;
+  height: 26px;
 }
 
-.app-info h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-  margin: 0 0 0.5rem 0;
-}
-
-.app-info p {
-  font-size: 0.875rem;
-  color: #6b7280;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .applications-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .applications-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .main-content {
-    margin-left: 200px;
-  }
-
-  .applications-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .top-header {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .dashboard-main {
-    padding: 1rem;
-  }
+.app-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  color: #374151;
+  padding: 0 0.5rem;
 }
 
 @media (max-width: 640px) {
-  .main-content {
-    margin-left: 60px;
+  .apps-section {
+    padding: 1.25rem 1.25rem 2rem;
   }
-
-  .dashboard-main {
-    padding: 1rem;
+  .apps-grid {
+    gap: 1.25rem;
+  }
+  .app-card {
+    height: 150px;
   }
 }
 </style>
