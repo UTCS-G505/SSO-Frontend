@@ -1,15 +1,7 @@
 <template>
   <div class="dashboard-shell">
-    <!-- Top Brand Bar -->
-    <header class="brand-bar">
-      <div class="brand-left">
-        <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
-        <span class="brand-name">University SSO</span>
-      </div>
-      <div class="brand-right">
-        <UserMenu />
-      </div>
-    </header>
+    <!-- App Header -->
+    <AppHeader />
 
     <!-- Applications Section -->
     <main class="apps-section">
@@ -38,7 +30,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
-import UserMenu from '@/components/common/UserMenu.vue'
+import AppHeader from '@/components/common/Header.vue'
 import { BookOpen, GraduationCap, Mail, User, Calendar, CreditCard } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -116,35 +108,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   background: #f5f6f8;
-}
-
-/* Brand Bar */
-.brand-bar {
-  height: 64px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.75rem;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.brand-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #1e293b;
-}
-
-.brand-logo {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
 }
 
 /* Section */

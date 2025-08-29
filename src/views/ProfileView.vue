@@ -1,14 +1,7 @@
 <template>
   <div class="profile-shell">
-    <!-- Brand / Top Bar -->
-    <header class="brand-bar">
-      <div class="brand-left">
-        <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
-        <span class="brand-name">University SSO</span>
-      </div>
-      <!-- UserMenu now handles user data internally -->
-      <UserMenu />
-    </header>
+    <!-- App Header -->
+    <AppHeader />
 
     <!-- Profile Section -->
     <main class="profile-section">
@@ -209,7 +202,7 @@ import {
   KeyRound,
   Users,
 } from 'lucide-vue-next'
-import UserMenu from '@/components/common/UserMenu.vue'
+import AppHeader from '@/components/common/Header.vue'
 
 const userStore = useUserStore()
 const isEditing = ref(false)
@@ -308,34 +301,6 @@ const submitPasswordChange = () => {
   display: flex;
   flex-direction: column;
   background: #f5f6f8;
-}
-
-.brand-bar {
-  height: 64px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 1.75rem;
-  position: sticky;
-  top: 0;
-  z-index: 30;
-}
-
-.brand-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #1e293b;
-}
-
-.brand-logo {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
 }
 
 /* Profile Section */
@@ -859,9 +824,6 @@ const submitPasswordChange = () => {
   }
   .section-title {
     font-size: 1.1rem;
-  }
-  .brand-bar {
-    padding: 0 1rem;
   }
 }
 
