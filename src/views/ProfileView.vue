@@ -6,7 +6,8 @@
         <img src="/src/assets/logo.png" alt="University SSO" class="brand-logo" />
         <span class="brand-name">University SSO</span>
       </div>
-      <UserMenu :user-initials="userInitials" :display-name="userProfile?.name || ''" user-role="User" />
+      <!-- Use committed store values, not the draft form -->
+      <UserMenu :user-initials="committedInitials" :display-name="committedName" user-role="User" />
     </header>
 
     <!-- Profile Section -->
@@ -201,18 +202,24 @@ const authStore = useAuthStore()
 const userStore = useUserStore()
 const isEditing = ref(false)
 
-const userAuth = computed(() => ({
-  id: authStore.id,
-  accessToken: authStore.accessToken,
-  loginTime: authStore.loginTime,
-}))
-
+// Draft form state separate from committed store state
 const userProfile = ref({
   name: userStore.name,
   primary_email: userStore.primary_email,
   secondary_email: userStore.secondary_email,
   phone_number: userStore.phone_number,
   position: userStore.position,
+})
+
+// Committed values from the store for display components
+const committedName = computed(() => userStore.name || '')
+const committedInitials = computed(() => {
+  if (userStore.name) {
+    const parts = userStore.name.trim().split(/\s+/)
+    if (parts.length === 1) return parts[0][0].toUpperCase()
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  }
+  return (authStore.id && authStore.id[0].toUpperCase()) || 'U'
 })
 
 // Password change form state
@@ -230,34 +237,41 @@ const passwordMismatch = computed(
     passwordForm.value.confirmPassword.length > 0,
 )
 
-const userInitials = computed(() => {
-  if (userProfile.value.name) {
-    const parts = userProfile.value.name.trim().split(/\s+/)
-    if (parts.length === 1) return parts[0][0].toUpperCase()
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-  }
-  return userAuth.value?.id?.[0]?.toUpperCase() || 'U'
-})
-
-// Methods
-const toggleEdit = () => {
+const toggleEdit = async () => {
   if (isEditing.value) {
-    saveProfile()
+    await saveProfile()
   } else {
+    userProfile.value = {
+      name: userStore.name,
+      primary_email: userStore.primary_email,
+      secondary_email: userStore.secondary_email,
+      phone_number: userStore.phone_number,
+      position: userStore.position,
+    }
     isEditing.value = true
   }
 }
 
-const saveProfile = () => {
-  // In a real app, this would make an API call to save the profile
-  console.log('Saving profile:', userProfile.value)
+const saveProfile = async () => {
+  try {
+    const payload = { ...userProfile.value }
+    await userStore.updateProfile(payload)
 
-  // Simulate saving
-  setTimeout(() => {
+    // After successful update, draft reflects store (store already set in updateProfile)
+    // userProfile.value = {
+    //   name: userStore.name,
+    //   primary_email: userStore.primary_email,
+    //   secondary_email: userStore.secondary_email,
+    //   phone_number: userStore.phone_number,
+    //   position: userStore.position,
+    // }
+
     isEditing.value = false
-    // Show success message (could use a toast notification)
     alert('Profile updated successfully!')
-  }, 500)
+  } catch (err) {
+    console.error('Failed to update profile:', err)
+    alert('Failed to update profile. Please try again.')
+  }
 }
 
 const togglePasswordSection = () => {

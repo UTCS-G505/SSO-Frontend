@@ -51,6 +51,44 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    async updateProfile(updated?: Partial<User>) {
+      const authStore = useAuthStore()
+
+      if (!authStore.id) {
+        console.error('No user ID found in authStore')
+        throw new Error('User not authenticated')
+      }
+
+      if (!authStore.accessToken) {
+        console.error('No access token found in authStore')
+        throw new Error('No access token available')
+      }
+
+      const payload = updated ? { ...this.$state, ...updated } : this.$state
+      console.log(payload)
+
+      const response = await axios.patch(
+        `http://localhost:8000/api/v1/user/update/${authStore.id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${authStore.accessToken}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          withCredentials: true,
+        },
+      )
+
+      const result = response.data
+      console.log('updateProfile response:', result)
+
+      if (result && result.code === 0) {
+        this.setProfile(payload)
+      }
+      return result
+    },
+
     setProfile(user: User) {
       this.$state = user
       localStorage.setItem('user-profile', JSON.stringify(user))
