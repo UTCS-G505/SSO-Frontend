@@ -7,7 +7,11 @@
         <span class="brand-name">University SSO</span>
       </div>
       <!-- Use committed store values, not the draft form -->
-      <UserMenu :user-initials="committedInitials" :display-name="committedName" user-role="User" />
+      <UserMenu
+        :user-initials="committedInitials"
+        :display-name="committedName"
+        :user-role="committedRole"
+      />
     </header>
 
     <!-- Profile Section -->
@@ -90,6 +94,18 @@
                   type="text"
                   :disabled="!isEditing"
                   :class="{ editable: isEditing }"
+                />
+              </div>
+              <div class="form-group">
+                <label for="role" class="icon-label"
+                  ><Users class="field-icon" /> <span>Role</span></label
+                >
+                <input
+                  id="role"
+                  :value="userProfile.role !== null ? getRoleName(userProfile.role) : ''"
+                  type="text"
+                  disabled
+                  class="role-display"
                 />
               </div>
             </div>
@@ -181,9 +197,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
+import { getRoleName } from '@/types/userRoles'
 import {
   Edit,
   Save,
@@ -195,6 +212,7 @@ import {
   Shield,
   Lock,
   KeyRound,
+  Users,
 } from 'lucide-vue-next'
 import UserMenu from '@/components/common/UserMenu.vue'
 
@@ -209,10 +227,14 @@ const userProfile = ref({
   secondary_email: userStore.secondary_email,
   phone_number: userStore.phone_number,
   position: userStore.position,
+  role: userStore.role,
 })
 
 // Committed values from the store for display components
 const committedName = computed(() => userStore.name || '')
+const committedRole = computed(() =>
+  userStore.role !== null ? getRoleName(userStore.role) : 'User',
+)
 const committedInitials = computed(() => {
   if (userStore.name) {
     const parts = userStore.name.trim().split(/\s+/)
@@ -247,6 +269,7 @@ const toggleEdit = async () => {
       secondary_email: userStore.secondary_email,
       phone_number: userStore.phone_number,
       position: userStore.position,
+      role: userStore.role,
     }
     isEditing.value = true
   }
@@ -256,15 +279,6 @@ const saveProfile = async () => {
   try {
     const payload = { ...userProfile.value }
     await userStore.updateProfile(payload)
-
-    // After successful update, draft reflects store (store already set in updateProfile)
-    // userProfile.value = {
-    //   name: userStore.name,
-    //   primary_email: userStore.primary_email,
-    //   secondary_email: userStore.secondary_email,
-    //   phone_number: userStore.phone_number,
-    //   position: userStore.position,
-    // }
 
     isEditing.value = false
     alert('Profile updated successfully!')
@@ -305,11 +319,6 @@ const submitPasswordChange = () => {
   alert('Password updated (demo).')
   togglePasswordSection()
 }
-
-// Close dropdown when clicking outside
-onMounted(() => {
-  // Event listener is now handled by UserMenu component
-})
 </script>
 
 <style scoped>
@@ -321,7 +330,6 @@ onMounted(() => {
   background: #f5f6f8;
 }
 
-/* Brand Bar (reuse style philosophy from dashboard) */
 .brand-bar {
   height: 64px;
   background: #ffffff;
@@ -774,6 +782,14 @@ onMounted(() => {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.role-display {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 500;
+  cursor: not-allowed;
 }
 
 /* Removed security & session sections */

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './authStore'
+import { type UserRoleValue } from '@/types/userRoles'
 
 interface User {
   id: string | null
@@ -9,6 +10,7 @@ interface User {
   secondary_email: string | null
   phone_number: string | null
   position: string | null
+  role: UserRoleValue | null
 }
 
 export const useUserStore = defineStore('user', {
@@ -19,6 +21,7 @@ export const useUserStore = defineStore('user', {
     secondary_email: null,
     phone_number: null,
     position: null,
+    role: null,
   }),
 
   getters: {},
@@ -102,6 +105,7 @@ export const useUserStore = defineStore('user', {
         secondary_email: null,
         phone_number: null,
         position: null,
+        role: null,
       }
       localStorage.removeItem('user-profile')
     },
