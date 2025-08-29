@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
+import FootBar from '@/components/FootBar.vue'
 
 const authStore = useAuthStore()
 
@@ -12,7 +13,10 @@ onMounted(() => {
 
 <template>
   <div id="app">
-    <RouterView />
+    <div class="app-main">
+      <RouterView />
+    </div>
+    <FootBar />
   </div>
 </template>
 
@@ -31,6 +35,14 @@ body {
 
 #app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Global styles */
