@@ -7,7 +7,9 @@ const authStore = useAuthStore()
 
 onMounted(async () => {
   // Initialize auth state when app starts
-  await authStore.initializeAuth()
+  if (!authStore.isAuthenticated) {
+    await authStore.initializeAuth()
+  }
 })
 </script>
 
