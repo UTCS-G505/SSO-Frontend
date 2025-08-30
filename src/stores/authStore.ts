@@ -120,8 +120,6 @@ export const useAuthStore = defineStore('auth', {
         })
 
         if (response.data.code === 0) {
-          console.log("refresh successfully!")
-          console.log(response.data)
           this.id = response.data.data.id
           this.accessToken = response.data.data.access_token
           this.saveToStorage()
@@ -134,22 +132,22 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    saveToStorage() {
+    saveToStorage(): void {
       if (this.id) {
         localStorage.setItem('sso-user-id', this.id)
       }
     },
 
     // Clear authentication state and localStorage
-    clearAuth() {
+    clearAuth(): void {
       this.id = null
       this.accessToken = null
       localStorage.removeItem('sso-user-id')
     },
 
-    async initializeAuth() {
+    // Initialize authentication state
+    async initializeAuth(): Promise<void> {
       if (this.isAuthenticated) return
-
       try {
         await this.refresh()
         return

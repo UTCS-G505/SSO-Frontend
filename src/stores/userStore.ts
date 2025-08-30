@@ -27,7 +27,7 @@ export const useUserStore = defineStore('user', {
   getters: {},
 
   actions: {
-    async getProfile() {
+    async getProfile(): Promise<void> {
       const authStore = useAuthStore()
       const id = localStorage.getItem('sso-user-id')
 
@@ -48,15 +48,13 @@ export const useUserStore = defineStore('user', {
         withCredentials: true,
       })
       const userProfile = response.data
-      console.log('userProfile response:', userProfile)
-
       // Update the store state with the fetched profile data
       if (userProfile && userProfile.code === 0 && userProfile.data) {
         this.setProfile(userProfile.data)
       }
     },
 
-    async updateProfile(updated?: Partial<User>) {
+    async updateProfile(updated?: Partial<User>): Promise<void> {
       const authStore = useAuthStore()
       const id = localStorage.getItem('sso-user-id')
 
@@ -71,7 +69,6 @@ export const useUserStore = defineStore('user', {
       }
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state
-      console.log(payload)
 
       const response = await axios.patch(
         `http://localhost:8000/api/v1/user/update/${id}`,
@@ -87,20 +84,18 @@ export const useUserStore = defineStore('user', {
       )
 
       const result = response.data
-      console.log('updateProfile response:', result)
-
       if (result && result.code === 0) {
         this.setProfile(payload)
       }
       return result
     },
 
-    setProfile(user: User) {
+    setProfile(user: User): void {
       this.$state = user
       localStorage.setItem('user-profile', JSON.stringify(user))
     },
 
-    clearProfile() {
+    clearProfile(): void {
       this.$state = {
         id: null,
         name: null,
