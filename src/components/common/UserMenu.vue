@@ -86,7 +86,14 @@ const handleLogout = async () => {
 }
 
 // Close dropdown when clicking outside
-onMounted(() => {
+onMounted(async () => {
+  if (!authStore.isAuthenticated) {
+    await authStore.initializeAuth()
+  }
+  if (!userStore.name) {
+    await userStore.getProfile()
+  }
+  
   document.addEventListener('click', (e) => {
     const dropdown = document.querySelector('.user-dropdown')
     if (dropdown && !dropdown.contains(e.target as Node)) {

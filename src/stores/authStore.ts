@@ -1,27 +1,19 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-interface User {
-  id: string
-  accessToken: string
-  loginTime: string
-}
-
 interface AuthState {
   id: string | null
   accessToken: string | null
-  loginTime: string | null
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     id: null,
     accessToken: null,
-    loginTime: null,
   }),
 
   getters: {
-    isAuthenticated: (state) => state.accessToken !== null,
+    isAuthenticated: (state) => (state.accessToken !== null && localStorage.getItem('sso-user-id') !== null),
   },
 
   actions: {
@@ -45,15 +37,11 @@ export const useAuthStore = defineStore('auth', {
         if (data.code == 0) {
           this.id = id
           this.accessToken = data.data.access_token
-          this.loginTime = new Date().toISOString()
-
-          // Persist to localStorage
           this.saveToStorage()
         } else {
           throw new Error('Invalid credentials')
         }
       } catch {
-        // console.error('Error logging in:', error)
         throw new Error('Invalid credentials')
       }
     },
@@ -104,6 +92,7 @@ export const useAuthStore = defineStore('auth', {
           headers: {
             Authorization: `Bearer ${this.accessToken}`,
           },
+          withCredentials: true,
         })
         if (response.data.code === 0) {
           this.clearAuth()
@@ -118,39 +107,54 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async refresh(): Promise<void> {
+      if (this.isAuthenticated) return
+      
+      try {
+        const response = await axios.post('http://localhost:8000/api/v1/auth/refresh', null, {
+          headers: {
+            Authorization: `Bearer ${this.accessToken}`,
+            accept: 'application/json',
+          },
+          withCredentials: true,
+        })
+
+        if (response.data.code === 0) {
+          console.log("refresh successfully!")
+          console.log(response.data)
+          this.id = response.data.data.id
+          this.accessToken = response.data.data.access_token
+          this.saveToStorage()
+        } else {
+          throw new Error('Refresh token failed')
+        }
+      } catch {
+        // console.error('Error refreshing token:', error)
+        throw new Error('Refresh token failed')
+      }
+    },
+
+    saveToStorage() {
+      if (this.id) {
+        localStorage.setItem('sso-user-id', this.id)
+      }
+    },
+
     // Clear authentication state and localStorage
     clearAuth() {
       this.id = null
       this.accessToken = null
-      this.loginTime = null
-      localStorage.removeItem('sso-user')
+      localStorage.removeItem('sso-user-id')
     },
 
-    // Save current auth state to localStorage
-    saveToStorage() {
-      if (this.id && this.accessToken && this.loginTime) {
-        const userData: User = {
-          id: this.id,
-          accessToken: this.accessToken,
-          loginTime: this.loginTime,
-        }
-        localStorage.setItem('sso-user', JSON.stringify(userData))
-      }
-    },
+    async initializeAuth() {
+      if (this.isAuthenticated) return
 
-    // Check if user is already logged in (from localStorage)
-    initializeAuth() {
-      const storedUser = localStorage.getItem('sso-user')
-      if (storedUser) {
-        try {
-          const userData: User = JSON.parse(storedUser)
-          this.id = userData.id
-          this.accessToken = userData.accessToken
-          this.loginTime = userData.loginTime
-        } catch {
-          // Clear invalid data
-          localStorage.removeItem('sso-user')
-        }
+      try {
+        await this.refresh()
+        return
+      } catch {
+        this.clearAuth()
       }
     },
   },

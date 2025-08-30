@@ -5,9 +5,9 @@ import FootBar from '@/components/FootBar.vue'
 
 const authStore = useAuthStore()
 
-onMounted(() => {
+onMounted(async () => {
   // Initialize auth state when app starts
-  authStore.initializeAuth()
+  await authStore.initializeAuth()
 })
 </script>
 

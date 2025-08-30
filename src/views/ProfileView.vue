@@ -186,8 +186,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
+import { useAuthStore } from '@/stores/authStore'
 import { getRoleName } from '@/types/userRoles'
 import {
   Edit,
@@ -205,6 +206,7 @@ import {
 import AppHeader from '@/components/common/Header.vue'
 
 const userStore = useUserStore()
+const authStore = useAuthStore()
 const isEditing = ref(false)
 
 // Draft form state separate from committed store state
@@ -292,6 +294,24 @@ const submitPasswordChange = () => {
   alert('Password updated (demo).')
   togglePasswordSection()
 }
+
+onMounted(async () => {
+  if (!authStore.isAuthenticated) {
+    await authStore.initializeAuth()
+  }
+  if (!userStore.name) {
+    await userStore.getProfile()
+  }
+
+  userProfile.value = {
+    name: userStore.name,
+    primary_email: userStore.primary_email,
+    secondary_email: userStore.secondary_email,
+    phone_number: userStore.phone_number,
+    position: userStore.position,
+    role: userStore.role,
+  }
+})
 </script>
 
 <style scoped>

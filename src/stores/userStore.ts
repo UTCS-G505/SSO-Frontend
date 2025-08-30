@@ -29,9 +29,10 @@ export const useUserStore = defineStore('user', {
   actions: {
     async getProfile() {
       const authStore = useAuthStore()
+      const id = localStorage.getItem('sso-user-id')
 
-      if (!authStore.id) {
-        console.error('No user ID found in authStore')
+      if (!id) {
+        console.error('No user ID found in localStorage')
         throw new Error('User not authenticated')
       }
 
@@ -40,10 +41,11 @@ export const useUserStore = defineStore('user', {
         throw new Error('No access token available')
       }
 
-      const response = await axios.get(`http://localhost:8000/api/v1/user/get/${authStore.id}`, {
+      const response = await axios.get(`http://localhost:8000/api/v1/user/get/${id}`, {
         headers: {
           Authorization: `Bearer ${authStore.accessToken}`,
         },
+        withCredentials: true,
       })
       const userProfile = response.data
       console.log('userProfile response:', userProfile)
@@ -56,9 +58,10 @@ export const useUserStore = defineStore('user', {
 
     async updateProfile(updated?: Partial<User>) {
       const authStore = useAuthStore()
+      const id = localStorage.getItem('sso-user-id')
 
-      if (!authStore.id) {
-        console.error('No user ID found in authStore')
+      if (!id) {
+        console.error('No user ID found in localStorage')
         throw new Error('User not authenticated')
       }
 
@@ -71,7 +74,7 @@ export const useUserStore = defineStore('user', {
       console.log(payload)
 
       const response = await axios.patch(
-        `http://localhost:8000/api/v1/user/update/${authStore.id}`,
+        `http://localhost:8000/api/v1/user/update/${id}`,
         payload,
         {
           headers: {

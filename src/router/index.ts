@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/dashboard',
     },
     {
       path: '/login',
@@ -39,11 +39,11 @@ const router = createRouter({
 })
 
 // Navigation guards
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
   // Initialize auth state from localStorage
-  authStore.initializeAuth()
+  await authStore.initializeAuth()
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
