@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import apiClient from '@/utils/api'
 
 interface AuthState {
   id: string | null
@@ -19,8 +19,8 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(id: string, password: string): Promise<void> {
       try {
-        const response = await axios.post(
-          'http://localhost:8000/api/v1/auth/login',
+        const response = await apiClient.post(
+          '/auth/login',
           new URLSearchParams({
             username: id,
             password: password,
@@ -29,7 +29,6 @@ export const useAuthStore = defineStore('auth', {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            withCredentials: true,
           },
         )
 
@@ -56,8 +55,8 @@ export const useAuthStore = defineStore('auth', {
       position: string,
     ): Promise<void> {
       try {
-        const response = await axios.post(
-          'http://localhost:8000/api/v1/auth/register',
+        const response = await apiClient.post(
+          '/auth/register',
           {
             id: id,
             name: name,
@@ -69,10 +68,8 @@ export const useAuthStore = defineStore('auth', {
           },
           {
             headers: {
-              accept: 'application/json',
               'Content-Type': 'application/json',
             },
-            withCredentials: true,
           },
         )
 
@@ -88,12 +85,8 @@ export const useAuthStore = defineStore('auth', {
 
     async logout(): Promise<void> {
       try {
-        const response = await axios.post('http://localhost:8000/api/v1/auth/logout', null, {
-          headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-          },
-          withCredentials: true,
-        })
+        const response = await apiClient.post('/auth/logout', null)
+
         if (response.data.code === 0) {
           this.clearAuth()
         } else {
@@ -111,13 +104,7 @@ export const useAuthStore = defineStore('auth', {
       if (this.isAuthenticated) return
       
       try {
-        const response = await axios.post('http://localhost:8000/api/v1/auth/refresh', null, {
-          headers: {
-            Authorization: `Bearer ${this.accessToken}`,
-            accept: 'application/json',
-          },
-          withCredentials: true,
-        })
+        const response = await apiClient.post('/auth/refresh', null)
 
         if (response.data.code === 0) {
           this.id = response.data.data.id

@@ -41,8 +41,6 @@ const router = createRouter({
 // Navigation guards
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-
-  // Initialize auth state from localStorage
   await authStore.initializeAuth()
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
