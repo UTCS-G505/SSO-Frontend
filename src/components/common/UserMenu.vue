@@ -40,6 +40,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
+import { useToast } from '@/composables/useToast'
 import { getRoleName } from '@/types/userRoles'
 import { LayoutGrid, User, LogOut, PawPrint } from 'lucide-vue-next'
 
@@ -52,6 +53,7 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const userStore = useUserStore()
+const { error } = useToast()
 const isDropdownOpen = ref(false)
 
 // Computed properties for user display
@@ -81,8 +83,14 @@ const goToProfile = () => {
 
 const handleLogout = async () => {
   isDropdownOpen.value = false
-  await authStore.logout()
-  router.push('/login')
+  try {
+    await authStore.logout()
+    router.push('/login')
+  } catch {
+    error('登出失敗', '登出時發生錯誤，請重新嘗試')
+    // Still redirect to login even if logout fails
+    router.push('/login')
+  }
 }
 
 // Close dropdown when clicking outside

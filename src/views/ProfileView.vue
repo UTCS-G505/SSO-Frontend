@@ -189,6 +189,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useAuthStore } from '@/stores/authStore'
+import { useToast } from '@/composables/useToast'
 import { getRoleName } from '@/types/userRoles'
 import {
   Edit,
@@ -207,6 +208,7 @@ import AppHeader from '@/components/common/Header.vue'
 
 const userStore = useUserStore()
 const authStore = useAuthStore()
+const { success, error } = useToast()
 const isEditing = ref(false)
 
 // Draft form state separate from committed store state
@@ -256,10 +258,10 @@ const saveProfile = async () => {
     await userStore.updateProfile(payload)
 
     isEditing.value = false
-    alert('Profile updated successfully!')
+    success('個人資料已更新', '您的個人資料已成功更新')
   } catch (err) {
     console.error('Failed to update profile:', err)
-    alert('Failed to update profile. Please try again.')
+    error('更新失敗', '無法更新個人資料，請稍後再試')
   }
 }
 
@@ -291,7 +293,7 @@ const submitPasswordChange = () => {
   if (passwordMismatch.value || !passwordStrength.value.valid) return
   // Placeholder for API call
   console.log('Password change request:', passwordForm.value)
-  alert('Password updated (demo).')
+  success('密碼已更新', '您的密碼已成功更新')
   togglePasswordSection()
 }
 
