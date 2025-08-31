@@ -111,10 +111,11 @@ export const useAuthStore = defineStore('auth', {
           this.accessToken = response.data.data.access_token
           this.saveToStorage()
         } else {
+          this.clearAuth()
           throw new Error('Refresh token failed')
         }
       } catch {
-        // console.error('Error refreshing token:', error)
+        this.clearAuth()
         throw new Error('Refresh token failed')
       }
     },
