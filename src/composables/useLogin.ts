@@ -18,6 +18,7 @@ export interface LoginFormData {
 export function useLogin() {
   const router = useRouter()
   const authStore = useAuthStore()
+  const userStore = useUserStore()
 
   const formData = ref<LoginFormData>({
     id: '',
@@ -35,6 +36,21 @@ export function useLogin() {
   const error = ref('')
   const success = ref('')
   const isRegisterMode = ref(false)
+
+  const resetForm = (keepId = false) => {
+    const id = keepId ? formData.value.id : ''
+    formData.value = {
+      id,
+      name: '',
+      password: '',
+      confirmPassword: '',
+      primary_email: '',
+      secondary_email: '',
+      phone_number: '',
+      position: '',
+      rememberMe: false,
+    }
+  }
 
   const validateForm = (): boolean => {
     if (!formData.value.id || !formData.value.password) {
@@ -90,25 +106,14 @@ export function useLogin() {
         // After successful registration, switch to login mode
         isRegisterMode.value = false
         // Clear form data except for id which user can use to login
-        const userId = formData.value.id
-        formData.value = {
-          id: userId,
-          name: '',
-          password: '',
-          confirmPassword: '',
-          primary_email: '',
-          secondary_email: '',
-          phone_number: '',
-          position: '',
-          rememberMe: false,
-        }
+        resetForm(true)
         // Show success message
         success.value = 'Registration successful! Please login with your credentials.'
       } else {
         await authStore.login(formData.value.id, formData.value.password)
 
         if (authStore.id && authStore.accessToken) {
-          await useUserStore().getProfile()
+          await userStore.getProfile()
           router.push('/dashboard')
         } else {
           throw new Error('Login failed - no auth data received')
@@ -131,17 +136,7 @@ export function useLogin() {
     error.value = ''
     success.value = ''
     // Clear form when switching modes
-    formData.value = {
-      id: '',
-      name: '',
-      password: '',
-      confirmPassword: '',
-      primary_email: '',
-      secondary_email: '',
-      phone_number: '',
-      position: '',
-      rememberMe: false,
-    }
+    resetForm()
   }
 
   const updatePassword = (value: string) => {
