@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
-import FootBar from '@/components/FootBar.vue'
+import FootBar from '@/components/common/FootBar.vue'
 
 const authStore = useAuthStore()
 
