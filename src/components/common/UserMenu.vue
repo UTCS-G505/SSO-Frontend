@@ -101,7 +101,7 @@ onMounted(async () => {
   if (!userStore.name) {
     await userStore.getProfile()
   }
-  
+
   document.addEventListener('click', (e) => {
     const dropdown = document.querySelector('.user-dropdown')
     if (dropdown && !dropdown.contains(e.target as Node)) {

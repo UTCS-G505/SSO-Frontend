@@ -13,7 +13,8 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => (state.accessToken !== null && localStorage.getItem('sso-user-id') !== null),
+    isAuthenticated: (state) =>
+      state.accessToken !== null && localStorage.getItem('sso-user-id') !== null,
   },
 
   actions: {
@@ -102,7 +103,7 @@ export const useAuthStore = defineStore('auth', {
 
     async refresh(): Promise<void> {
       if (this.isAuthenticated) return
-      
+
       try {
         const response = await apiClient.post('/auth/refresh', null)
 

@@ -65,11 +65,11 @@ defineOptions({
   .app-header {
     padding: 0 1rem;
   }
-  
+
   .header-brand {
     font-size: 1rem;
   }
-  
+
   .header-logo {
     width: 24px;
     height: 24px;
@@ -80,11 +80,11 @@ defineOptions({
   .app-header {
     padding: 0 0.75rem;
   }
-  
+
   .header-left {
     gap: 0.5rem;
   }
-  
+
   .header-brand {
     font-size: 0.9rem;
   }

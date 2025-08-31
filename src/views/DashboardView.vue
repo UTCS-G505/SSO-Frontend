@@ -54,18 +54,18 @@ const applications = computed<AppConfig[]>(() => {
     return getApplicationsByRole(userStore.role)
   }
   // If no role is set, show basic applications (no role restrictions)
-  return applicationConfig.filter(app => app.isActive && !app.requiredRoles)
+  return applicationConfig.filter((app) => app.isActive && !app.requiredRoles)
 })
 
 const launchApp = (app: AppConfig) => {
   // Update the launched state (this would typically be handled by a store)
-  const appIndex = applicationConfig.findIndex(a => a.id === app.id)
+  const appIndex = applicationConfig.findIndex((a) => a.id === app.id)
   if (appIndex !== -1) {
     applicationConfig[appIndex].launched = true
   }
-  
+
   console.log(`Launching ${app.name} at ${app.url}`)
-  
+
   // Handle different types of URLs
   if (app.url.startsWith('http') || app.isExternal) {
     // External URL - open in new tab
