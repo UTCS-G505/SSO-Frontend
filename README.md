@@ -83,11 +83,68 @@ src/
 │   ├── login/       # 登入相關元件
 │   └── navigation/  # 導覽元件
 ├── composables/     # Composition API 可複用邏輯
+├── config/          # 應用程式配置檔案
 ├── router/          # 路由設定
 ├── stores/          # Pinia 狀態管理
 ├── types/           # TypeScript 型別定義
 ├── utils/           # 工具函數
 └── views/           # 頁面元件
+```
+
+## 應用程式配置系統
+
+### 配置架構
+
+應用程式配置採用集中式管理，所有應用程式定義於 `src/config/applications.ts`：
+
+```typescript
+interface AppConfig {
+  id: string                    // 唯一識別碼
+  name: string                  // 應用程式名稱
+  description?: string          // 應用程式說明
+  icon: FunctionalComponent     // Lucide 圖示組件
+  bg: string                    // 背景顏色
+  url: string                   // 應用程式網址
+  category?: string             // 分類：academic | administrative | communication | tools | system
+  requiredRoles?: number[]      // 需要的使用者角色
+  isExternal?: boolean          // 是否為外部連結
+  isActive?: boolean            // 應用程式是否啟用
+}
+```
+
+### 角色權限控制
+
+系統根據使用者角色動態顯示可用應用程式：
+
+```typescript
+USER_ROLES = {
+  ADMIN: 0,      // 系統管理員 - 可存取所有應用程式
+  OFFICER: 1,    // 系辦人員 - 存取行政和部分系統功能
+  DIRECTOR: 2,   // 系主任 - 存取學術和行政功能
+  TEACHER: 3,    // 系上教師 - 存取教學相關功能
+  STUDENT: 4,    // 系上學生 - 存取學習相關功能
+  UT_USER: 5,    // 校內人員 - 存取基本功能
+  GUEST: 6,      // 校外人士 - 限制存取
+}
+```
+
+### 新增應用程式
+
+在 `src/config/applications.ts` 中新增應用程式配置：
+
+```typescript
+{
+  id: 'new-app',
+  name: '新應用程式',
+  description: '應用程式說明',
+  icon: NewIcon,
+  bg: '#f0f9ff',
+  url: 'https://new-app.example.com',
+  category: 'academic',
+  requiredRoles: [0, 1, 2], // 限制特定角色存取
+  isExternal: true,
+  isActive: true,
+}
 ```
 
 ## API 整合
