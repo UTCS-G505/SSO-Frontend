@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
 
@@ -17,6 +17,7 @@ export interface LoginFormData {
 
 export function useLogin() {
   const router = useRouter()
+  const route = useRoute()
   const authStore = useAuthStore()
   const userStore = useUserStore()
 
@@ -114,7 +115,12 @@ export function useLogin() {
 
         if (authStore.id && authStore.accessToken) {
           await userStore.getProfile()
-          router.push('/dashboard')
+          const redirectUrl = route.query.redirect
+          if (redirectUrl && typeof redirectUrl === 'string') {
+            window.location.href = redirectUrl
+          } else {
+            router.push('/dashboard')
+          }
         } else {
           throw new Error('Login failed - no auth data received')
         }
