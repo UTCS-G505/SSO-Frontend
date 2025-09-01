@@ -5,7 +5,7 @@
 
     <!-- Applications Section -->
     <main class="apps-section">
-  <h2 class="section-title">應用程式</h2>
+      <h2 class="section-title">應用程式</h2>
       <div class="apps-grid">
         <div
           class="app-card"

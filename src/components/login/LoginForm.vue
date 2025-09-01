@@ -2,13 +2,13 @@
   <div class="login-card">
     <div class="logo-section">
       <div class="logo">
-  <img src="/src/assets/logo.png" alt="UTCS 單一驗證平台" class="logo-icon" />
-  <span class="logo-text">UTCS 單一驗證平台</span>
+        <img src="/src/assets/logo.png" alt="UTCS 單一驗證平台" class="logo-icon" />
+        <span class="logo-text">UTCS 單一驗證平台</span>
       </div>
     </div>
 
     <div class="form-section">
-  <h1>{{ isRegisterMode ? '建立帳號' : '登入' }}</h1>
+      <h1>{{ isRegisterMode ? '建立帳號' : '登入' }}</h1>
       <p class="subtitle">
         {{
           isRegisterMode

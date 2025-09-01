@@ -10,11 +10,9 @@
         </div>
       </div>
 
-  <h1 class="error-title">找不到頁面</h1>
+      <h1 class="error-title">找不到頁面</h1>
 
-      <p class="error-message">
-        很抱歉，您要造訪的頁面不存在，可能已被移動或刪除。
-      </p>
+      <p class="error-message">很抱歉，您要造訪的頁面不存在，可能已被移動或刪除。</p>
 
       <div class="error-actions">
         <button @click="goHome" class="btn btn-primary">

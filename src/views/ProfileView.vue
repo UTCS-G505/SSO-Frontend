@@ -5,7 +5,7 @@
 
     <!-- Profile Section -->
     <main class="profile-section">
-  <h2 class="section-title">個人資料</h2>
+      <h2 class="section-title">個人資料</h2>
       <div class="profile-content">
         <!-- Profile Form -->
         <div class="profile-form-card">
