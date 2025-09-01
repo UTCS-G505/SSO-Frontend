@@ -39,6 +39,19 @@ export const applicationConfig: AppConfig[] = [
     isActive: true,
   },
   {
+    id: 'classroom_admin',
+    name: '教室借用管理',
+    description: '管理教室借用的相關事宜',
+    icon: Settings,
+    bg: '#fef2f2',
+    url: 'https://classroom-borrow-frontend.vercel.app/admin',
+    launched: false,
+    category: 'system',
+    requiredRoles: [0, 1, 2, 3],
+    isExternal: false,
+    isActive: true,
+  },
+  {
     id: 'course',
     name: '系櫃借用',
     description: '借用資科系系櫃',
@@ -85,19 +98,6 @@ export const applicationConfig: AppConfig[] = [
     category: 'academic',
     requiredRoles: [2, 3], // DIRECTOR, TEACHER
     isExternal: true,
-    isActive: true,
-  },
-  {
-    id: 'admin',
-    name: '系統管理',
-    description: '系統設定和使用者管理',
-    icon: Settings,
-    bg: '#fef2f2',
-    url: '/admin',
-    launched: false,
-    category: 'system',
-    requiredRoles: [0], // ADMIN only
-    isExternal: false,
     isActive: true,
   },
   {
