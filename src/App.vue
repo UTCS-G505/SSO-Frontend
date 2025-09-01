@@ -34,7 +34,7 @@ onMounted(async () => {
 body {
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #f5f7fa;
+  background-color: #f9f7f3;
 }
 
 #app {
