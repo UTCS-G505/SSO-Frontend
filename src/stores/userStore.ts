@@ -33,12 +33,12 @@ export const useUserStore = defineStore('user', {
 
       if (!id) {
         console.error('No user ID found in localStorage')
-        throw new Error('User not authenticated')
+        throw new Error('使用者未經過身份驗證')
       }
 
       if (!authStore.accessToken) {
         console.error('No access token found in authStore')
-        throw new Error('No access token available')
+        throw new Error('使用者未經過身份驗證')
       }
 
       const response = await apiClient.get(`/user/get/${id}`)
@@ -55,12 +55,12 @@ export const useUserStore = defineStore('user', {
 
       if (!id) {
         console.error('No user ID found in localStorage')
-        throw new Error('User not authenticated')
+        throw new Error('使用者未經過身份驗證')
       }
 
       if (!authStore.accessToken) {
         console.error('No access token found in authStore')
-        throw new Error('No access token available')
+        throw new Error('未提供 refresh token')
       }
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state

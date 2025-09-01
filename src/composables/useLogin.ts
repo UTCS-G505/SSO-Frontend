@@ -55,29 +55,29 @@ export function useLogin() {
 
   const validateForm = (): boolean => {
     if (!formData.value.id || !formData.value.password) {
-      error.value = 'Please fill in all fields'
+      error.value = '請填寫所有欄位'
       return false
     }
 
     if (isRegisterMode.value) {
       if (!formData.value.primary_email) {
-        error.value = 'Primary email is required for registration'
+        error.value = '註冊時必須輸入主要電子郵件'
         return false
       }
       if (!formData.value.name) {
-        error.value = 'Name is required for registration'
+        error.value = '註冊時必須輸入姓名'
         return false
       }
       if (!formData.value.confirmPassword) {
-        error.value = 'Please confirm your password'
+        error.value = '註冊時必須確認密碼'
         return false
       }
       if (formData.value.password !== formData.value.confirmPassword) {
-        error.value = 'Passwords do not match'
+        error.value = '密碼不匹配'
         return false
       }
       if (formData.value.password.length < 6) {
-        error.value = 'Password must be at least 6 characters long'
+        error.value = '密碼長度必須至少 6 個字元'
         return false
       }
     }
@@ -109,7 +109,7 @@ export function useLogin() {
         // Clear form data except for id which user can use to login
         resetForm(true)
         // Show success message
-        success.value = 'Registration successful! Please login with your credentials.'
+        success.value = '註冊成功! 請使用您的帳號密碼登入。'
       } else {
         await authStore.login(formData.value.id, formData.value.password)
 
@@ -122,7 +122,7 @@ export function useLogin() {
             router.push('/dashboard')
           }
         } else {
-          throw new Error('Login failed - no auth data received')
+          throw new Error('登入失敗! 請檢查您的帳號和密碼。')
         }
       }
     } catch (err) {

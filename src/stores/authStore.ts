@@ -39,10 +39,10 @@ export const useAuthStore = defineStore('auth', {
           this.accessToken = data.data.access_token
           this.saveToStorage()
         } else {
-          throw new Error('Invalid credentials')
+          throw new Error('登入失敗! 請檢查您的帳號和密碼。')
         }
       } catch {
-        throw new Error('Invalid credentials')
+        throw new Error('登入失敗! 請檢查您的帳號和密碼。')
       }
     },
 
@@ -76,11 +76,10 @@ export const useAuthStore = defineStore('auth', {
 
         const data = response.data
         if (data.code !== 0) {
-          throw new Error('Registration failed')
+          throw new Error('註冊失敗')
         }
       } catch {
-        // console.error('Error creating user:', error)
-        throw new Error('Register failed')
+        throw new Error('註冊失敗')
       }
     },
 
@@ -91,13 +90,11 @@ export const useAuthStore = defineStore('auth', {
         if (response.data.code === 0) {
           this.clearAuth()
         } else {
-          throw new Error('Logout failed')
+          throw new Error('登出失敗')
         }
       } catch {
-        // console.error('Error logging out:', error)
-        // Clear local state even if server logout fails
         this.clearAuth()
-        throw new Error('Logout failed')
+        throw new Error('登出失敗')
       }
     },
 
@@ -113,11 +110,11 @@ export const useAuthStore = defineStore('auth', {
           this.saveToStorage()
         } else {
           this.clearAuth()
-          throw new Error('Refresh token failed')
+          throw new Error('刷新 refresh token 失敗')
         }
       } catch {
         this.clearAuth()
-        throw new Error('Refresh token failed')
+        throw new Error('刷新 refresh token 失敗')
       }
     },
 
