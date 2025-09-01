@@ -5,23 +5,23 @@
 
     <!-- Profile Section -->
     <main class="profile-section">
-      <h2 class="section-title">Profile</h2>
+  <h2 class="section-title">個人資料</h2>
       <div class="profile-content">
         <!-- Profile Form -->
         <div class="profile-form-card">
           <div class="card-header">
-            <h3 class="with-icon"><UserIcon class="header-icon" /> Personal Information</h3>
+            <h3 class="with-icon"><UserIcon class="header-icon" /> 個人資訊</h3>
             <button class="edit-btn" :class="{ 'save-btn': isEditing }" @click="toggleEdit">
               <Edit v-if="!isEditing" class="edit-icon" />
               <Save v-else class="save-icon" />
-              {{ isEditing ? 'Save Changes' : 'Edit Profile' }}
+              {{ isEditing ? '儲存變更' : '編輯資料' }}
             </button>
           </div>
           <form @submit.prevent="saveProfile" class="profile-form">
             <div class="form-row">
               <div class="form-group full-width">
                 <label for="name" class="icon-label"
-                  ><UserIcon class="field-icon" /> <span>Full Name</span></label
+                  ><UserIcon class="field-icon" /> <span>姓名</span></label
                 >
                 <input
                   id="name"
@@ -36,7 +36,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="primaryEmail" class="icon-label"
-                  ><Mail class="field-icon" /> <span>Primary Email</span></label
+                  ><Mail class="field-icon" /> <span>主要 Email</span></label
                 >
                 <input
                   id="primaryEmail"
@@ -48,7 +48,7 @@
               </div>
               <div class="form-group">
                 <label for="secondaryEmail" class="icon-label"
-                  ><MailPlus class="field-icon" /> <span>Secondary Email</span></label
+                  ><MailPlus class="field-icon" /> <span>次要 Email</span></label
                 >
                 <input
                   id="secondaryEmail"
@@ -63,7 +63,7 @@
             <div class="form-row">
               <div class="form-group">
                 <label for="phone" class="icon-label"
-                  ><Phone class="field-icon" /> <span>Phone Number</span></label
+                  ><Phone class="field-icon" /> <span>電話</span></label
                 >
                 <input
                   id="phone"
@@ -75,7 +75,7 @@
               </div>
               <div class="form-group">
                 <label for="position" class="icon-label"
-                  ><Briefcase class="field-icon" /> <span>Position</span></label
+                  ><Briefcase class="field-icon" /> <span>職稱 / 身分</span></label
                 >
                 <input
                   id="position"
@@ -87,7 +87,7 @@
               </div>
               <div class="form-group">
                 <label for="role" class="icon-label"
-                  ><Users class="field-icon" /> <span>Role</span></label
+                  ><Users class="field-icon" /> <span>角色</span></label
                 >
                 <input
                   id="role"

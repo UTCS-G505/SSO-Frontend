@@ -10,17 +10,16 @@
         </div>
       </div>
 
-      <h1 class="error-title">Page Not Found</h1>
+  <h1 class="error-title">找不到頁面</h1>
 
       <p class="error-message">
-        We're sorry, but the page you were looking for doesn't exist. It might have been moved or
-        deleted.
+        很抱歉，您要造訪的頁面不存在，可能已被移動或刪除。
       </p>
 
       <div class="error-actions">
         <button @click="goHome" class="btn btn-primary">
           <ArrowLeft :size="20" />
-          Go to Application Dashboard
+          返回應用程式總覽
         </button>
       </div>
     </div>

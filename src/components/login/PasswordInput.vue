@@ -33,8 +33,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  label: 'Password',
-  placeholder: 'Type your password',
+  label: '密碼',
+  placeholder: '請輸入密碼',
   id: 'password',
 })
 

@@ -19,16 +19,16 @@
       <div class="dropdown-menu" v-show="isDropdownOpen">
         <div class="dropdown-item" @click.stop="goToDashboard">
           <LayoutGrid class="dropdown-icon-small" />
-          Dashboard
+          應用程式
         </div>
         <div class="dropdown-item" @click.stop="goToProfile">
           <User class="dropdown-icon-small" />
-          Profile
+          個人資料
         </div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-item logout" @click.stop="handleLogout">
           <LogOut class="dropdown-icon-small" />
-          Logout
+          登出
         </div>
       </div>
     </div>
@@ -57,9 +57,9 @@ const { error } = useToast()
 const isDropdownOpen = ref(false)
 
 // Computed properties for user display
-const userDisplayName = computed(() => userStore.name || 'User')
+const userDisplayName = computed(() => userStore.name || '使用者')
 const userRoleName = computed(() =>
-  userStore.role !== null ? getRoleName(userStore.role) : 'User',
+  userStore.role !== null ? getRoleName(userStore.role) : '使用者',
 )
 
 // Methods

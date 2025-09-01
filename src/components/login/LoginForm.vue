@@ -2,50 +2,50 @@
   <div class="login-card">
     <div class="logo-section">
       <div class="logo">
-        <img src="/src/assets/logo.png" alt="UTCS SSO" class="logo-icon" />
-        <span class="logo-text">UTCS SSO</span>
+  <img src="/src/assets/logo.png" alt="UTCS 單一登入" class="logo-icon" />
+  <span class="logo-text">UTCS 單一登入平台</span>
       </div>
     </div>
 
     <div class="form-section">
-      <h1>{{ isRegisterMode ? 'Create Account' : 'Login' }}</h1>
+  <h1>{{ isRegisterMode ? '建立帳號' : '登入' }}</h1>
       <p class="subtitle">
         {{
           isRegisterMode
-            ? 'Join UTCS SSO to access CS resources: classroom booking, locker requests, and more.'
-            : 'Access CS resources: classroom booking, locker requests, and more.'
+            ? '加入 UTCS SSO 以使用資科系資源：教室預約、置物櫃申請等功能。'
+            : '使用資科系資源：教室預約、置物櫃申請等功能。'
         }}
       </p>
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
-          <label for="id">ID</label>
+          <label for="id">學號 / 帳號</label>
           <input
             id="id"
             :value="formData.id"
             @input="updateId"
             type="text"
             required
-            placeholder="Enter your ID"
+            placeholder="請輸入帳號"
             :disabled="isLoading"
           />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="name">Name</label>
+          <label for="name">姓名</label>
           <input
             id="name"
             :value="formData.name"
             @input="updateName"
             type="text"
             required
-            placeholder="Enter your full name"
+            placeholder="請輸入完整姓名"
             :disabled="isLoading"
           />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="primary-email">Primary Email</label>
+          <label for="primary-email">主要 Email</label>
           <input
             id="primary-email"
             :value="formData.primary_email"
@@ -58,37 +58,37 @@
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="secondary-email">Secondary Email</label>
+          <label for="secondary-email">次要 Email</label>
           <input
             id="secondary-email"
             :value="formData.secondary_email"
             @input="updateSecondaryEmail"
             type="email"
-            placeholder="your.secondary@example.com (optional)"
+            placeholder="your.secondary@example.com (選填)"
             :disabled="isLoading"
           />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="phone-number">Phone Number</label>
+          <label for="phone-number">電話</label>
           <input
             id="phone-number"
             :value="formData.phone_number"
             @input="updatePhoneNumber"
             type="tel"
-            placeholder="Enter your phone number"
+            placeholder="請輸入電話"
             :disabled="isLoading"
           />
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
-          <label for="position">Position</label>
+          <label for="position">職稱 / 身分</label>
           <input
             id="position"
             :value="formData.position"
             @input="updatePosition"
             type="text"
-            placeholder="Enter your position/role"
+            placeholder="請輸入職稱或身分"
             :disabled="isLoading"
           />
         </div>
@@ -97,8 +97,8 @@
           :model-value="formData.password"
           @update:model-value="updatePassword"
           :disabled="isLoading"
-          :label="isRegisterMode ? 'Password' : 'Password'"
-          :placeholder="isRegisterMode ? 'Minimum 6 characters' : 'Enter your password'"
+          :label="isRegisterMode ? '密碼' : '密碼'"
+          :placeholder="isRegisterMode ? '至少 6 個字元' : '請輸入密碼'"
           id="password"
         />
 
@@ -107,8 +107,8 @@
             :model-value="formData.confirmPassword"
             @update:model-value="updateConfirmPassword"
             :disabled="isLoading"
-            label="Confirm Password"
-            placeholder="Confirm your password"
+            label="確認密碼"
+            placeholder="請再次輸入密碼"
             id="confirm-password"
           />
         </div>
@@ -116,20 +116,20 @@
         <div class="form-options" v-if="!isRegisterMode">
           <label class="remember-me">
             <input type="checkbox" :checked="formData.rememberMe" @change="updateRememberMe" />
-            Remember me
+            記住我
           </label>
-          <a href="#" class="forgot-password">Forgot password?</a>
+          <a href="#" class="forgot-password">忘記密碼？</a>
         </div>
 
         <button type="submit" class="login-btn" :disabled="isLoading">
           {{
             isLoading
               ? isRegisterMode
-                ? 'Creating Account...'
-                : 'Logging in...'
+                ? '建立帳號中...'
+                : '登入中...'
               : isRegisterMode
-                ? 'Create Account'
-                : 'Login'
+                ? '建立帳號'
+                : '登入'
           }}
         </button>
 
@@ -143,14 +143,14 @@
 
         <div class="mode-toggle">
           <p>
-            {{ isRegisterMode ? 'Already have an account?' : "Don't have an account?" }}
+            {{ isRegisterMode ? '已經有帳號？' : '還沒有帳號？' }}
             <button
               type="button"
               @click="handleToggleMode"
               class="toggle-btn"
               :disabled="isLoading"
             >
-              {{ isRegisterMode ? 'Login here' : 'Register here' }}
+              {{ isRegisterMode ? '這裡登入' : '這裡註冊' }}
             </button>
           </p>
         </div>

@@ -2,8 +2,8 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <img src="/src/assets/logo.png" alt="UTCS SSO" class="logo-icon" />
-        <span>UTCS SSO</span>
+        <img src="/src/assets/logo.png" alt="UTCS 單一登入" class="logo-icon" />
+        <span>UTCS 單一登入</span>
       </div>
     </div>
     <nav class="sidebar-nav">
@@ -11,25 +11,25 @@
         <li class="nav-item" :class="{ active: currentRoute === 'dashboard' }">
           <router-link to="/dashboard" class="nav-link">
             <LayoutGrid class="nav-icon" />
-            Applications
+            應用程式
           </router-link>
         </li>
         <li class="nav-item" :class="{ active: currentRoute === 'profile' }">
           <router-link to="/profile" class="nav-link">
             <User class="nav-icon" />
-            Profile
+            個人資料
           </router-link>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <Clock class="nav-icon" />
-            Activity Log
+            活動紀錄
           </a>
         </li>
         <li class="nav-item">
           <a href="#" class="nav-link">
             <HelpCircle class="nav-icon" />
-            Help
+            說明
           </a>
         </li>
       </ul>
