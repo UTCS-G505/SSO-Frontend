@@ -100,93 +100,13 @@
             </div>
           </form>
         </div>
-
-        <!-- Security / Change Password -->
-        <div class="security-form-card">
-          <div class="card-header security-header">
-            <div class="security-title-wrap">
-              <h3 class="with-icon"><Shield class="header-icon" /> Security</h3>
-              <p class="muted">Update your password regularly to keep your account secure.</p>
-            </div>
-            <button class="secondary-btn" type="button" @click="togglePasswordSection">
-              {{ showPasswordForm ? 'Cancel' : 'Change Password' }}
-            </button>
-          </div>
-          <transition name="fade-height">
-            <form
-              v-if="showPasswordForm"
-              class="password-form"
-              @submit.prevent="submitPasswordChange"
-            >
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="currentPassword" class="icon-label"
-                    ><Lock class="field-icon" /> <span>Current Password</span></label
-                  >
-                  <input
-                    id="currentPassword"
-                    v-model="passwordForm.currentPassword"
-                    type="password"
-                    autocomplete="current-password"
-                    :class="{ editable: true }"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label for="newPassword" class="icon-label"
-                    ><KeyRound class="field-icon" /> <span>New Password</span></label
-                  >
-                  <input
-                    id="newPassword"
-                    v-model="passwordForm.newPassword"
-                    type="password"
-                    autocomplete="new-password"
-                    @input="evaluateStrength"
-                    :class="{ editable: true }"
-                    required
-                  />
-                  <div class="password-strength">
-                    <div class="strength-bar" :data-level="passwordStrength.level"></div>
-                    <span class="strength-label">{{ passwordStrength.label }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="form-row">
-                <div class="form-group">
-                  <label for="confirmPassword" class="icon-label"
-                    ><KeyRound class="field-icon" /> <span>Confirm New Password</span></label
-                  >
-                  <input
-                    id="confirmPassword"
-                    v-model="passwordForm.confirmPassword"
-                    type="password"
-                    autocomplete="new-password"
-                    :class="{ editable: true, error: passwordMismatch }"
-                    required
-                  />
-                  <p v-if="passwordMismatch" class="error-text">Passwords do not match.</p>
-                </div>
-                <div class="form-group submit-col">
-                  <label class="invisible-label">Submit</label>
-                  <button
-                    class="change-pass-btn"
-                    type="submit"
-                    :disabled="passwordMismatch || !passwordStrength.valid"
-                  >
-                    Update Password
-                  </button>
-                </div>
-              </div>
-            </form>
-          </transition>
-        </div>
       </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/composables/useToast'
@@ -199,9 +119,6 @@ import {
   MailPlus,
   Phone,
   Briefcase,
-  Shield,
-  Lock,
-  KeyRound,
   Users,
 } from 'lucide-vue-next'
 import AppHeader from '@/components/common/Header.vue'
@@ -220,21 +137,6 @@ const userProfile = ref({
   position: userStore.position,
   role: userStore.role,
 })
-
-// Password change form state
-const showPasswordForm = ref(false)
-const passwordForm = ref({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-})
-
-const passwordStrength = ref({ level: 0, label: 'Weak', valid: false })
-const passwordMismatch = computed(
-  () =>
-    passwordForm.value.newPassword !== passwordForm.value.confirmPassword &&
-    passwordForm.value.confirmPassword.length > 0,
-)
 
 const toggleEdit = async () => {
   if (isEditing.value) {
@@ -263,38 +165,6 @@ const saveProfile = async () => {
     console.error('Failed to update profile:', err)
     error('更新失敗', '無法更新個人資料，請稍後再試')
   }
-}
-
-const togglePasswordSection = () => {
-  showPasswordForm.value = !showPasswordForm.value
-  if (!showPasswordForm.value) {
-    passwordForm.value = { currentPassword: '', newPassword: '', confirmPassword: '' }
-    passwordStrength.value = { level: 0, label: 'Weak', valid: false }
-  }
-}
-
-const evaluateStrength = () => {
-  const pwd = passwordForm.value.newPassword
-  let level = 0
-  if (pwd.length >= 8) level++
-  if (/[A-Z]/.test(pwd)) level++
-  if (/[a-z]/.test(pwd)) level++
-  if (/\d/.test(pwd)) level++
-  if (/[^A-Za-z0-9]/.test(pwd)) level++
-  const labels = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Excellent']
-  passwordStrength.value = {
-    level,
-    label: labels[level] || 'Very Weak',
-    valid: level >= 3,
-  }
-}
-
-const submitPasswordChange = () => {
-  if (passwordMismatch.value || !passwordStrength.value.valid) return
-  // Placeholder for API call
-  console.log('Password change request:', passwordForm.value)
-  success('密碼已更新', '您的密碼已成功更新')
-  togglePasswordSection()
 }
 
 onMounted(async () => {
@@ -348,49 +218,12 @@ onMounted(async () => {
 }
 /* Cards */
 .profile-header-card,
-.profile-form-card,
-.security-card,
-.session-card {
+.profile-form-card {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-}
-
-.security-form-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 1.75rem 2rem 2.25rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-  overflow: hidden;
-}
-
-.security-form-card:before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 55%);
-  pointer-events: none;
-}
-
-.security-header {
-  align-items: flex-start;
-}
-.security-title-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.security-title-wrap .muted {
-  margin: 0;
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #64748b;
-  font-weight: 600;
 }
 
 .secondary-btn {
@@ -409,98 +242,6 @@ onMounted(async () => {
 }
 .secondary-btn:hover {
   background: #e2e8f0;
-}
-
-.password-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  margin-top: 0.75rem;
-}
-.password-form .form-row {
-  grid-template-columns: 1fr 1fr;
-}
-
-.password-strength {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.4rem;
-}
-.strength-bar {
-  flex: 1;
-  height: 6px;
-  border-radius: 4px;
-  background: linear-gradient(
-    90deg,
-    #f87171 0%,
-    #fb923c 25%,
-    #facc15 50%,
-    #4ade80 75%,
-    #22c55e 100%
-  );
-  filter: grayscale(0.4) brightness(0.85);
-  position: relative;
-  overflow: hidden;
-}
-.strength-bar:after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #fff;
-  mix-blend-mode: overlay;
-  opacity: 0.2;
-}
-.strength-bar[data-level='0'] {
-  clip-path: inset(0 100% 0 0);
-}
-.strength-bar[data-level='1'] {
-  clip-path: inset(0 80% 0 0);
-}
-.strength-bar[data-level='2'] {
-  clip-path: inset(0 60% 0 0);
-}
-.strength-bar[data-level='3'] {
-  clip-path: inset(0 40% 0 0);
-}
-.strength-bar[data-level='4'] {
-  clip-path: inset(0 20% 0 0);
-}
-.strength-bar[data-level='5'] {
-  clip-path: inset(0 0 0 0);
-}
-.strength-label {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.change-pass-btn {
-  width: 100%;
-  padding: 0.9rem 1.2rem;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  border: none;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 0.8rem;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-  cursor: pointer;
-  transition:
-    transform 0.18s,
-    box-shadow 0.18s,
-    background 0.18s;
-}
-.change-pass-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
-}
-.change-pass-btn:disabled {
-  background: #cbd5e1;
-  box-shadow: none;
-  cursor: not-allowed;
 }
 
 .submit-col {
@@ -758,8 +499,6 @@ onMounted(async () => {
   cursor: not-allowed;
 }
 
-/* Removed security & session sections */
-
 /* Responsive Design */
 @media (max-width: 900px) {
   .profile-header-card {
@@ -778,8 +517,7 @@ onMounted(async () => {
   .profile-header-card {
     padding: 1.5rem;
   }
-  .profile-form-card,
-  .security-form-card {
+  .profile-form-card {
     padding: 1.25rem 1rem 1.5rem;
     border-radius: 10px;
   }
@@ -789,7 +527,6 @@ onMounted(async () => {
     gap: 0.75rem;
     margin-bottom: 1.25rem;
   }
-  /* Keep security toggle full width, but restore edit/save to top-right layout */
   .secondary-btn {
     width: 100%;
     justify-content: center;
@@ -813,23 +550,14 @@ onMounted(async () => {
     grid-template-columns: 1fr;
     gap: 1.1rem;
   }
-  .password-form .form-row {
-    grid-template-columns: 1fr;
-  }
   .submit-col {
     align-items: stretch;
-  }
-  .change-pass-btn {
-    margin-top: 0.25rem;
   }
   .form-group label {
     font-size: 0.75rem;
   }
   .form-group input {
     font-size: 0.8rem;
-  }
-  .strength-label {
-    font-size: 0.55rem;
   }
   .secondary-btn {
     font-size: 0.7rem;
@@ -839,8 +567,7 @@ onMounted(async () => {
     font-size: 0.75rem;
     padding: 0.65rem 1rem;
   }
-  .profile-form-card h3,
-  .security-form-card h3 {
+  .profile-form-card h3 {
     font-size: 1rem;
   }
   .section-title {
@@ -852,8 +579,7 @@ onMounted(async () => {
   .profile-section {
     padding: 1rem 0.85rem 1.5rem;
   }
-  .profile-form-card,
-  .security-form-card {
+  .profile-form-card {
     padding: 1rem 0.85rem 1.25rem;
   }
   .edit-btn,
@@ -863,10 +589,6 @@ onMounted(async () => {
   }
   .form-group input {
     padding: 0.6rem 0.65rem;
-  }
-  .change-pass-btn {
-    padding: 0.75rem 1rem;
-    font-size: 0.7rem;
   }
 }
 </style>
