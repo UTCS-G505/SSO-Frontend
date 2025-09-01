@@ -2,8 +2,8 @@
   <div class="login-card">
     <div class="logo-section">
       <div class="logo">
-  <img src="/src/assets/logo.png" alt="UTCS 單一登入" class="logo-icon" />
-  <span class="logo-text">UTCS 單一登入平台</span>
+  <img src="/src/assets/logo.png" alt="UTCS 單一驗證平台" class="logo-icon" />
+  <span class="logo-text">UTCS 單一驗證平台</span>
       </div>
     </div>
 

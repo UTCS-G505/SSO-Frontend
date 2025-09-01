@@ -1,8 +1,8 @@
 <template>
   <header class="app-header">
     <div class="header-left">
-  <img src="/src/assets/logo.png" alt="資科系單一登入平台" class="header-logo" />
-  <span class="header-brand">UTCS 單一登入平台</span>
+  <img src="/src/assets/logo.png" alt="資科系單一驗證平台" class="header-logo" />
+  <span class="header-brand">UTCS 單一驗證平台</span>
     </div>
     <div class="header-right">
       <UserMenu />

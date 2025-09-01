@@ -1,6 +1,6 @@
 # SSO-Frontend
 
-北市大資科系單點登入（Single Sign-On）前端應用程式，基於 Vue 3 和 TypeScript 開發。
+北市大資科系單一驗證平台（Single Sign-On）前端應用程式，基於 Vue 3 和 TypeScript 開發。
 
 ## 專案簡介
 
