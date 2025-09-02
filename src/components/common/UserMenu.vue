@@ -25,6 +25,10 @@
           <User class="dropdown-icon-small" />
           個人資料
         </div>
+        <div v-if="canManageUsers" class="dropdown-item" @click.stop="goToUserManagement">
+          <Users class="dropdown-icon-small" />
+          用戶管理
+        </div>
         <div class="dropdown-divider"></div>
         <div class="dropdown-item logout" @click.stop="handleLogout">
           <LogOut class="dropdown-icon-small" />
@@ -41,8 +45,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
 import { useToast } from '@/composables/useToast'
-import { getRoleName } from '@/types/userRoles'
-import { LayoutGrid, User, LogOut, PawPrint } from 'lucide-vue-next'
+import { getRoleName, USER_ROLES } from '@/types/userRoles'
+import { LayoutGrid, User, Users, LogOut, PawPrint } from 'lucide-vue-next'
 
 // Component name for ESLint
 defineOptions({
@@ -62,6 +66,11 @@ const userRoleName = computed(() =>
   userStore.role !== null ? getRoleName(userStore.role) : '使用者',
 )
 
+// Check if user can manage other users (Admin or Officer)
+const canManageUsers = computed(
+  () => userStore.role === USER_ROLES.ADMIN || userStore.role === USER_ROLES.OFFICER,
+)
+
 // Methods
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
@@ -78,6 +87,13 @@ const goToProfile = () => {
   isDropdownOpen.value = false
   if (route.name !== 'profile') {
     router.push('/profile')
+  }
+}
+
+const goToUserManagement = () => {
+  isDropdownOpen.value = false
+  if (route.name !== 'user-management') {
+    router.push('/users')
   }
 }
 

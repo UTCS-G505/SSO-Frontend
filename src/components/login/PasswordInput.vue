@@ -23,7 +23,7 @@
 import { ref, computed } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
-  interface Props {
+interface Props {
   modelValue: string
   disabled?: boolean
   label?: string

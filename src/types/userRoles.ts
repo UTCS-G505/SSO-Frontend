@@ -97,3 +97,8 @@ export const hasTeachingPrivileges = (role: UserRoleValue): boolean => {
     ] as UserRoleValue[]
   ).includes(role)
 }
+
+// Check if user has management privileges for user management (admin, officer)
+export const hasManagementPrivileges = (role: UserRoleValue): boolean => {
+  return role === USER_ROLES.ADMIN || role === USER_ROLES.OFFICER
+}
