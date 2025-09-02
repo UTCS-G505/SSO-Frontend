@@ -12,8 +12,8 @@
         :disabled="disabled"
       />
       <button type="button" class="password-toggle" @click="togglePassword">
-        <EyeIcon v-if="!showPassword" />
-        <EyeOffIcon v-else />
+        <Eye v-if="!showPassword" />
+        <EyeOff v-else />
       </button>
     </div>
   </div>
@@ -21,10 +21,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import EyeIcon from '@/components/icons/EyeIcon.vue'
-import EyeOffIcon from '@/components/icons/EyeOffIcon.vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
-interface Props {
+  interface Props {
   modelValue: string
   disabled?: boolean
   label?: string
