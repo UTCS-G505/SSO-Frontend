@@ -60,7 +60,7 @@ export const useUserStore = defineStore('user', {
 
       if (!authStore.accessToken) {
         console.error('No access token found in authStore')
-        throw new Error('未提供 refresh token')
+        throw new Error('使用者未經過身份驗證')
       }
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state
