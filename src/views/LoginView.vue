@@ -17,6 +17,7 @@
         @update:position="updatePosition"
         @update:confirm-password="updateConfirmPassword"
         @update:remember-me="updateRememberMe"
+        @update:agreed-rules="updateAgreedRules"
         @submit="handleLogin"
         @toggle-mode="toggleMode"
       />
@@ -45,6 +46,7 @@ const {
   updatePosition,
   updateConfirmPassword,
   updateRememberMe,
+  updateAgreedRules,
 } = useLogin()
 
 const handleLogin = () => {

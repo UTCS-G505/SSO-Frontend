@@ -13,6 +13,7 @@ export interface LoginFormData {
   phone_number: string
   position: string
   rememberMe: boolean
+  agreedRules: boolean
 }
 
 export function useLogin() {
@@ -31,6 +32,7 @@ export function useLogin() {
     phone_number: '',
     position: '',
     rememberMe: false,
+    agreedRules: false,
   })
 
   const isLoading = ref(false)
@@ -50,6 +52,7 @@ export function useLogin() {
       phone_number: '',
       position: '',
       rememberMe: false,
+      agreedRules: false,
     }
   }
 
@@ -78,6 +81,10 @@ export function useLogin() {
       }
       if (formData.value.password.length < 6) {
         error.value = '密碼長度必須至少 6 個字元'
+        return false
+      }
+      if (!formData.value.agreedRules) {
+        error.value = '註冊前請先閱讀並勾選同意使用規範'
         return false
       }
     }
@@ -181,6 +188,10 @@ export function useLogin() {
     formData.value.rememberMe = value
   }
 
+  const updateAgreedRules = (value: boolean) => {
+    formData.value.agreedRules = value
+  }
+
   return {
     formData,
     isLoading,
@@ -198,5 +209,6 @@ export function useLogin() {
     updatePosition,
     updateConfirmPassword,
     updateRememberMe,
+    updateAgreedRules,
   }
 }
