@@ -105,7 +105,6 @@ interface AppConfig {
   icon: FunctionalComponent     // Lucide 圖示組件
   bg: string                    // 背景顏色
   url: string                   // 應用程式網址
-  category?: string             // 分類：academic | administrative | communication | tools | system
   requiredRoles?: number[]      // 需要的使用者角色
   isExternal?: boolean          // 是否為外部連結
   isActive?: boolean            // 應用程式是否啟用
@@ -140,7 +139,6 @@ USER_ROLES = {
   icon: NewIcon,
   bg: '#f0f9ff',
   url: 'https://new-app.example.com',
-  category: 'academic',
   requiredRoles: [0, 1, 2], // 限制特定角色存取
   isExternal: true,
   isActive: true,
