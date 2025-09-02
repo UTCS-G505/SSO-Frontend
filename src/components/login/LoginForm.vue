@@ -76,6 +76,7 @@
             :value="formData.phone_number"
             @input="updatePhoneNumber"
             type="tel"
+            required
             placeholder="請輸入電話"
             :disabled="isLoading"
           />
@@ -88,6 +89,7 @@
             :value="formData.position"
             @input="updatePosition"
             type="text"
+            required
             placeholder="請輸入職稱或身分"
             :disabled="isLoading"
           />
