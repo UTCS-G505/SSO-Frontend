@@ -58,12 +58,6 @@ const applications = computed<AppConfig[]>(() => {
 })
 
 const launchApp = (app: AppConfig) => {
-  // Update the launched state (this would typically be handled by a store)
-  const appIndex = applicationConfig.findIndex((a) => a.id === app.id)
-  if (appIndex !== -1) {
-    applicationConfig[appIndex].launched = true
-  }
-
   console.log(`Launching ${app.name} at ${app.url}`)
 
   // Handle different types of URLs

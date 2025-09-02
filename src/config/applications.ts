@@ -18,8 +18,6 @@ export interface AppConfig {
   icon: FunctionalComponent
   bg: string
   url: string
-  launched: boolean
-  category?: 'academic' | 'administrative' | 'communication' | 'tools' | 'system'
   requiredRoles?: number[] // User roles that can access this app
   isExternal?: boolean // Opens in new tab
   isActive?: boolean // Whether the app is currently available
@@ -33,8 +31,6 @@ export const applicationConfig: AppConfig[] = [
     icon: School,
     bg: '#e0ecff',
     url: 'https://classroom-borrow-frontend.vercel.app/',
-    launched: false,
-    category: 'academic',
     isExternal: true,
     isActive: true,
   },
@@ -45,8 +41,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Settings,
     bg: '#fef2f2',
     url: 'https://classroom-borrow-frontend.vercel.app/admin',
-    launched: false,
-    category: 'system',
     requiredRoles: [0, 1, 2, 3],
     isExternal: false,
     isActive: true,
@@ -58,8 +52,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Lock,
     bg: '#dcfce7',
     url: 'https://locker-borrow-system-frontend.vercel.app/',
-    launched: false,
-    category: 'academic',
     isExternal: true,
     isActive: true,
   },
@@ -70,8 +62,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Hammer,
     bg: '#fee2e2',
     url: 'https://classroom-borrow-frontend-pmvh.vercel.app/',
-    launched: false,
-    category: 'tools',
     isExternal: true,
     isActive: true,
   },
@@ -82,8 +72,6 @@ export const applicationConfig: AppConfig[] = [
     icon: User,
     bg: '#fef3c7',
     url: 'https://cs.utaipei.edu.tw/index.php',
-    launched: false,
-    category: 'administrative',
     isExternal: true,
     isActive: true,
   },
@@ -94,8 +82,6 @@ export const applicationConfig: AppConfig[] = [
     icon: FileText,
     bg: '#f0fdf4',
     url: 'https://research.ntu.edu.tw',
-    launched: false,
-    category: 'academic',
     requiredRoles: [2, 3], // DIRECTOR, TEACHER
     isExternal: true,
     isActive: true,
@@ -107,8 +93,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Database,
     bg: '#f8fafc',
     url: '/database',
-    launched: false,
-    category: 'system',
     requiredRoles: [0, 1], // ADMIN, OFFICER
     isExternal: false,
     isActive: false, // Currently disabled
@@ -120,8 +104,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Shield,
     bg: '#fdf4ff',
     url: '/security',
-    launched: false,
-    category: 'system',
     requiredRoles: [0], // ADMIN only
     isExternal: false,
     isActive: true,
@@ -133,8 +115,6 @@ export const applicationConfig: AppConfig[] = [
     icon: Code,
     bg: '#f0f9ff',
     url: '/dev',
-    launched: false,
-    category: 'tools',
     requiredRoles: [0], // ADMIN only
     isExternal: false,
     isActive: true,
@@ -142,10 +122,6 @@ export const applicationConfig: AppConfig[] = [
 ]
 
 // Helper functions for filtering applications
-export const getApplicationsByCategory = (category: AppConfig['category']) => {
-  return applicationConfig.filter((app) => app.category === category && app.isActive)
-}
-
 export const getApplicationsByRole = (userRole: number) => {
   return applicationConfig.filter((app) => {
     if (!app.isActive) return false
