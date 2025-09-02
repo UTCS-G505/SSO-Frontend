@@ -16,6 +16,9 @@
             : '使用資科系資源：教室預約、置物櫃申請等功能。'
         }}
       </p>
+      <div v-if="!isRegisterMode" class="dept-hint" role="note" aria-label="帳號提示">
+        <strong>提醒：</strong> 本系成員可直接登入，無需註冊。
+      </div>
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
@@ -245,8 +248,7 @@
                 </ol>
                 若您欲執行上述權利，或有任何建議指教，請與本系連繫。
                 <br />
-                電話：886-2-23113040 #8362、8363 ，電子郵件：<a
-                  href="mailto:cs@go.utaipei.edu.tw"
+                電話：886-2-23113040 #8362、8363 ，電子郵件：<a href="mailto:cs@go.utaipei.edu.tw"
                   >cs@go.utaipei.edu.tw</a
                 >。本系個人資料保護申訴窗口為資訊科學系系辦。
               </li>
@@ -419,6 +421,27 @@ const handleToggleMode = () => {
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 20px;
+}
+
+.dept-hint {
+  background: linear-gradient(135deg, #eef6ff 0%, #e0f2fe 100%);
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: -4px 0 18px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(30, 58, 138, 0.08);
+}
+
+.dept-hint strong {
+  font-weight: 600;
+}
+.dept-hint .no-register {
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 .login-form {
