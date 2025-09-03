@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { PASSWORD_MIN_LENGTH, isValidPassword } from '@/utils/validation'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
@@ -79,8 +80,8 @@ export function useLogin() {
         error.value = '密碼不匹配'
         return false
       }
-      if (formData.value.password.length < 6) {
-        error.value = '密碼長度必須至少 6 個字元'
+      if (!isValidPassword(formData.value.password)) {
+        error.value = `密碼長度必須至少 ${PASSWORD_MIN_LENGTH} 個字元`
         return false
       }
       if (!formData.value.agreedRules) {

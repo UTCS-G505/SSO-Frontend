@@ -189,16 +189,16 @@
                 v-model="createForm.password"
                 type="password"
                 class="form-input"
-                placeholder="請輸入密碼"
+                placeholder="請輸入密碼 (至少 8 個字元)"
                 required
-                minlength="6"
+                minlength="8"
               />
               <div v-if="createForm.password" class="password-feedback">
                 <span
                   class="password-strength"
                   :class="{ weak: !passwordStrong, strong: passwordStrong }"
                 >
-                  {{ passwordStrong ? '密碼強度：良好' : '密碼強度：不足 (至少6個字符)' }}
+                  {{ passwordStrong ? '密碼強度：良好' : '密碼強度：不足 (至少8個字符)' }}
                 </span>
               </div>
             </div>
@@ -209,9 +209,9 @@
                 v-model="createForm.confirmPassword"
                 type="password"
                 class="form-input"
-                placeholder="請再次輸入密碼"
+                placeholder="請再次輸入密碼 (至少 8 個字元)"
                 required
-                minlength="6"
+                minlength="8"
               />
               <div v-if="createForm.confirmPassword" class="password-feedback">
                 <span
@@ -512,7 +512,7 @@ const passwordsMatch = computed(() => {
 })
 
 const passwordStrong = computed(() => {
-  return createForm.value.password.length >= 6
+  return createForm.value.password.length >= 8
 })
 
 // Methods

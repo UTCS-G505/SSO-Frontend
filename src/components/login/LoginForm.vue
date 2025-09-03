@@ -103,7 +103,7 @@
           @update:model-value="updatePassword"
           :disabled="isLoading"
           :label="isRegisterMode ? '密碼' : '密碼'"
-          :placeholder="isRegisterMode ? '至少 6 個字元' : '請輸入密碼'"
+          :placeholder="isRegisterMode ? '至少 8 個字元' : '請輸入密碼'"
           id="password"
         />
 
@@ -113,9 +113,21 @@
             @update:model-value="updateConfirmPassword"
             :disabled="isLoading"
             label="確認密碼"
-            placeholder="請再次輸入密碼"
+            placeholder="請再次輸入密碼 (至少 8 個字元)"
             id="confirm-password"
           />
+          <p
+            v-if="formData.confirmPassword && formData.confirmPassword.length < 8"
+            class="password-hint error"
+          >
+            密碼至少需 8 個字元
+          </p>
+          <p
+            v-else-if="formData.confirmPassword && formData.confirmPassword !== formData.password"
+            class="password-hint error"
+          >
+            密碼不匹配
+          </p>
         </div>
 
         <div v-if="isRegisterMode" class="form-group rules-group">
@@ -802,5 +814,16 @@ input:disabled {
     padding: 40px 20px;
     max-width: none;
   }
+}
+</style>
+<style scoped>
+.password-hint {
+  font-size: 12px;
+  margin-top: -8px;
+  margin-bottom: 8px;
+  color: #6b7280;
+}
+.password-hint.error {
+  color: #dc2626;
 }
 </style>
