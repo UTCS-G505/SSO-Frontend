@@ -51,7 +51,7 @@ defineOptions({
 }
 
 .brand-link:focus-visible {
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.5);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5);
   border-radius: 6px;
 }
 
