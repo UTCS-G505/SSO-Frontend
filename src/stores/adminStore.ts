@@ -182,11 +182,21 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.post(`/user/activate/${userId}`)
+        const userIndex = this.users.findIndex((user) => user.id === userId)
+        const response = await apiClient.patch(`/user/update/${userId}`, {
+          id: this.users[userIndex].id,
+          name: this.users[userIndex].name,
+          primary_email: this.users[userIndex].primary_email,
+          secondary_email: this.users[userIndex].secondary_email,
+          phone_number: this.users[userIndex].phone_number,
+          position: this.users[userIndex].position,
+          role: this.users[userIndex].role,
+          enabled: false,
+          last_updated: new Date().toISOString(),
+        })
 
         if (response.data.code === 0) {
           // Update user status in local state
-          const userIndex = this.users.findIndex((user) => user.id === userId)
           if (userIndex !== -1) {
             this.users[userIndex].enabled = false
           }

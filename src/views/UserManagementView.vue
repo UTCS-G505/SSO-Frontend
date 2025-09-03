@@ -90,11 +90,13 @@
                 </td>
                 <td class="user-status">
                   <div class="status-toggle">
-                    <button 
+                    <button
                       @click="toggleUserStatus(user)"
                       :class="['status-btn', user.enabled !== false ? 'active' : 'inactive']"
                       :title="user.enabled !== false ? '停用用戶' : '啟用用戶'"
-                      :disabled="user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN"
+                      :disabled="
+                        user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
+                      "
                     >
                       <span class="status-indicator"></span>
                       {{ user.enabled !== false ? '啟用' : '停用' }}
@@ -722,7 +724,7 @@ const confirmDelete = async () => {
 const toggleUserStatus = async (user: User) => {
   const isCurrentlyActive = user.enabled !== false
   const action = isCurrentlyActive ? '停用' : '啟用'
-  
+
   try {
     if (isCurrentlyActive) {
       await adminStore.deactivateUser(user.id)
