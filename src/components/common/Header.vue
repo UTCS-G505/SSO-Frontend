@@ -1,9 +1,9 @@
 <template>
   <header class="app-header">
-    <div class="header-left">
+    <RouterLink to="/dashboard" class="header-left brand-link" aria-label="前往儀表板">
       <img src="/src/assets/logo.png" alt="資科系單一驗證平台" class="header-logo" />
       <span class="header-brand">UTCS 單一驗證平台</span>
-    </div>
+    </RouterLink>
     <div class="header-right">
       <UserMenu />
     </div>
@@ -12,6 +12,7 @@
 
 <script setup lang="ts">
 import UserMenu from './UserMenu.vue'
+import { RouterLink } from 'vue-router'
 
 // Component name for ESLint
 defineOptions({
@@ -41,6 +42,21 @@ defineOptions({
   font-weight: 600;
   font-size: 1.1rem;
   color: #1e293b;
+}
+
+.brand-link {
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.brand-link:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.5);
+  border-radius: 6px;
+}
+
+.brand-link:hover .header-brand {
+  color: #0f172a;
 }
 
 .header-logo {
