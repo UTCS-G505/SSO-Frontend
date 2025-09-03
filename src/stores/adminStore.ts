@@ -11,7 +11,7 @@ interface User {
   phone_number?: string
   position?: string
   role: UserRoleValue
-  last_updated: string
+  last_updated?: string
   enabled?: boolean
 }
 
@@ -94,9 +94,8 @@ export const useAdminStore = defineStore('admin', {
         const response = await apiClient.post('/user/create', newUser)
 
         if (response.data.code === 0) {
-          const createdUser = response.data.data
-          this.users.push(createdUser)
-          return createdUser
+          this.users.push(newUser)
+          return newUser
         } else {
           throw new Error(response.data.message || '創建用戶失敗')
         }
