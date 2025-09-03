@@ -66,6 +66,7 @@
                 <th>姓名</th>
                 <th>主要Email</th>
                 <th>角色</th>
+                <th>狀態</th>
                 <th>職位</th>
                 <th>電話</th>
                 <th>操作</th>
@@ -86,6 +87,19 @@
                   >
                     {{ getRoleName(user.role) }}
                   </span>
+                </td>
+                <td class="user-status">
+                  <div class="status-toggle">
+                    <button 
+                      @click="toggleUserStatus(user)"
+                      :class="['status-btn', user.enabled !== false ? 'active' : 'inactive']"
+                      :title="user.enabled !== false ? '停用用戶' : '啟用用戶'"
+                      :disabled="user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN"
+                    >
+                      <span class="status-indicator"></span>
+                      {{ user.enabled !== false ? '啟用' : '停用' }}
+                    </button>
+                  </div>
                 </td>
                 <td class="user-position" :title="user.position || '-'">
                   {{ user.position || '-' }}
@@ -411,6 +425,7 @@ interface User {
   phone_number?: string
   position?: string
   role: UserRoleValue
+  enabled?: boolean
 }
 
 interface EditForm {
@@ -704,6 +719,24 @@ const confirmDelete = async () => {
   }
 }
 
+const toggleUserStatus = async (user: User) => {
+  const isCurrentlyActive = user.enabled !== false
+  const action = isCurrentlyActive ? '停用' : '啟用'
+  
+  try {
+    if (isCurrentlyActive) {
+      await adminStore.deactivateUser(user.id)
+      success('狀態更新', `用戶 ${user.name} 已停用`)
+    } else {
+      await adminStore.activateUser(user.id)
+      success('狀態更新', `用戶 ${user.name} 已啟用`)
+    }
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : `${action}用戶時發生錯誤`
+    showError(`${action}失敗`, errorMessage)
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   fetchUsers()
@@ -954,16 +987,21 @@ onMounted(() => {
 
 .users-table th:nth-child(5),
 .users-table td:nth-child(5) {
-  width: 120px; /* 職位 */
+  width: 100px; /* 狀態 */
 }
 
 .users-table th:nth-child(6),
 .users-table td:nth-child(6) {
-  width: 140px; /* 電話 */
+  width: 120px; /* 職位 */
 }
 
 .users-table th:nth-child(7),
 .users-table td:nth-child(7) {
+  width: 140px; /* 電話 */
+}
+
+.users-table th:nth-child(8),
+.users-table td:nth-child(8) {
   width: 100px; /* 操作 */
 }
 
@@ -1055,6 +1093,57 @@ onMounted(() => {
 .role-guest {
   background: #f1f5f9;
   color: #475569;
+}
+
+/* Status Toggle */
+.status-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.status-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 70px;
+  justify-content: center;
+}
+
+.status-btn.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-btn.active:hover:not(:disabled) {
+  background: #bbf7d0;
+}
+
+.status-btn.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-btn.inactive:hover:not(:disabled) {
+  background: #fecaca;
+}
+
+.status-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.status-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 /* Actions */
@@ -1435,16 +1524,21 @@ onMounted(() => {
 
   .users-table th:nth-child(5),
   .users-table td:nth-child(5) {
-    width: 80px; /* 職位 */
+    width: 80px; /* 狀態 */
   }
 
   .users-table th:nth-child(6),
   .users-table td:nth-child(6) {
-    width: 120px; /* 電話 */
+    width: 80px; /* 職位 */
   }
 
   .users-table th:nth-child(7),
   .users-table td:nth-child(7) {
+    width: 120px; /* 電話 */
+  }
+
+  .users-table th:nth-child(8),
+  .users-table td:nth-child(8) {
     width: 80px; /* 操作 */
   }
 
@@ -1452,6 +1546,12 @@ onMounted(() => {
   .users-table td {
     padding: 0.5rem;
     font-size: 0.8rem;
+  }
+
+  .status-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+    min-width: 60px;
   }
 
   .modal-content {

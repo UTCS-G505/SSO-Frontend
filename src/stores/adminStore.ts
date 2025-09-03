@@ -12,6 +12,7 @@ interface User {
   position?: string
   role: UserRoleValue
   last_updated: string
+  enabled?: boolean
 }
 
 interface CreateUserData {
@@ -153,13 +154,47 @@ export const useAdminStore = defineStore('admin', {
         const response = await apiClient.post(`/user/activate/${userId}`)
 
         if (response.data.code === 0) {
-          // Update user status in local state if needed
-          console.log('User activated successfully:', response.data)
+          // Update user status in local state
+          const userIndex = this.users.findIndex((user) => user.id === userId)
+          if (userIndex !== -1) {
+            this.users[userIndex].enabled = true
+          }
         } else {
           throw new Error(response.data.message || '開通用戶失敗')
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '開通用戶時發生錯誤'
+        this.error = errorMessage
+        throw error
+      }
+    },
+
+    async deactivateUser(userId: string): Promise<void> {
+      try {
+        const authStore = useAuthStore()
+        const id = localStorage.getItem('sso-user-id')
+
+        if (!id) {
+          throw new Error('使用者未經過身份驗證')
+        }
+
+        if (!authStore.accessToken) {
+          throw new Error('使用者未經過身份驗證')
+        }
+
+        const response = await apiClient.post(`/user/activate/${userId}`)
+
+        if (response.data.code === 0) {
+          // Update user status in local state
+          const userIndex = this.users.findIndex((user) => user.id === userId)
+          if (userIndex !== -1) {
+            this.users[userIndex].enabled = false
+          }
+        } else {
+          throw new Error(response.data.message || '停用用戶失敗')
+        }
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : '停用用戶時發生錯誤'
         this.error = errorMessage
         throw error
       }
