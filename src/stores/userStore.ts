@@ -11,7 +11,7 @@ interface User {
   phone_number: string | null
   position: string | null
   role: UserRoleValue | null
-  enabled?: boolean
+  enabled: boolean | null
 }
 
 export const useUserStore = defineStore('user', {
@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', {
     phone_number: null,
     position: null,
     role: null,
-    enabled: undefined,
+    enabled: null,
   }),
 
   getters: {},
@@ -91,7 +91,7 @@ export const useUserStore = defineStore('user', {
         phone_number: null,
         position: null,
         role: null,
-        enabled: undefined,
+        enabled: null,
       }
       localStorage.removeItem('user-profile')
     },
