@@ -307,11 +307,21 @@
                 type="text"
                 class="form-input"
                 required
+                readonly
+                disabled
               />
             </div>
             <div class="form-group">
               <label for="edit-id">用戶ID</label>
-              <input id="edit-id" v-model="editForm.id" type="text" class="form-input" required />
+              <input
+                id="edit-id"
+                v-model="editForm.id"
+                type="text"
+                class="form-input"
+                required
+                readonly
+                disabled
+              />
             </div>
             <div class="form-group">
               <label for="edit-primary-email">主要Email</label>
@@ -321,6 +331,8 @@
                 type="email"
                 class="form-input"
                 required
+                readonly
+                disabled
               />
             </div>
             <div class="form-group">
@@ -338,6 +350,8 @@
                 v-model="editForm.position"
                 type="text"
                 class="form-input"
+                readonly
+                disabled
               />
             </div>
             <div class="form-group">
@@ -347,6 +361,8 @@
                 v-model="editForm.phone_number"
                 type="tel"
                 class="form-input"
+                readonly
+                disabled
               />
             </div>
             <div class="form-group">
@@ -356,6 +372,8 @@
                 v-model="editForm.secondary_email"
                 type="email"
                 class="form-input"
+                readonly
+                disabled
               />
             </div>
             <div class="modal-actions">

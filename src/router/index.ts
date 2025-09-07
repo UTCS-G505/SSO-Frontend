@@ -86,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
         }
       }
 
-      // Block access to routes other than profile when user is disabled
+      // Block access to routes other than complete-profile when user is disabled
       if (userStore.enabled === false && to.name !== 'complete-profile') {
         return next({ name: 'complete-profile' })
       }
