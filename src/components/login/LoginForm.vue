@@ -16,8 +16,8 @@
             : '使用資科系資源：教室預約、置物櫃申請等功能。'
         }}
       </p>
-      <div v-if="!isRegisterMode" class="dept-hint" role="note" aria-label="帳號提示">
-        <strong>提醒：</strong> 本系成員可直接登入，無需註冊。
+      <div class="dept-hint" role="note" aria-label="帳號提示">
+        <strong>提醒：</strong> 擁有校務系統帳號可直接登入，無需註冊。
       </div>
 
       <form @submit.prevent="handleSubmit" class="login-form">
