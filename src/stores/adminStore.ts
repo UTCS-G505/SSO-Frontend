@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useAuthStore } from './authStore'
 import { type UserRoleValue } from '@/types/userRoles'
 import apiClient from '@/utils/api'
+import type { ApiResponse } from '@/types/api'
 
 interface User {
   id: string
@@ -61,7 +62,7 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.get('/user/all')
+        const response = await apiClient.get<ApiResponse<User[]>>('/user/all')
 
         if (response.data.code === 0) {
           this.users = response.data.data || []
@@ -91,7 +92,7 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.post('/user/create', newUser)
+        const response = await apiClient.post<ApiResponse<User>>('/user/create', newUser)
 
         if (response.data.code === 0) {
           this.users.push(newUser)
@@ -119,7 +120,7 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.patch(`/user/update/${userId}`, userData)
+        const response = await apiClient.patch<ApiResponse>(`/user/update/${userId}`, userData)
 
         if (response.data.code === 0) {
           const userIndex = this.users.findIndex((user) => user.id === userId)
@@ -150,7 +151,7 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.post(`/user/activate/${userId}`)
+        const response = await apiClient.post<ApiResponse>(`/user/activate/${userId}`)
 
         if (response.data.code === 0) {
           // Update user status in local state
@@ -182,7 +183,7 @@ export const useAdminStore = defineStore('admin', {
         }
 
         const userIndex = this.users.findIndex((user) => user.id === userId)
-        const response = await apiClient.patch(`/user/update/${userId}`, {
+        const response = await apiClient.patch<ApiResponse>(`/user/update/${userId}`, {
           id: this.users[userIndex].id,
           name: this.users[userIndex].name,
           primary_email: this.users[userIndex].primary_email,
@@ -222,7 +223,7 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
-        const response = await apiClient.delete(`/user/delete/${userId}`)
+        const response = await apiClient.delete<ApiResponse>(`/user/delete/${userId}`)
 
         if (response.data.code === 0) {
           // Remove user from local state

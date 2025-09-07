@@ -1,15 +1,18 @@
 import { defineStore } from 'pinia'
 import apiClient from '@/utils/api'
+import type { ApiResponse } from '@/types/api'
 
 interface AuthState {
   id: string | null
   accessToken: string | null
+  initialized: boolean
 }
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     id: null,
     accessToken: null,
+    initialized: false,
   }),
 
   getters: {
@@ -20,7 +23,9 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(id: string, password: string): Promise<void> {
       try {
-        const response = await apiClient.post(
+        const response = await apiClient.post<
+          ApiResponse<{ access_token: string; token_type: string }>
+        >(
           '/auth/login',
           new URLSearchParams({
             username: id,
@@ -34,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
         )
 
         const data = response.data
-        if (data.code == 0) {
+        if (data.code == 0 && data.data?.access_token) {
           this.id = id
           this.accessToken = data.data.access_token
           this.saveToStorage()
@@ -56,7 +61,7 @@ export const useAuthStore = defineStore('auth', {
       position: string,
     ): Promise<void> {
       try {
-        const response = await apiClient.post(
+        const response = await apiClient.post<ApiResponse>(
           '/auth/register',
           {
             id: id,
@@ -85,7 +90,7 @@ export const useAuthStore = defineStore('auth', {
 
     async logout(): Promise<void> {
       try {
-        const response = await apiClient.post('/auth/logout', null)
+        const response = await apiClient.post<ApiResponse>('/auth/logout', null)
 
         if (response.data.code === 0) {
           this.clearAuth()
@@ -102,10 +107,12 @@ export const useAuthStore = defineStore('auth', {
       if (this.isAuthenticated) return
 
       try {
-        const response = await apiClient.post('/auth/refresh', null)
+        const response = await apiClient.post<
+          ApiResponse<{ access_token: string; token_type: string }>
+        >('/auth/refresh', null)
 
-        if (response.data.code === 0) {
-          this.id = response.data.data.id
+        if (response.data.code === 0 && response.data.data) {
+          this.id = localStorage.getItem('sso-user-id')
           this.accessToken = response.data.data.access_token
           this.saveToStorage()
         } else {
@@ -128,15 +135,15 @@ export const useAuthStore = defineStore('auth', {
     clearAuth(): void {
       this.id = null
       this.accessToken = null
-      localStorage.removeItem('sso-user-id')
     },
 
     // Initialize authentication state
     async initializeAuth(): Promise<void> {
+      // if (this.initialized) return
+      // this.initialized = true
       if (this.isAuthenticated) return
       try {
         await this.refresh()
-        return
       } catch {
         this.clearAuth()
       }

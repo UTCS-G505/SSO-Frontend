@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useAuthStore } from './authStore'
 import { type UserRoleValue } from '@/types/userRoles'
 import apiClient from '@/utils/api'
+import type { ApiResponse } from '@/types/api'
 
 interface User {
   id: string | null
@@ -43,12 +44,11 @@ export const useUserStore = defineStore('user', {
         throw new Error('使用者未經過身份驗證')
       }
 
-      const response = await apiClient.get(`/user/get/${id}`)
+      const response = await apiClient.get<ApiResponse<User>>(`/user/get/${id}`)
       const userProfile = response.data
       // Update the store state with the fetched profile data
       if (userProfile && userProfile.code === 0 && userProfile.data) {
         this.setProfile(userProfile.data)
-        console.log(userProfile.data)
       }
     },
 
@@ -68,18 +68,16 @@ export const useUserStore = defineStore('user', {
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state
 
-      const response = await apiClient.patch(`/user/update/${id}`, payload)
+      const response = await apiClient.patch<ApiResponse>(`/user/update/${id}`, payload)
 
       const result = response.data
       if (result && result.code === 0) {
         this.setProfile(payload)
       }
-      return result
     },
 
     setProfile(user: User): void {
       this.$state = user
-      localStorage.setItem('user-profile', JSON.stringify(user))
     },
 
     clearProfile(): void {
