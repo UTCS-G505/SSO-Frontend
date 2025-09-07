@@ -123,6 +123,11 @@ export function useLogin() {
 
         if (authStore.id && authStore.accessToken) {
           await userStore.getProfile()
+          // If user is not enabled, force them to complete profile first
+          if (userStore.enabled === false) {
+            router.push({ name: 'complete-profile' })
+            return
+          }
           const redirectUrl = route.query.redirect
           if (redirectUrl && typeof redirectUrl === 'string') {
             window.location.href = redirectUrl

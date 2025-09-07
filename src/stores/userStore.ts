@@ -11,6 +11,7 @@ interface User {
   phone_number: string | null
   position: string | null
   role: UserRoleValue | null
+  enabled?: boolean
 }
 
 export const useUserStore = defineStore('user', {
@@ -22,6 +23,7 @@ export const useUserStore = defineStore('user', {
     phone_number: null,
     position: null,
     role: null,
+    enabled: undefined,
   }),
 
   getters: {},
@@ -46,6 +48,7 @@ export const useUserStore = defineStore('user', {
       // Update the store state with the fetched profile data
       if (userProfile && userProfile.code === 0 && userProfile.data) {
         this.setProfile(userProfile.data)
+        console.log(userProfile.data)
       }
     },
 
@@ -88,6 +91,7 @@ export const useUserStore = defineStore('user', {
         phone_number: null,
         position: null,
         role: null,
+        enabled: undefined,
       }
       localStorage.removeItem('user-profile')
     },

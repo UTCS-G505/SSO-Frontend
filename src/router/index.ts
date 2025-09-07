@@ -5,6 +5,7 @@ import { USER_ROLES } from '@/types/userRoles'
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import CompleteProfileView from '@/views/CompleteProfileView.vue'
 import UserManagementView from '@/views/UserManagementView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
@@ -31,6 +32,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/complete-profile',
+      name: 'complete-profile',
+      component: CompleteProfileView,
       meta: { requiresAuth: true },
     },
     {
@@ -69,6 +76,21 @@ router.beforeEach(async (to, from, next) => {
       next()
     }
   } else {
+    // If authenticated, ensure user profile is loaded and check enabled state
+    if (authStore.isAuthenticated) {
+      if (userStore.role === null && userStore.name === null) {
+        try {
+          await userStore.getProfile()
+        } catch {
+          // ignore, handled elsewhere
+        }
+      }
+
+      // Block access to routes other than profile when user is disabled
+      if (userStore.enabled === false && to.name !== 'complete-profile') {
+        return next({ name: 'complete-profile' })
+      }
+    }
     next()
   }
 })
