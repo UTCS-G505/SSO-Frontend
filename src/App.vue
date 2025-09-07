@@ -1,17 +1,6 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useAuthStore } from '@/stores/authStore'
 import FootBar from '@/components/common/FootBar.vue'
 import ToastContainer from '@/components/common/ToastContainer.vue'
-
-const authStore = useAuthStore()
-
-onMounted(async () => {
-  // Initialize auth state when app starts
-  if (!authStore.isAuthenticated) {
-    await authStore.initializeAuth()
-  }
-})
 </script>
 
 <template>
