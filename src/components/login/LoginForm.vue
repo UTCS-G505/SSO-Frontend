@@ -22,7 +22,8 @@
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
-          <label for="id">學號 / 帳號</label>
+          <label v-if="isRegisterMode" for="id">帳號</label>
+          <label v-else for="id">學號 / 帳號</label>
           <input
             id="id"
             :value="formData.id"
