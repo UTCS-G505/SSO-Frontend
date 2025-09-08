@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import apiClient from '@/utils/api'
 import type { ApiResponse } from '@/types/api'
+import { getCookie } from '@/utils/getCookie'
 
 interface AuthState {
   id: string | null
@@ -16,8 +17,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) =>
-      state.accessToken !== null && localStorage.getItem('sso-user-id') !== null,
+    isAuthenticated: (state) => state.accessToken !== null && state.id !== null,
   },
 
   actions: {
@@ -42,7 +42,6 @@ export const useAuthStore = defineStore('auth', {
         if (data.code == 0 && data.data?.access_token) {
           this.id = id
           this.accessToken = data.data.access_token
-          this.saveToStorage()
         } else {
           throw new Error('登入失敗! 請檢查您的帳號和密碼。')
         }
@@ -112,9 +111,8 @@ export const useAuthStore = defineStore('auth', {
         >('/auth/refresh', null)
 
         if (response.data.code === 0 && response.data.data) {
-          this.id = localStorage.getItem('sso-user-id')
+          this.id = getCookie('uid')
           this.accessToken = response.data.data.access_token
-          this.saveToStorage()
         } else {
           this.clearAuth()
           throw new Error('刷新 refresh token 失敗')
@@ -125,13 +123,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    saveToStorage(): void {
-      if (this.id) {
-        localStorage.setItem('sso-user-id', this.id)
-      }
-    },
-
-    // Clear authentication state and localStorage
+    // Clear authentication state
     clearAuth(): void {
       this.id = null
       this.accessToken = null

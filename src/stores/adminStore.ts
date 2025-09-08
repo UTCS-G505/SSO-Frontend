@@ -52,13 +52,8 @@ export const useAdminStore = defineStore('admin', {
 
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 
@@ -82,13 +77,8 @@ export const useAdminStore = defineStore('admin', {
     async createUser(newUser: CreateUserData): Promise<User> {
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 
@@ -110,13 +100,8 @@ export const useAdminStore = defineStore('admin', {
     async updateUser(userId: string, userData: Partial<User>): Promise<User> {
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 
@@ -141,13 +126,8 @@ export const useAdminStore = defineStore('admin', {
     async activateUser(userId: string): Promise<void> {
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 
@@ -172,13 +152,8 @@ export const useAdminStore = defineStore('admin', {
     async deactivateUser(userId: string): Promise<void> {
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 
@@ -213,13 +188,8 @@ export const useAdminStore = defineStore('admin', {
     async deleteUser(userId: string): Promise<void> {
       try {
         const authStore = useAuthStore()
-        const id = localStorage.getItem('sso-user-id')
 
-        if (!id) {
-          throw new Error('使用者未經過身份驗證')
-        }
-
-        if (!authStore.accessToken) {
+        if (!authStore.id || !authStore.accessToken) {
           throw new Error('使用者未經過身份驗證')
         }
 

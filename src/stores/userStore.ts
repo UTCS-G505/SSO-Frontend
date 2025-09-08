@@ -32,19 +32,12 @@ export const useUserStore = defineStore('user', {
   actions: {
     async getProfile(): Promise<void> {
       const authStore = useAuthStore()
-      const id = localStorage.getItem('sso-user-id')
 
-      if (!id) {
-        console.error('No user ID found in localStorage')
+      if (!authStore.id || !authStore.accessToken) {
         throw new Error('使用者未經過身份驗證')
       }
 
-      if (!authStore.accessToken) {
-        console.error('No access token found in authStore')
-        throw new Error('使用者未經過身份驗證')
-      }
-
-      const response = await apiClient.get<ApiResponse<User>>(`/user/get/${id}`)
+      const response = await apiClient.get<ApiResponse<User>>(`/user/get/${authStore.id}`)
       const userProfile = response.data
       // Update the store state with the fetched profile data
       if (userProfile && userProfile.code === 0 && userProfile.data) {
@@ -54,21 +47,14 @@ export const useUserStore = defineStore('user', {
 
     async updateProfile(updated?: Partial<User>): Promise<void> {
       const authStore = useAuthStore()
-      const id = localStorage.getItem('sso-user-id')
 
-      if (!id) {
-        console.error('No user ID found in localStorage')
-        throw new Error('使用者未經過身份驗證')
-      }
-
-      if (!authStore.accessToken) {
-        console.error('No access token found in authStore')
+      if (!authStore.id || !authStore.accessToken) {
         throw new Error('使用者未經過身份驗證')
       }
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state
 
-      const response = await apiClient.patch<ApiResponse>(`/user/update/${id}`, payload)
+      const response = await apiClient.patch<ApiResponse>(`/user/update/${authStore.id}`, payload)
 
       const result = response.data
       if (result && result.code === 0) {
@@ -91,7 +77,6 @@ export const useUserStore = defineStore('user', {
         role: null,
         enabled: null,
       }
-      localStorage.removeItem('user-profile')
     },
   },
 })
