@@ -32,7 +32,13 @@
             </div>
             <div class="field">
               <label for="position">職稱 / 身分</label>
-              <input id="position" v-model.trim="form.position" type="text" required />
+              <input
+                id="position"
+                v-model.trim="form.position"
+                type="text"
+                required
+                placeholder="請輸入職稱或身分（學生請填年級，如：大一、碩一、職碩一）"
+              />
             </div>
           </div>
 
