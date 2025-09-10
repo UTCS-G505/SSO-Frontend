@@ -97,11 +97,9 @@
                     type="checkbox"
                     :checked="selectedUserIds.has(user.id)"
                     @change="toggleUserSelection(user)"
-                    :disabled="
-                      user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
-                    "
+                    :disabled="!canModify(user)"
                     :title="
-                      user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
+                      !canModify(user)
                         ? '只有管理員可以選擇/刪除管理員'
                         : '選擇此用戶'
                     "
@@ -127,9 +125,7 @@
                       @click="toggleUserStatus(user)"
                       :class="['status-btn', user.enabled !== false ? 'active' : 'inactive']"
                       :title="user.enabled !== false ? '停用用戶' : '啟用用戶'"
-                      :disabled="
-                        user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
-                      "
+                      :disabled="!canModify(user)"
                     >
                       <span class="status-indicator"></span>
                       {{ user.enabled !== false ? '啟用' : '停用' }}
@@ -150,9 +146,7 @@
                     @click="deleteUser(user)"
                     class="action-btn delete-btn"
                     title="刪除"
-                    :disabled="
-                      user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
-                    "
+                    :disabled="!canModify(user)"
                   >
                     <Trash2 class="action-icon" />
                   </button>
@@ -544,7 +538,8 @@ const headerCheckbox = ref<HTMLInputElement | null>(null)
 
 // Create modal
 const creatingUser = ref(false)
-const createForm = ref<CreateForm>({
+const MIN_PASSWORD_LENGTH = 8
+const emptyCreateForm = (): CreateForm => ({
   id: '',
   name: '',
   primary_email: '',
@@ -555,6 +550,7 @@ const createForm = ref<CreateForm>({
   position: '',
   role: '',
 })
+const createForm = ref<CreateForm>(emptyCreateForm())
 const creating = ref(false)
 
 // Edit modal
@@ -576,19 +572,24 @@ const deleting = ref(false)
 
 // Computed properties
 const currentUser = computed(() => userStore)
-const users = computed(() => adminStore.users)
+const users = computed(() => adminStore.users || [])
 const loading = computed(() => adminStore.loading)
 const error = computed(() => adminStore.error)
 
+// Normalized search term and role filter
+const normalizedSearchQuery = computed(() => searchQuery.value.trim().toLowerCase())
+
 const filteredUsers = computed(() => {
+  const q = normalizedSearchQuery.value
+  const roleFilter = selectedRole.value
   return users.value.filter((user) => {
     const matchesSearch =
-      !searchQuery.value ||
-      user.name?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      user.primary_email?.toLowerCase().includes(searchQuery.value.toLowerCase())
+      !q ||
+      user.name?.toLowerCase().includes(q) ||
+      user.id.toLowerCase().includes(q) ||
+      user.primary_email?.toLowerCase().includes(q)
 
-    const matchesRole = !selectedRole.value || user.role.toString() === selectedRole.value
+    const matchesRole = !roleFilter || user.role.toString() === roleFilter
 
     return matchesSearch && matchesRole
   })
@@ -604,9 +605,7 @@ const paginatedUsers = computed(() => {
 
 // Selectable IDs on current page (respect admin restriction)
 const paginatedSelectableIds = computed(() =>
-  paginatedUsers.value
-    .filter((u) => !(u.role === USER_ROLES.ADMIN && currentUser.value?.role !== USER_ROLES.ADMIN))
-    .map((u) => u.id),
+  paginatedUsers.value.filter((u) => canModify(u)).map((u) => u.id),
 )
 const paginatedSelectableCount = computed(() => paginatedSelectableIds.value.length)
 const allSelectableOnPageSelected = computed(
@@ -641,7 +640,7 @@ const passwordsMatch = computed(() => {
 })
 
 const passwordStrong = computed(() => {
-  return createForm.value.password.length >= 8
+  return createForm.value.password.length >= MIN_PASSWORD_LENGTH
 })
 
 // Methods
@@ -687,55 +686,29 @@ const toggleSelectAllOnPage = () => {
   selectedUserIds.value = next
 }
 
-const getRoleClass = (role: UserRoleValue): string => {
-  switch (role) {
-    case USER_ROLES.ADMIN:
-      return 'role-admin'
-    case USER_ROLES.OFFICER:
-      return 'role-officer'
-    case USER_ROLES.DIRECTOR:
-      return 'role-director'
-    case USER_ROLES.TEACHER:
-      return 'role-teacher'
-    case USER_ROLES.STUDENT:
-      return 'role-student'
-    case USER_ROLES.UT_USER:
-      return 'role-ut-user'
-    case USER_ROLES.GUEST:
-      return 'role-guest'
-    default:
-      return 'role-guest'
-  }
+const ROLE_CLASS_MAP: Record<UserRoleValue, string> = {
+  [USER_ROLES.ADMIN]: 'role-admin',
+  [USER_ROLES.OFFICER]: 'role-officer',
+  [USER_ROLES.DIRECTOR]: 'role-director',
+  [USER_ROLES.TEACHER]: 'role-teacher',
+  [USER_ROLES.STUDENT]: 'role-student',
+  [USER_ROLES.UT_USER]: 'role-ut-user',
+  [USER_ROLES.GUEST]: 'role-guest',
 }
+const getRoleClass = (role: UserRoleValue): string => ROLE_CLASS_MAP[role] ?? 'role-guest'
+
+// Permission helper
+const canModify = (user: User): boolean =>
+  !(user.role === USER_ROLES.ADMIN && currentUser.value?.role !== USER_ROLES.ADMIN)
 
 const openCreateModal = () => {
   creatingUser.value = true
-  createForm.value = {
-    id: '',
-    name: '',
-    primary_email: '',
-    password: '',
-    confirmPassword: '',
-    secondary_email: '',
-    phone_number: '',
-    position: '',
-    role: '',
-  }
+  createForm.value = emptyCreateForm()
 }
 
 const closeCreateModal = () => {
   creatingUser.value = false
-  createForm.value = {
-    id: '',
-    name: '',
-    primary_email: '',
-    password: '',
-    confirmPassword: '',
-    secondary_email: '',
-    phone_number: '',
-    position: '',
-    role: '',
-  }
+  createForm.value = emptyCreateForm()
 }
 
 const createUser = async () => {
@@ -757,8 +730,8 @@ const createUser = async () => {
     return
   }
 
-  if (createForm.value.password.length < 6) {
-    showError('密碼錯誤', '密碼長度至少需要6個字符')
+  if (createForm.value.password.length < MIN_PASSWORD_LENGTH) {
+    showError('密碼錯誤', `密碼長度至少需要${MIN_PASSWORD_LENGTH}個字符`)
     return
   }
 
