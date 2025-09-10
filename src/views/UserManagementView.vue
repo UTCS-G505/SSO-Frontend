@@ -32,6 +32,15 @@
             <UserPlus class="create-icon" />
             新增用戶
           </button>
+          <button
+            @click="openBulkDeleteModal"
+            class="bulk-delete-btn"
+            :disabled="selectedCount === 0 || deletingSelected"
+            title="刪除所選"
+          >
+            <Trash2 class="create-icon" />
+            刪除所選<span v-if="selectedCount"> ({{ selectedCount }})</span>
+          </button>
           <button @click="refreshUsers" class="refresh-btn" :disabled="loading">
             <RefreshCw class="refresh-icon" :class="{ 'animate-spin': loading }" />
             刷新
@@ -62,6 +71,15 @@
           <table class="users-table">
             <thead>
               <tr>
+                <th class="select-col">
+                  <input
+                    type="checkbox"
+                    ref="headerCheckbox"
+                    :checked="allSelectableOnPageSelected"
+                    @change="toggleSelectAllOnPage"
+                    :disabled="paginatedSelectableCount === 0"
+                  />
+                </th>
                 <th>用戶ID</th>
                 <th>姓名</th>
                 <th>主要Email</th>
@@ -74,6 +92,21 @@
             </thead>
             <tbody>
               <tr v-for="user in paginatedUsers" :key="user.id" class="user-row">
+                <td class="select-cell">
+                  <input
+                    type="checkbox"
+                    :checked="selectedUserIds.has(user.id)"
+                    @change="toggleUserSelection(user)"
+                    :disabled="
+                      user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
+                    "
+                    :title="
+                      user.role === USER_ROLES.ADMIN && currentUser?.role !== USER_ROLES.ADMIN
+                        ? '只有管理員可以選擇/刪除管理員'
+                        : '選擇此用戶'
+                    "
+                  />
+                </td>
                 <td class="user-id" :title="user.id">{{ user.id }}</td>
                 <td class="user-name" :title="user.name || '-'">{{ user.name || '-' }}</td>
                 <td class="user-email" :title="user.primary_email || '-'">
@@ -404,12 +437,35 @@
           </div>
         </div>
       </div>
+
+      <!-- Bulk Delete Confirmation Modal -->
+      <div v-if="bulkDeleteModalOpen" class="modal-overlay" @click="closeBulkDeleteModal">
+        <div class="modal-content delete-modal" @click.stop>
+          <div class="delete-content">
+            <div class="delete-warning-icon-container">
+              <AlertTriangle class="delete-warning-icon" />
+            </div>
+            <h3 class="delete-modal-title">您確定要刪除已選擇的 {{ selectedCount }} 位用戶嗎？</h3>
+            <p class="delete-warning">此操作無法撤銷！</p>
+          </div>
+          <div class="modal-actions">
+            <button @click="closeBulkDeleteModal" class="cancel-btn">取消</button>
+            <button
+              @click="confirmBulkDelete"
+              :disabled="deletingSelected"
+              class="delete-confirm-btn"
+            >
+              {{ deletingSelected ? '刪除中...' : '確認刪除' }}
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useAdminStore } from '@/stores/adminStore'
 import { useToast } from '@/composables/useToast'
@@ -481,6 +537,11 @@ const selectedRole = ref<string>('')
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 
+// Selection state for bulk actions
+const selectedUserIds = ref<Set<string>>(new Set())
+const selectedCount = computed(() => selectedUserIds.value.size)
+const headerCheckbox = ref<HTMLInputElement | null>(null)
+
 // Create modal
 const creatingUser = ref(false)
 const createForm = ref<CreateForm>({
@@ -541,6 +602,39 @@ const paginatedUsers = computed(() => {
   return filteredUsers.value.slice(start, end)
 })
 
+// Selectable IDs on current page (respect admin restriction)
+const paginatedSelectableIds = computed(() =>
+  paginatedUsers.value
+    .filter((u) => !(u.role === USER_ROLES.ADMIN && currentUser.value?.role !== USER_ROLES.ADMIN))
+    .map((u) => u.id),
+)
+const paginatedSelectableCount = computed(() => paginatedSelectableIds.value.length)
+const allSelectableOnPageSelected = computed(
+  () =>
+    paginatedSelectableCount.value > 0 &&
+    paginatedSelectableIds.value.every((id) => selectedUserIds.value.has(id)),
+)
+
+// Keep header checkbox indeterminate in sync with page selection
+watch(
+  [paginatedUsers, selectedUserIds],
+  () => {
+    if (!headerCheckbox.value) return
+    const ids = paginatedSelectableIds.value
+    const selectedOnPage = ids.filter((id) => selectedUserIds.value.has(id))
+
+    // Set indeterminate only when some (but not all) are selected
+    headerCheckbox.value.indeterminate =
+      selectedOnPage.length > 0 && selectedOnPage.length < ids.length
+
+    // Ensure checkbox is unchecked when no items are selected
+    if (selectedOnPage.length === 0) {
+      headerCheckbox.value.checked = false
+    }
+  },
+  { flush: 'post' },
+)
+
 // Password validation
 const passwordsMatch = computed(() => {
   return createForm.value.password === createForm.value.confirmPassword
@@ -562,7 +656,35 @@ const fetchUsers = async () => {
 
 const refreshUsers = () => {
   currentPage.value = 1
+  // Clear selection when refreshing
+  selectedUserIds.value = new Set()
   fetchUsers()
+}
+
+// Selection handlers
+const toggleUserSelection = (user: User) => {
+  const id = user.id
+  const next = new Set(selectedUserIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  selectedUserIds.value = next
+}
+
+const toggleSelectAllOnPage = () => {
+  const next = new Set(selectedUserIds.value)
+  const ids = paginatedSelectableIds.value
+  const selectedOnPage = ids.filter((id) => selectedUserIds.value.has(id))
+
+  // If any are selected (including indeterminate state), unselect all
+  // Otherwise, select all
+  if (selectedOnPage.length > 0) {
+    // Unselect all on current page
+    ids.forEach((id) => next.delete(id))
+  } else {
+    // Select all on current page
+    ids.forEach((id) => next.add(id))
+  }
+  selectedUserIds.value = next
 }
 
 const getRoleClass = (role: UserRoleValue): string => {
@@ -736,6 +858,54 @@ const confirmDelete = async () => {
     showError('刪除失敗', errorMessage)
   } finally {
     deleting.value = false
+  }
+}
+
+// Bulk delete
+const bulkDeleteModalOpen = ref(false)
+const deletingSelected = ref(false)
+
+const openBulkDeleteModal = () => {
+  if (selectedCount.value === 0) return
+  bulkDeleteModalOpen.value = true
+}
+
+const closeBulkDeleteModal = () => {
+  bulkDeleteModalOpen.value = false
+}
+
+const confirmBulkDelete = async () => {
+  if (selectedCount.value === 0) return
+  deletingSelected.value = true
+  const ids = Array.from(selectedUserIds.value)
+  try {
+    const results = await Promise.allSettled(ids.map((id) => adminStore.deleteUser(id)))
+    let successCount = 0
+    let failCount = 0
+    results.forEach((r) => (r.status === 'fulfilled' ? successCount++ : failCount++))
+
+    if (successCount > 0) {
+      success('刪除成功', `已刪除 ${successCount} 位用戶`)
+    }
+    if (failCount > 0) {
+      showError('部分刪除失敗', `有 ${failCount} 位用戶刪除失敗`)
+    }
+
+    // Remove successfully deleted IDs from selection
+    const next = new Set(selectedUserIds.value)
+    ids.forEach((id, idx) => {
+      if (results[idx].status === 'fulfilled') {
+        next.delete(id)
+      }
+    })
+    selectedUserIds.value = next
+
+    closeBulkDeleteModal()
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : '批量刪除時發生錯誤'
+    showError('刪除失敗', errorMessage)
+  } finally {
+    deletingSelected.value = false
   }
 }
 
@@ -984,44 +1154,49 @@ onMounted(() => {
   white-space: nowrap;
 }
 
-/* Fixed column widths */
+/* Fixed column widths (with checkbox column) */
 .users-table th:nth-child(1),
 .users-table td:nth-child(1) {
-  width: 120px; /* 用戶ID */
+  width: 44px; /* 選擇框 */
 }
 
 .users-table th:nth-child(2),
 .users-table td:nth-child(2) {
-  width: 120px; /* 姓名 */
+  width: 120px; /* 用戶ID */
 }
 
 .users-table th:nth-child(3),
 .users-table td:nth-child(3) {
-  width: 200px; /* 主要Email */
+  width: 120px; /* 姓名 */
 }
 
 .users-table th:nth-child(4),
 .users-table td:nth-child(4) {
-  width: 120px; /* 角色 */
+  width: 200px; /* 主要Email */
 }
 
 .users-table th:nth-child(5),
 .users-table td:nth-child(5) {
-  width: 100px; /* 狀態 */
+  width: 120px; /* 角色 */
 }
 
 .users-table th:nth-child(6),
 .users-table td:nth-child(6) {
-  width: 120px; /* 職位 */
+  width: 100px; /* 狀態 */
 }
 
 .users-table th:nth-child(7),
 .users-table td:nth-child(7) {
-  width: 140px; /* 電話 */
+  width: 120px; /* 職位 */
 }
 
 .users-table th:nth-child(8),
 .users-table td:nth-child(8) {
+  width: 140px; /* 電話 */
+}
+
+.users-table th:nth-child(9),
+.users-table td:nth-child(9) {
   width: 100px; /* 操作 */
 }
 
@@ -1210,6 +1385,44 @@ onMounted(() => {
 .delete-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Bulk delete button */
+.bulk-delete-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bulk-delete-btn:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.bulk-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Selection cells */
+.users-table th.select-col,
+.users-table td.select-cell {
+  text-align: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.users-table td.select-cell input[type='checkbox'],
+.users-table th.select-col input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
 }
 
 /* Pagination */
@@ -1524,41 +1737,46 @@ onMounted(() => {
   /* Adjust table column widths for mobile */
   .users-table th:nth-child(1),
   .users-table td:nth-child(1) {
-    width: 100px; /* 用戶ID */
+    width: 36px; /* 選擇框 */
   }
 
   .users-table th:nth-child(2),
   .users-table td:nth-child(2) {
-    width: 100px; /* 姓名 */
+    width: 100px; /* 用戶ID */
   }
 
   .users-table th:nth-child(3),
   .users-table td:nth-child(3) {
-    width: 150px; /* 主要Email */
+    width: 100px; /* 姓名 */
   }
 
   .users-table th:nth-child(4),
   .users-table td:nth-child(4) {
-    width: 100px; /* 角色 */
+    width: 150px; /* 主要Email */
   }
 
   .users-table th:nth-child(5),
   .users-table td:nth-child(5) {
-    width: 80px; /* 狀態 */
+    width: 100px; /* 角色 */
   }
 
   .users-table th:nth-child(6),
   .users-table td:nth-child(6) {
-    width: 80px; /* 職位 */
+    width: 80px; /* 狀態 */
   }
 
   .users-table th:nth-child(7),
   .users-table td:nth-child(7) {
-    width: 120px; /* 電話 */
+    width: 80px; /* 職位 */
   }
 
   .users-table th:nth-child(8),
   .users-table td:nth-child(8) {
+    width: 120px; /* 電話 */
+  }
+
+  .users-table th:nth-child(9),
+  .users-table td:nth-child(9) {
     width: 80px; /* 操作 */
   }
 
