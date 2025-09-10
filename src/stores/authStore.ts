@@ -2,11 +2,13 @@ import { defineStore } from 'pinia'
 import apiClient from '@/utils/api'
 import type { ApiResponse } from '@/types/api'
 import { getCookie } from '@/utils/getCookie'
+import { getJwtExp } from '@/utils/getJwtExp'
 
 interface AuthState {
   id: string | null
   accessToken: string | null
   initialized: boolean
+  refreshTimerId: number | null
 }
 
 export const useAuthStore = defineStore('auth', {
@@ -14,6 +16,7 @@ export const useAuthStore = defineStore('auth', {
     id: null,
     accessToken: null,
     initialized: false,
+    refreshTimerId: null,
   }),
 
   getters: {
@@ -21,6 +24,38 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    // Schedule automatic access token refresh 1 minute before expiry (default 9 minutes)
+    scheduleTokenRefresh(): void {
+      // Clear any previous timer
+      if (this.refreshTimerId) {
+        clearTimeout(this.refreshTimerId)
+        this.refreshTimerId = null
+      }
+
+      if (!this.accessToken) return
+
+      const BUFFER_MS = 60 * 1000 // 1 minute
+      const DEFAULT_DELAY_MS = 9 * 60 * 1000 // 9 minutes if no exp available
+
+      const exp = getJwtExp(this.accessToken)
+      let delay = DEFAULT_DELAY_MS
+      if (exp) {
+        const msUntilExp = exp * 1000 - Date.now()
+        delay = Math.max(0, msUntilExp - BUFFER_MS)
+      }
+
+      // If already expired or very close, refresh immediately
+      if (delay === 0) {
+        // Small microtask delay to avoid recursive call issues
+        this.refresh().catch(() => {})
+        return
+      }
+
+      this.refreshTimerId = window.setTimeout(() => {
+        this.refresh().catch(() => {})
+      }, delay)
+    },
+
     async login(id: string, password: string): Promise<void> {
       try {
         const response = await apiClient.post<
@@ -42,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
         if (data.code == 0 && data.data?.access_token) {
           this.id = id
           this.accessToken = data.data.access_token
+          this.scheduleTokenRefresh()
         } else {
           throw new Error('登入失敗! 請檢查您的帳號和密碼。')
         }
@@ -103,8 +139,6 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async refresh(): Promise<void> {
-      if (this.isAuthenticated) return
-
       try {
         const response = await apiClient.post<
           ApiResponse<{ access_token: string; token_type: string }>
@@ -113,6 +147,7 @@ export const useAuthStore = defineStore('auth', {
         if (response.data.code === 0 && response.data.data) {
           this.id = getCookie('uid')
           this.accessToken = response.data.data.access_token
+          this.scheduleTokenRefresh()
         } else {
           this.clearAuth()
           throw new Error('刷新 refresh token 失敗')
@@ -127,6 +162,10 @@ export const useAuthStore = defineStore('auth', {
     clearAuth(): void {
       this.id = null
       this.accessToken = null
+      if (this.refreshTimerId) {
+        clearTimeout(this.refreshTimerId)
+        this.refreshTimerId = null
+      }
     },
 
     // Initialize authentication state
