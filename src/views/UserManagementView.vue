@@ -98,11 +98,7 @@
                     :checked="selectedUserIds.has(user.id)"
                     @change="toggleUserSelection(user)"
                     :disabled="!canModify(user)"
-                    :title="
-                      !canModify(user)
-                        ? '只有管理員可以選擇/刪除管理員'
-                        : '選擇此用戶'
-                    "
+                    :title="!canModify(user) ? '只有管理員可以選擇/刪除管理員' : '選擇此用戶'"
                   />
                 </td>
                 <td class="user-id" :title="user.id">{{ user.id }}</td>
