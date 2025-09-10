@@ -75,7 +75,8 @@ export const useAuthStore = defineStore('auth', {
 
         const data = response.data
         if (data.code == 0 && data.data?.access_token) {
-          this.id = id
+          // prefer backend-issued uid cookie if present
+          this.id = getCookie('uid') || id
           this.accessToken = data.data.access_token
           this.scheduleTokenRefresh()
         } else {
