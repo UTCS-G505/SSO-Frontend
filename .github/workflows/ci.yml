@@ -1,4 +1,4 @@
-name: Lint and Build
+name: CI - Prettier, ESLint, Vitest, Build
 
 on:
   # Trigger the workflow on push or pull request,
@@ -26,7 +26,7 @@ on:
 
 jobs:
   checking:
-    name: Lint and Build
+    name: Lint and Test
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,9 +54,12 @@ jobs:
 
       - name: Run ESLint
         run: pnpm lint
-      
+
       - name: Run test Prettier
         run: pnpm test:format
+
+      - name: Run Unit Tests
+        run: pnpm test:run
 
       - name: Run Build
         run: pnpm build
