@@ -139,7 +139,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = true
 
       // Mock registration failure
-      mockAuthStore.register.mockRejectedValue(new Error('Registration failed'))
+      mockAuthStore.register.mockRejectedValue(new Error('註冊失敗'))
 
       // Fill form with valid data
       updateId('testuser')
@@ -153,7 +153,7 @@ describe('Registration Validation - Integration Tests', () => {
       await login()
 
       // Should show error message and stay in register mode
-      expect(error.value).toBe('Registration failed')
+      expect(error.value).toBe('註冊失敗')
       expect(isRegisterMode.value).toBe(true)
     })
 
@@ -404,7 +404,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = false
 
       // Setup login to throw error
-      mockAuthStore.login.mockRejectedValue(new Error('Network error'))
+      mockAuthStore.login.mockRejectedValue(new Error('網路錯誤'))
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
@@ -415,7 +415,7 @@ describe('Registration Validation - Integration Tests', () => {
       await login()
 
       // Verify error was handled
-      expect(error.value).toBe('Network error')
+      expect(error.value).toBe('網路錯誤')
       expect(mockRouter.push).not.toHaveBeenCalled()
       expect(window.location.href).toBe('')
     })
@@ -463,7 +463,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.login.mockResolvedValue(undefined)
       mockAuthStore.id = 'testuser'
       mockAuthStore.accessToken = 'valid-token'
-      mockUserStore.getProfile.mockRejectedValue(new Error('Profile fetch failed'))
+      mockUserStore.getProfile.mockRejectedValue(new Error('個人資料載入失敗'))
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
@@ -474,7 +474,7 @@ describe('Registration Validation - Integration Tests', () => {
       await login()
 
       // Verify error was handled
-      expect(error.value).toBe('Profile fetch failed')
+      expect(error.value).toBe('個人資料載入失敗')
       expect(mockRouter.push).not.toHaveBeenCalled()
       expect(window.location.href).toBe('')
     })

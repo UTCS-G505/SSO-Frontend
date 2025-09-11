@@ -111,8 +111,7 @@ const submit = async () => {
     } else {
       router.push({ name: 'dashboard' })
     }
-  } catch (e) {
-    console.error(e)
+  } catch {
     error('儲存失敗', '請稍後再試')
   } finally {
     loading.value = false

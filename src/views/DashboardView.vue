@@ -84,9 +84,9 @@ onMounted(async () => {
   if (!userStore.name || userStore.role === null) {
     try {
       await userStore.getProfile()
-    } catch (error) {
-      console.error('Failed to load user profile:', error)
-      // Continue with default applications if profile loading fails
+    } catch {
+      // Handle error silently
+      router.push('/login')
     }
   }
 })

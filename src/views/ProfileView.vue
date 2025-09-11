@@ -161,8 +161,7 @@ const saveProfile = async () => {
 
     isEditing.value = false
     success('個人資料已更新', '您的個人資料已成功更新')
-  } catch (err) {
-    console.error('Failed to update profile:', err)
+  } catch {
     error('更新失敗', '無法更新個人資料，請稍後再試')
   }
 }
