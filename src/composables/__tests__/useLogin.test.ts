@@ -1,37 +1,63 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useLogin } from '../useLogin'
 import { createPinia, setActivePinia } from 'pinia'
 
+// Mock window.location
+const mockLocation = {
+  href: '',
+}
+Object.defineProperty(window, 'location', {
+  value: mockLocation,
+  writable: true,
+})
+
 // Mock the router
+const mockRouter = {
+  push: vi.fn(),
+}
+
+const mockRoute = {
+  query: {},
+}
+
 vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-  }),
-  useRoute: () => ({
-    query: {},
-  }),
+  useRouter: () => mockRouter,
+  useRoute: () => mockRoute,
 }))
 
 // Mock the stores
+const mockAuthStore = {
+  register: vi.fn(),
+  login: vi.fn(),
+  id: null as string | null,
+  accessToken: null as string | null,
+}
+
+const mockUserStore = {
+  getProfile: vi.fn(),
+  enabled: true as boolean,
+}
+
 vi.mock('@/stores/authStore', () => ({
-  useAuthStore: () => ({
-    register: vi.fn(),
-    login: vi.fn(),
-    id: null,
-    accessToken: null,
-  }),
+  useAuthStore: () => mockAuthStore,
 }))
 
 vi.mock('@/stores/userStore', () => ({
-  useUserStore: () => ({
-    getProfile: vi.fn(),
-    enabled: true,
-  }),
+  useUserStore: () => mockUserStore,
 }))
 
 describe('useLogin - Registration Validation', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    vi.clearAllMocks()
+    mockLocation.href = ''
+    mockRoute.query = {}
+    mockAuthStore.id = null
+    mockAuthStore.accessToken = null
+    mockUserStore.enabled = true
   })
 
   describe('validateForm for registration', () => {
@@ -367,6 +393,279 @@ describe('useLogin - Registration Validation', () => {
 
       expect(formData.value.id).toBe('')
       expect(formData.value.name).toBe('')
+    })
+  })
+
+  describe('callback handling', () => {
+    it('should redirect to external URL when redirect query parameter is provided', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // Set redirect URL in route query
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should redirect to external URL
+      expect(window.location.href).toBe('https://external-app.example.com/callback')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+    })
+
+    it('should navigate to dashboard when no redirect parameter is provided', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // No redirect URL in route query
+      mockRoute.query = {}
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should navigate to dashboard
+      expect(mockRouter.push).toHaveBeenCalledWith('/dashboard')
+      expect(window.location.href).toBe('')
+    })
+
+    it('should redirect to complete profile when user is not enabled', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario but user not enabled
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = false // User needs to complete profile
+
+      // Set redirect URL in route query
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should redirect to complete profile instead of external URL
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'complete-profile' })
+      expect(window.location.href).toBe('')
+    })
+
+    it('should handle non-string redirect parameter gracefully', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // Set non-string redirect parameter
+      mockRoute.query = { redirect: ['multiple', 'values'] }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should fall back to dashboard navigation
+      expect(mockRouter.push).toHaveBeenCalledWith('/dashboard')
+      expect(window.location.href).toBe('')
+    })
+
+    it('should handle empty string redirect parameter', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // Set empty string redirect parameter
+      mockRoute.query = { redirect: '' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should fall back to dashboard navigation
+      expect(mockRouter.push).toHaveBeenCalledWith('/dashboard')
+      expect(window.location.href).toBe('')
+    })
+
+    it('should not attempt redirect when login fails', async () => {
+      const { login, formData, error } = useLogin()
+
+      // Setup failed login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = null // Login failed
+      mockAuthStore.accessToken = null
+
+      // Set redirect URL in route query
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'wrongpassword',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should show error and not redirect
+      expect(error.value).toBe('登入失敗! 請檢查您的帳號和密碼。')
+      expect(window.location.href).toBe('')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+    })
+
+    it('should handle internal route redirects', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // Set internal route redirect parameter
+      mockRoute.query = { redirect: '/users' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should use window.location.href even for internal routes to maintain consistency
+      expect(window.location.href).toBe('/users')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+    })
+
+    it('should call getProfile before checking user enabled status', async () => {
+      const { login, formData } = useLogin()
+
+      // Setup successful login scenario
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'token123'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+
+      // Set redirect URL in route query
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Setup valid login form
+      formData.value = {
+        id: 'testuser',
+        password: 'password123',
+        name: '',
+        confirmPassword: '',
+        primary_email: '',
+        secondary_email: '',
+        phone_number: '',
+        position: '',
+        rememberMe: false,
+        agreedRules: false,
+      }
+
+      await login()
+
+      // Should call getProfile before checking enabled status
+      expect(mockUserStore.getProfile).toHaveBeenCalled()
+      expect(window.location.href).toBe('https://external-app.example.com/callback')
     })
   })
 })

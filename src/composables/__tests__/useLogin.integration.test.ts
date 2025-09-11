@@ -1,27 +1,43 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 
+// Mock window.location
+const mockLocation = {
+  href: '',
+}
+Object.defineProperty(window, 'location', {
+  value: mockLocation,
+  writable: true,
+})
+
 // Mock the router
+const mockRouter = {
+  push: vi.fn(),
+}
+
+const mockRoute = {
+  query: {},
+}
+
 vi.mock('vue-router', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-  }),
-  useRoute: () => ({
-    query: {},
-  }),
+  useRouter: () => mockRouter,
+  useRoute: () => mockRoute,
 }))
 
 // Mock the stores
 const mockAuthStore = {
   register: vi.fn(),
   login: vi.fn(),
-  id: null,
-  accessToken: null,
+  id: null as string | null,
+  accessToken: null as string | null,
 }
 
 const mockUserStore = {
   getProfile: vi.fn(),
-  enabled: true,
+  enabled: true as boolean,
 }
 
 vi.mock('@/stores/authStore', () => ({
@@ -36,6 +52,11 @@ describe('Registration Validation - Integration Tests', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
+    mockLocation.href = ''
+    mockRoute.query = {}
+    mockAuthStore.id = null
+    mockAuthStore.accessToken = null
+    mockUserStore.enabled = true
   })
 
   describe('End-to-end registration flow', () => {
@@ -246,6 +267,216 @@ describe('Registration Validation - Integration Tests', () => {
       expect(formData.value.phone_number).toBe('1234567890')
       expect(formData.value.position).toBe('Developer')
       expect(formData.value.agreedRules).toBe(true)
+    })
+  })
+
+  describe('Login and Callback Handling - Integration Tests', () => {
+    it('should handle complete login flow with external redirect', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup successful login with external redirect
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'valid-token'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+      mockRoute.query = { redirect: 'https://external-app.example.com/sso/callback' }
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify store methods were called
+      expect(mockAuthStore.login).toHaveBeenCalledWith('testuser', 'password123')
+      expect(mockUserStore.getProfile).toHaveBeenCalled()
+
+      // Verify external redirect occurred
+      expect(window.location.href).toBe('https://external-app.example.com/sso/callback')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+      expect(error.value).toBe('')
+    })
+
+    it('should handle complete login flow with internal navigation', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup successful login without redirect
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'valid-token'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+      mockRoute.query = {} // No redirect parameter
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify store methods were called
+      expect(mockAuthStore.login).toHaveBeenCalledWith('testuser', 'password123')
+      expect(mockUserStore.getProfile).toHaveBeenCalled()
+
+      // Verify internal navigation occurred
+      expect(mockRouter.push).toHaveBeenCalledWith('/dashboard')
+      expect(window.location.href).toBe('')
+      expect(error.value).toBe('')
+    })
+
+    it('should handle login flow when user needs profile completion', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup successful login but user not enabled
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'newuser'
+      mockAuthStore.accessToken = 'valid-token'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = false // User needs to complete profile
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Fill login form
+      updateId('newuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify store methods were called
+      expect(mockAuthStore.login).toHaveBeenCalledWith('newuser', 'password123')
+      expect(mockUserStore.getProfile).toHaveBeenCalled()
+
+      // Verify redirect to complete profile (not external redirect)
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'complete-profile' })
+      expect(window.location.href).toBe('')
+      expect(error.value).toBe('')
+    })
+
+    it('should handle authentication failure gracefully', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup failed login
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = null // Login failed
+      mockAuthStore.accessToken = null
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('wrongpassword')
+
+      // Perform login
+      await login()
+
+      // Verify login was attempted
+      expect(mockAuthStore.login).toHaveBeenCalledWith('testuser', 'wrongpassword')
+
+      // Verify no navigation or redirect occurred
+      expect(mockRouter.push).not.toHaveBeenCalled()
+      expect(window.location.href).toBe('')
+      expect(error.value).toBe('登入失敗! 請檢查您的帳號和密碼。')
+    })
+
+    it('should handle store errors during login', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup login to throw error
+      mockAuthStore.login.mockRejectedValue(new Error('Network error'))
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify error was handled
+      expect(error.value).toBe('Network error')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+      expect(window.location.href).toBe('')
+    })
+
+    it('should handle complex redirect URLs with query parameters', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup successful login with complex redirect URL
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'valid-token'
+      mockUserStore.getProfile.mockResolvedValue(undefined)
+      mockUserStore.enabled = true
+      mockRoute.query = {
+        redirect: 'https://external-app.example.com/sso/callback?state=abc123&return_to=/dashboard',
+      }
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify complex redirect URL was preserved
+      expect(window.location.href).toBe(
+        'https://external-app.example.com/sso/callback?state=abc123&return_to=/dashboard',
+      )
+      expect(mockRouter.push).not.toHaveBeenCalled()
+      expect(error.value).toBe('')
+    })
+
+    it('should handle getProfile failure during login', async () => {
+      const { useLogin } = await import('../useLogin')
+      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+
+      // Ensure we're in login mode
+      isRegisterMode.value = false
+
+      // Setup successful login but getProfile fails
+      mockAuthStore.login.mockResolvedValue(undefined)
+      mockAuthStore.id = 'testuser'
+      mockAuthStore.accessToken = 'valid-token'
+      mockUserStore.getProfile.mockRejectedValue(new Error('Profile fetch failed'))
+      mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
+
+      // Fill login form
+      updateId('testuser')
+      updatePassword('password123')
+
+      // Perform login
+      await login()
+
+      // Verify error was handled
+      expect(error.value).toBe('Profile fetch failed')
+      expect(mockRouter.push).not.toHaveBeenCalled()
+      expect(window.location.href).toBe('')
     })
   })
 })
