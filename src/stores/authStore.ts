@@ -4,6 +4,9 @@ import type { ApiResponse } from '@/types/api'
 import { getCookie } from '@/utils/getCookie'
 import { getJwtExp } from '@/utils/getJwtExp'
 
+// Lock to ensure only one refresh request is in-flight at a time
+let refreshInFlight: Promise<void> | null = null
+
 interface AuthState {
   id: string | null
   accessToken: string | null
@@ -140,23 +143,34 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async refresh(): Promise<void> {
-      try {
-        const response = await apiClient.post<
-          ApiResponse<{ access_token: string; token_type: string }>
-        >('/auth/refresh', null)
+      // If a refresh is already running, return the existing promise
+      if (refreshInFlight) {
+        return refreshInFlight
+      }
+      // Start a new refresh and store the promise
+      refreshInFlight = (async () => {
+        try {
+          const response = await apiClient.post<
+            ApiResponse<{ access_token: string; token_type: string }>
+          >('/auth/refresh', null)
 
-        if (response.data.code === 0 && response.data.data) {
-          this.id = getCookie('uid')
-          this.accessToken = response.data.data.access_token
-          this.scheduleTokenRefresh()
-        } else {
+          if (response.data.code === 0 && response.data.data) {
+            this.id = getCookie('uid')
+            this.accessToken = response.data.data.access_token
+            this.scheduleTokenRefresh()
+          } else {
+            this.clearAuth()
+            throw new Error('刷新 refresh token 失敗')
+          }
+        } catch {
           this.clearAuth()
           throw new Error('刷新 refresh token 失敗')
+        } finally {
+          // Clear the lock regardless of outcome
+          refreshInFlight = null
         }
-      } catch {
-        this.clearAuth()
-        throw new Error('刷新 refresh token 失敗')
-      }
+      })()
+      return refreshInFlight
     },
 
     // Clear authentication state
