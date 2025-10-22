@@ -54,7 +54,7 @@ export const useAdminStore = defineStore('admin', {
         const authStore = useAuthStore()
 
         if (!authStore.id || !authStore.accessToken) {
-          throw new Error('使用者未經過身份驗證')
+          throw new Error('使用者未經過身份驗證，缺少 ID 或 access token')
         }
 
         const response = await apiClient.get<ApiResponse<User[]>>('/user/all')
