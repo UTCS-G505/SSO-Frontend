@@ -3,6 +3,7 @@ import apiClient from '@/utils/api'
 import type { ApiResponse } from '@/types/api'
 import { getCookie } from '@/utils/getCookie'
 import { getJwtExp } from '@/utils/getJwtExp'
+import type { AxiosError } from 'axios'
 
 // Lock to ensure only one refresh request is in-flight at a time
 let refreshInFlight: Promise<void> | null = null
@@ -85,7 +86,40 @@ export const useAuthStore = defineStore('auth', {
         } else {
           throw new Error('登入失敗! 請檢查您的帳號和密碼。')
         }
-      } catch {
+      } catch (err: unknown) {
+        console.error(err)
+        const axErr = err as AxiosError | undefined
+
+        // Align with Axios error semantics
+        if (axErr && (axErr as AxiosError).isAxiosError) {
+          const status = axErr.response?.status
+
+          if (typeof status === 'number') {
+            // Server responded with a status code
+            if (status >= 500 && status < 600) {
+              // 5xx: show backend/server message (interceptor already mapped) or fallback
+              const serverMsg = (axErr.message || '').trim()
+              throw new Error(serverMsg || '伺服器發生錯誤，請稍後再試。')
+            }
+
+            // Common credential failures (400/401)
+            if (status === 400 || status === 401) {
+              throw new Error('登入失敗! 請檢查您的帳號和密碼。')
+            }
+
+            // Other HTTP errors: show server message if present or a generic fallback
+            const serverMsg = (axErr.message || '').trim()
+            throw new Error(serverMsg || '請求失敗，請稍後再試。')
+          }
+
+          // No response received: network/CORS/timeout
+          if (axErr.code === 'ECONNABORTED') {
+            throw new Error('連線逾時，請稍後再試。')
+          }
+          throw new Error('無法連線到伺服器，請稍後再試。')
+        }
+
+        // Non-Axios error: default to credential failure
         throw new Error('登入失敗! 請檢查您的帳號和密碼。')
       }
     },
