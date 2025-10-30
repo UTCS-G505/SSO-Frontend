@@ -8,6 +8,7 @@ export default {
   <footer>
     <div>
       <p>Copyright 2025 © 臺北市立大學資訊科學系(含碩士班)版權所有</p>
+      <p><router-link to="/about">關於系統</router-link></p>
     </div>
   </footer>
 </template>
