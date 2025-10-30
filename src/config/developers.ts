@@ -1,7 +1,7 @@
 export interface DeveloperConfig {
   name: string
   description?: string
-  avatar?: URL,
+  avatar?: URL
   github?: string
 }
 
@@ -14,7 +14,8 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '陳皓平',
-    description: '前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。',
+    description:
+      '前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。',
     avatar: new URL('/src/assets/avatars/U11216028.png', import.meta.url),
     github: 'lucas6028',
   },
@@ -38,7 +39,8 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '楊顓睿',
-    description: '前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。',
+    description:
+      '前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。前端開發者，負責使用者介面與互動設計。',
     avatar: new URL('/src/assets/avatars/U11316016.png', import.meta.url),
     github: 'Roy-1011',
   },

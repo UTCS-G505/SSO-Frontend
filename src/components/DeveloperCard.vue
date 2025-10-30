@@ -13,7 +13,8 @@
     <div class="developer-info">
       <h1 class="developer-name">{{ name }}</h1>
       <p class="developer-description">{{ description }}</p>
-      <p class="github-link" v-if="github">GitHub:
+      <p class="github-link" v-if="github">
+        GitHub:
         <a :href="githubUrl" target="_blank" rel="noopener noreferrer">@{{ github }}</a>
       </p>
     </div>
@@ -27,7 +28,7 @@ const props = defineProps({
   image: URL,
   name: String,
   description: String,
-  github: String
+  github: String,
 })
 
 const githubUrl = computed(() => `https://github.com/${props.github}`).value
