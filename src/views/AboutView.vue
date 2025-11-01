@@ -4,13 +4,6 @@
     <AppHeader />
 
     <main class="about-section">
-      <div class="back-home-link">
-        <button @click="goBack" class="btn btn-primary">
-          <ArrowLeft :size="20" />
-          回上頁
-        </button>
-      </div>
-
       <h2 class="title">隱私權聲明</h2>
       <section class="about-content">
         <p>
@@ -90,6 +83,12 @@
           :github="developer.github"
         />
       </section>
+      <div class="back-home-link">
+        <button @click="goBack" class="btn btn-primary">
+          <ArrowLeft :size="20" />
+          回上頁
+        </button>
+      </div>
     </main>
   </div>
 </template>
@@ -154,7 +153,7 @@ const goBack = () => {
 
 .back-home-link {
   display: flex;
-  justify-content: start;
+  justify-content: center;
   margin: 2rem 2rem 0.5rem 2rem;
   z-index: 999;
 }
