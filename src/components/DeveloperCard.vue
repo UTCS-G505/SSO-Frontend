@@ -2,13 +2,14 @@
   <div class="developer-card">
     <div class="developer-image">
       <img
-        class="developer-image"
         :src="image?.href"
         alt="Developers and Maintainers"
-        width="100"
-        height="100"
+        width="125"
+        height="125"
         loading="lazy"
+        v-if="image"
       />
+      <CircleUserRound :size="125" v-else />
     </div>
     <div class="developer-info">
       <h1 class="developer-name">{{ name }}</h1>
@@ -23,6 +24,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { CircleUserRound } from 'lucide-vue-next'
 
 const props = defineProps({
   image: URL,
@@ -31,7 +33,7 @@ const props = defineProps({
   github: String,
 })
 
-const githubUrl = computed(() => `https://github.com/${props.github}`).value
+const githubUrl = computed(() => `https://github.com/${props.github}`)
 </script>
 
 <style scoped>
@@ -45,15 +47,15 @@ const githubUrl = computed(() => `https://github.com/${props.github}`).value
   border-radius: 50%;
   margin-bottom: 1rem;
   border: 1px solid #e5e7eb;
+  background-color: #fff;
   z-index: 1;
+  overflow: hidden;
 }
 
-.developer-image img {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 125px;
-  height: 125px;
+.developer-image img,
+.developer-image svg {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
