@@ -81,7 +81,7 @@ const goBack = () => {
 .back-home-link {
   display: flex;
   justify-content: center;
-  margin: 2rem 2rem 0.5rem 2rem;
+  margin: 0.5rem auto;
   z-index: 999;
 }
 
