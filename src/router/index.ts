@@ -7,6 +7,7 @@ import DashboardView from '@/views/DashboardView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import CompleteProfileView from '@/views/CompleteProfileView.vue'
 import UserManagementView from '@/views/UserManagementView.vue'
+import AboutView from '@/views/AboutView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 const router = createRouter({
@@ -45,6 +46,11 @@ const router = createRouter({
       name: 'user-management',
       component: UserManagementView,
       meta: { requiresAuth: true, requiresManagementRole: true },
+    },
+    {
+      path: '/about',
+      name: 'about-system',
+      component: AboutView,
     },
     {
       path: '/:pathMatch(.*)*',
