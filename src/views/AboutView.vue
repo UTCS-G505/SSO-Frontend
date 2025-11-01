@@ -19,6 +19,7 @@
           :name="developer.name"
           :description="developer.description"
           :github="developer.github"
+          :jobs="developer.jobs"
         />
       </section>
       <div class="back-home-link">
