@@ -8,7 +8,7 @@ export default {
   <footer>
     <div>
       <p>Copyright 2025 © 臺北市立大學資訊科學系(含碩士班)版權所有</p>
-      <p><router-link to="/about">關於系統</router-link></p>
+      <p><router-link to="/about" class="about-link">關於系統</router-link></p>
     </div>
   </footer>
 </template>
@@ -27,5 +27,21 @@ footer p {
   letter-spacing: 0.5px;
   word-spacing: 2px;
   text-align: center;
+}
+
+.about-link {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 0 auto;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.about-link:hover {
+  color: #1d4ed8;
 }
 </style>
