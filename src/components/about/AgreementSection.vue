@@ -91,5 +91,10 @@
 .agreement-info a {
   color: gray;
   text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.agreement-info a:hover {
+  color: lightgray;
 }
 </style>
