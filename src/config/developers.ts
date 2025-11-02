@@ -122,9 +122,9 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '許建程',
-    description: '',
-    //avatar: new URL('/src/assets/avatars/U11316035.png', import.meta.url),
-    //github: 'jimkro',
+    description: 'I\'m looking for some motivation.',
+    avatar: new URL('/src/assets/avatars/U11316035.png', import.meta.url),
+    github: 'jimkro',
     jobs: [locker_borrow({ frontend: true })],
   },
   {
