@@ -63,7 +63,7 @@
   <div class="agreement-info">
     <p>
       聲明更新時間：2025/11/01<br/>
-      本系辦公室電話：886-2-23113040 #8362、8363<br/>
+      本系辦公室電話：<a href="tel:+886-2-23113040">02-2311-3040</a> #8362、8363<br/>
       本系辦公室電子郵件：<a href="mailto:cs@go.utaipei.edu.tw">cs@go.utaipei.edu.tw</a>
     </p>
   </div>
@@ -88,5 +88,10 @@
   border-left: 2px solid lightgray;
   padding-left: 0.75rem;
   font-size: 0.875rem;
+}
+
+.agreement-info a {
+  color: gray;
+  text-decoration: underline;
 }
 </style>
