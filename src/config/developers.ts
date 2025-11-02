@@ -59,14 +59,6 @@ export const developerConfig: DeveloperConfig[] = [
     jobs: [
       sso_service({ pm: true, frontend: true, backend: true, devops: true }),
       locker_borrow({ pm: true, frontend: true, backend: true, devops: true }),
-      classroom_borrow({
-        pm: true,
-        frontend: true,
-        backend: true,
-        devops: true,
-        uiux: true,
-        maintainer: true,
-      }),
     ],
   },
   {
@@ -165,8 +157,7 @@ export const developerConfig: DeveloperConfig[] = [
   {
     name: '余珮璇',
     description: '',
-    //avatar: new URL('/src/assets/avatars/U11216004.png', import.meta.url),
-    //github: 'yu-peihsuan',
+    github: 'yu-peihsuan',
     jobs: [classroom_borrow({ uiux: true, frontend: true })],
   },
   {
@@ -186,8 +177,7 @@ export const developerConfig: DeveloperConfig[] = [
   {
     name: '張哲維',
     description: '',
-    //avatar: new URL('/src/assets/avatars/U11216021.png', import.meta.url),
-    //github: 'cjw931027',
+    github: 'cjw931027',
     jobs: [classroom_borrow({ frontend: true })],
   },
   {
