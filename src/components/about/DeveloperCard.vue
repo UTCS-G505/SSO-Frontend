@@ -97,7 +97,7 @@ onMounted(() => {
 .developer-image svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   pointer-events: none;
 }
 
@@ -137,5 +137,29 @@ onMounted(() => {
   display: inline-block;
   font-size: 0.75rem;
   background-color: #f3f4f6;
+}
+
+.red {
+  background-color: #ffb3ba2f;
+}
+
+.orange {
+  background-color: #ffdfba3f;
+}
+
+.yellow {
+  background-color: #ffffba8f;
+}
+
+.green {
+  background-color: #baffc93f;
+}
+
+.blue {
+  background-color: #bae1ff3f;
+}
+
+.purple {
+  background-color: #bdb2ff2f;
 }
 </style>
