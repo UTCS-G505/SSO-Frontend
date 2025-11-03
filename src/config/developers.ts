@@ -101,9 +101,9 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '陳胤華',
-    description: '',
-    //avatar: new URL('/src/assets/avatars/U11316017.png', import.meta.url),
-    //github: 'Fabricator0417',
+    description: 'Trying to turn caffeine into something that works.',
+    avatar: new URL('/src/assets/avatars/U11316017.jpg', import.meta.url),
+    github: 'Fabricator0417',
     jobs: [locker_borrow({ uiux: true, frontend: true })],
   },
   {
@@ -182,9 +182,6 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '楊淯丞',
-    description: '',
-    //avatar: new URL('/src/assets/avatars/U11216047.png', import.meta.url),
-    //github: 'yangyc1126',
     jobs: [classroom_borrow({ frontend: true })],
   },
 ]
