@@ -4,7 +4,7 @@
     <AppHeader />
 
     <main class="about-section">
-      <h2 class="title">隱私權聲明</h2>
+      <h2 class="title">個人資料保護暨隱私權聲明</h2>
       <section class="about-content">
         <AgreementSection />
       </section>
