@@ -142,7 +142,7 @@
             />
             <span>
               我已閱讀瞭解並同意本系
-              <a href="#" @click.prevent="openRules" class="rules-link">個人資料蒐集告知暨同意書</a>
+              <a href="#" @click.prevent="openRules" class="rules-link">個人資料保護暨隱私權聲明</a>
               之內容。
             </span>
           </label>
@@ -194,87 +194,80 @@
       <div v-if="showRulesModal" class="modal-overlay" @click.self="closeRules">
         <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
           <div class="modal-header">
-            <h2 id="rules-title">臺北市立大學資訊科學系個人資料蒐集告知暨同意書</h2>
+            <h2 id="rules-title">臺北市立大學資訊科學系個人資料保護暨隱私權聲明</h2>
             <button type="button" class="close-btn" @click="closeRules" aria-label="關閉">✕</button>
           </div>
           <div class="modal-body">
-            臺北市立大學資訊科學系(以下簡稱本系)，依個人資料保護法（以下簡稱個資法）第八條規定，告知下列事項，請您詳閱。
-            <ol class="rules-list" style="list-style-type: cjk-ideographic">
-              <li>
-                <strong>蒐集個人資料之目的：</strong
-                ><br />本系為執行資源利用與服務推廣相關業務所需，蒐集您的個人資料。
-              </li>
-              <li>
-                <strong>蒐集個人資料之類別：</strong>
-                <ol style="list-style-type: decimal; margin-top: 6px">
-                  <li>
-                    本系因執行業務蒐集您的個人資料包括中英文姓名、國民身分證統一編號、連絡電話、電子郵件地址、服務單位、借用教室紀錄等，詳如各項服務申請表。
-                  </li>
-                  <li>
-                    本系及電子資源廠商將使用 cookies 進行各項網路資源服務之管理及記錄，包括蒐集 IP
-                    位址、瀏覽網頁、使用檔案及時間等軌跡資料。
-                  </li>
-                </ol>
-              </li>
-              <li>
-                <strong>個人資料利用之期間、地區、對象與方式：</strong>
-                <ol style="list-style-type: decimal; margin-top: 6px">
-                  <li>
-                    本系於蒐集目的之存續期間或因執行業務所需保存期間內，得合理利用您的個人資料，利用地區不限。
-                  </li>
-                  <li>
-                    本系利用您的個人資料於蒐集目的宣告之各項業務執行，包括因業務執行所必須之各項聯繫與通知。
-                  </li>
-                  <li>
-                    本系利用各項網路資源服務使用紀錄，進行總體流量、使用行為研究及加值應用，以提昇網站服務品質，不針對個別使用者分析。
-                  </li>
-                </ol>
-              </li>
-              <li>
-                <strong>個人資料之提供：</strong>
-                <ol style="list-style-type: decimal; margin-top: 6px">
-                  <li>
-                    您可自由選擇是否提供相關個人資料，惟若拒絕提供個人資料，本系將無法提供相關服務。
-                  </li>
-                  <li>
-                    請依各項服務需求提供您本人正確、最新及完整的個人資料，若您的個人資料有任何異動，請主動向本系申請更正。
-                  </li>
-                  <li>
-                    若您提供錯誤、過時、不完整或具誤導性的資料，而損及您的相關權益，本系將不負相關賠償責任。
-                  </li>
-                </ol>
-              </li>
-              <li>
-                <strong>個人資料之保密：</strong
-                ><br />本系將善盡個人資料保護之責。如因天災、事變或其他不可抗力所致者，致您的個人資料被竊取、洩漏、竄改、遭其他侵害者，本系將於查明後以電話、電子郵件或網站公告等方法，擇適當方式通知您。
-              </li>
-              <li>
-                <strong>當事人就個人資料得行使之權利：</strong
-                ><br />您可依個資法第三條規定，就本系保有您的個人資料行使以下權利：
-                <ol style="list-style-type: decimal; margin-top: 6px; padding-left: 2em">
-                  <li>請求查詢或閱覽。</li>
-                  <li>請求製給複製本。</li>
-                  <li>請求補充或更正。</li>
-                  <li>
-                    請求停止蒐集、處理、利用或請求刪除，惟因本系執行業務所必須者，本系得不依請求為之。
-                  </li>
-                </ol>
-                若您欲執行上述權利，或有任何建議指教，請與本系連繫。
-                <br />
-                電話：886-2-23113040 #8362、8363 ，電子郵件：<a href="mailto:cs@go.utaipei.edu.tw"
-                  >cs@go.utaipei.edu.tw</a
-                >。本系個人資料保護申訴窗口為資訊科學系系辦。
-              </li>
-              <li>
-                <strong>同意書之效力：</strong>
-                <ol style="list-style-type: decimal; margin-top: 6px">
-                  <li>當您完成簽署時，即表示您已閱讀瞭解並同意本同意書的內容。</li>
-                  <li>
-                    本系保留隨時修改本同意書之權利，內容修改時將於本系網站公告。如您未於公告後一個月內提出異議或仍繼續使用本系相關服務，將視為您已同意並接受本系所更改之內容。
-                  </li>
-                </ol>
-              </li>
-            </ol>
+            <div class="agreement-content">
+              <p>
+                臺北市立大學資訊科學系（以下簡稱本系），依個人資料保護法（以下簡稱個資法）第八條規定，告知下列事項，請您詳閱。
+              </p>
+              <strong>一、 蒐集個人資料之目的</strong>
+              <p class="tab">本系為執行資源利用與服務推廣相關業務所需，蒐集您的個人資料。</p>
+              <strong>二、 蒐集個人資料之類別</strong>
+              <ol>
+                <li>
+                  本系因執行業務蒐集您的個人資料，包括中（英）文姓名、學號（或國民身分證統一編號）、聯絡電話、電子郵件地址、服務單位、使用系統之操作及申請紀錄等本系統及各子系統所需之資料。
+                </li>
+                <li>
+                  本系及電子資源廠商將使用 cookies 進行各項網路資源服務之管理及記錄，包括蒐集 IP
+                  位址、瀏覽網頁、使用檔案及時間等軌跡資料。
+                </li>
+              </ol>
+              <strong>三、 個人資料利用之期間、地區、對象與方式</strong>
+              <ol>
+                <li>
+                  本系於蒐集目的之存續期間或因執行業務所需保存期間內，得合理利用您的個人資料。除蒐集之目的涉及國際業務或活動外，本系僅於中華民國領域內利用您的個人資料。
+                </li>
+                <li>
+                  本系利用您的個人資料於蒐集目的宣告之各項業務執行，包括但不限於因業務執行所必須之各項聯繫與通知。
+                </li>
+                <li>
+                  本系利用各項網路資源服務使用紀錄，進行總體流量、使用行為研究及加值應用，以提昇網站服務品質，不針對個別使用者分析。
+                </li>
+              </ol>
+              <strong>四、 個人資料之提供</strong>
+              <ol>
+                <li>
+                  您可自由選擇是否提供相關個人資料，惟若拒絕提供個人資料，本系將無法提供相關服務。
+                </li>
+                <li>
+                  請依各項服務需求提供您本人正確、最新及完整的個人資料，若您的個人資料有任何異動，請主動向本系申請更正。
+                </li>
+                <li>
+                  若您提供錯誤、過時、不完整或具誤導性的資料，而損及您的相關權益，本系將不負相關賠償責任。
+                </li>
+              </ol>
+              <strong>五、個人資料之保密</strong>
+              <p class="tab">
+                本系將善盡個人資料保護之責。如因天災、事變或其他不可抗力所致者，致您的個人資料被竊取、洩漏、竄改、遭其他侵害者，本系將於查明後以電話、電子郵件或網站公告等方法，擇適當方式通知您。
+              </p>
+              <strong>六、當事人就個人資料得行使之權利</strong>
+              <p class="tab">您可依個資法第三條規定，就本系保有您的個人資料行使以下權利：</p>
+              <ol>
+                <li>請求查詢或閱覽。</li>
+                <li>請求製給複製本。</li>
+                <li>請求補充或更正。</li>
+                <li>
+                  請求停止蒐集、處理、利用或請求刪除，惟因本系執行業務所必須者，本系得不依請求為之。
+                </li>
+              </ol>
+              <p class="tab">
+                若您欲執行上述權利，或有任何建議指教，請與本系連繫。本系個人資料保護申訴窗口為本系辦公室。
+              </p>
+              <strong>七、 聲明之效力</strong>
+              <p class="tab">當您完成簽署時，即表示您已詳閱、瞭解並同意本聲明的內容。</p>
+              <p class="tab">
+                本系保留隨時修改本聲明之權利，內容修改時將於本系網站公告。如您未於公告後一個月內提出異議或仍繼續使用本系相關服務，將視為您已同意並接受本系所更改之內容。
+              </p>
+            </div>
+            <div class="agreement-info">
+              <p>
+                聲明更新時間：2025/11/01<br />
+                本系辦公室電話：<a href="tel:+886-2-23113040">02-2311-3040</a> #8362、8363<br />
+                本系辦公室電子郵件：<a href="mailto:cs@go.utaipei.edu.tw">cs@go.utaipei.edu.tw</a>
+              </p>
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="secondary" @click="closeRules">關閉</button>
@@ -779,6 +772,41 @@ input:disabled {
 }
 .rules-list strong {
   color: #1f2937;
+}
+
+.agreement-content p {
+  margin: 8px 0;
+  line-height: 1.7;
+}
+
+.agreement-content p.tab {
+  padding-left: 2em;
+  margin: 6px 0;
+}
+
+.agreement-content ol {
+  padding-left: 2.5em;
+  margin: 8px 0 12px;
+}
+
+.agreement-content ol li {
+  margin-bottom: 6px;
+  line-height: 1.7;
+}
+
+.agreement-info {
+  color: gray;
+  margin-top: 20px;
+  border-left: 2px solid lightgray;
+  padding-left: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.agreement-info a {
+  color: gray;
+  text-decoration: underline;
+  transition: color 0.15s ease;
 }
 
 .modal-footer {
