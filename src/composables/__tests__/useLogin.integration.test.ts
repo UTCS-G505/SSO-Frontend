@@ -38,6 +38,7 @@ const mockAuthStore = {
 const mockUserStore = {
   getProfile: vi.fn(),
   enabled: true as boolean,
+  privacy_agreed_at: null as string | null,
 }
 
 vi.mock('@/stores/authStore', () => ({
@@ -57,6 +58,7 @@ describe('Registration Validation - Integration Tests', () => {
     mockAuthStore.id = null
     mockAuthStore.accessToken = null
     mockUserStore.enabled = true
+    mockUserStore.privacy_agreed_at = null
   })
 
   describe('End-to-end registration flow', () => {
@@ -284,6 +286,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.accessToken = 'valid-token'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
       mockRoute.query = { redirect: 'https://external-app.example.com/sso/callback' }
 
       // Fill login form
@@ -316,6 +319,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.accessToken = 'valid-token'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
       mockRoute.query = {} // No redirect parameter
 
       // Fill login form
@@ -433,6 +437,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.accessToken = 'valid-token'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
       mockRoute.query = {
         redirect: 'https://external-app.example.com/sso/callback?state=abc123&return_to=/dashboard',
       }

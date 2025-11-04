@@ -39,6 +39,7 @@ const mockAuthStore = {
 const mockUserStore = {
   getProfile: vi.fn(),
   enabled: true as boolean,
+  privacy_agreed_at: null as string | null,
 }
 
 vi.mock('@/stores/authStore', () => ({
@@ -58,6 +59,7 @@ describe('useLogin - Registration Validation', () => {
     mockAuthStore.id = null
     mockAuthStore.accessToken = null
     mockUserStore.enabled = true
+    mockUserStore.privacy_agreed_at = null
   })
 
   describe('validateForm for registration', () => {
@@ -406,6 +408,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // Set redirect URL in route query
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
@@ -440,6 +443,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // No redirect URL in route query
       mockRoute.query = {}
@@ -508,6 +512,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // Set non-string redirect parameter
       mockRoute.query = { redirect: ['multiple', 'values'] }
@@ -542,6 +547,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // Set empty string redirect parameter
       mockRoute.query = { redirect: '' }
@@ -609,6 +615,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // Set internal route redirect parameter
       mockRoute.query = { redirect: '/users' }
@@ -643,6 +650,7 @@ describe('useLogin - Registration Validation', () => {
       mockAuthStore.accessToken = 'token123'
       mockUserStore.getProfile.mockResolvedValue(undefined)
       mockUserStore.enabled = true
+      mockUserStore.privacy_agreed_at = '2025-11-01T10:00:00+08:00'
 
       // Set redirect URL in route query
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
