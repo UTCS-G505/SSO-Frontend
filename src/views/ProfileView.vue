@@ -97,6 +97,30 @@
                   class="role-display"
                 />
               </div>
+              <div class="form-group">
+                <label for="privacyAgreedAt" class="icon-label"
+                  ><ShieldCheck class="field-icon" /> <span>隱私權政策同意時間</span></label
+                >
+                <input
+                  id="privacyAgreedAt"
+                  :value="
+                    userProfile.privacy_agreed_at
+                      ? new Date(userProfile.privacy_agreed_at).toLocaleString('zh-TW', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                          second: '2-digit',
+                          hour12: false,
+                        })
+                      : '未同意'
+                  "
+                  type="text"
+                  disabled
+                  class="role-display"
+                />
+              </div>
             </div>
           </form>
         </div>
@@ -120,6 +144,7 @@ import {
   Phone,
   Briefcase,
   Users,
+  ShieldCheck,
 } from 'lucide-vue-next'
 import AppHeader from '@/components/common/Header.vue'
 
@@ -136,6 +161,7 @@ const userProfile = ref({
   phone_number: userStore.phone_number,
   position: userStore.position,
   role: userStore.role,
+  privacy_agreed_at: userStore.privacy_agreed_at,
 })
 
 const toggleEdit = async () => {
@@ -149,6 +175,7 @@ const toggleEdit = async () => {
       phone_number: userStore.phone_number,
       position: userStore.position,
       role: userStore.role,
+      privacy_agreed_at: userStore.privacy_agreed_at,
     }
     isEditing.value = true
   }
@@ -181,6 +208,7 @@ onMounted(async () => {
     phone_number: userStore.phone_number,
     position: userStore.position,
     role: userStore.role,
+    privacy_agreed_at: userStore.privacy_agreed_at,
   }
 })
 </script>

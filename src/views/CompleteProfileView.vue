@@ -42,6 +42,31 @@
             </div>
           </div>
 
+          <div class="row">
+            <div class="field full">
+              <label for="privacyAgreedAt">隱私權政策同意時間</label>
+              <input
+                id="privacyAgreedAt"
+                :value="
+                  userStore.privacy_agreed_at
+                    ? new Date(userStore.privacy_agreed_at).toLocaleString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                      })
+                    : '未同意'
+                "
+                type="text"
+                disabled
+                class="disabled-field"
+              />
+            </div>
+          </div>
+
           <p v-if="errorText" class="error">{{ errorText }}</p>
 
           <div class="actions">
@@ -199,6 +224,12 @@ input {
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: #f9fafb;
+}
+.disabled-field {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-color: #cbd5e1 !important;
+  cursor: not-allowed;
 }
 .actions {
   display: flex;
