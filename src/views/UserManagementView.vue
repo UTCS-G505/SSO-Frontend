@@ -324,6 +324,23 @@
             </button>
           </div>
           <form @submit.prevent="saveUser" class="edit-form">
+            <div v-if="editForm.privacy_agreed_at" class="form-group">
+              <div class="privacy-notice">
+                已於
+                {{
+                  new Date(editForm.privacy_agreed_at).toLocaleString('zh-TW', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                  })
+                }}
+                簽署本系「個人資料保護暨隱私權聲明」
+              </div>
+            </div>
             <div class="form-group">
               <label for="edit-name">姓名</label>
               <input
@@ -401,6 +418,7 @@
                 disabled
               />
             </div>
+
             <div class="modal-actions">
               <button type="button" @click="closeEditModal" class="cancel-btn">取消</button>
               <button type="submit" :disabled="saving" class="save-btn">
@@ -494,6 +512,7 @@ interface User {
   position?: string
   role: UserRoleValue
   enabled?: boolean
+  privacy_agreed_at?: string | null
 }
 
 interface EditForm {
@@ -504,6 +523,7 @@ interface EditForm {
   position: string
   phone_number: string
   secondary_email: string
+  privacy_agreed_at?: string | null
 }
 
 interface CreateForm {
@@ -561,6 +581,7 @@ const editForm = ref<EditForm>({
   position: '',
   phone_number: '',
   secondary_email: '',
+  privacy_agreed_at: null,
 })
 const saving = ref(false)
 
@@ -766,6 +787,7 @@ const editUser = (user: User) => {
     position: user.position || '',
     phone_number: user.phone_number || '',
     secondary_email: user.secondary_email || '',
+    privacy_agreed_at: user.privacy_agreed_at || null,
   }
 }
 
@@ -779,6 +801,7 @@ const closeEditModal = () => {
     position: '',
     phone_number: '',
     secondary_email: '',
+    privacy_agreed_at: null,
   }
 }
 
@@ -1546,6 +1569,17 @@ onMounted(() => {
 .password-strength.strong,
 .password-match.match {
   color: #059669;
+}
+
+/* Privacy notice */
+.privacy-notice {
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #0c4a6e;
+  line-height: 1.5;
 }
 
 .modal-actions {
