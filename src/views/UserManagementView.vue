@@ -39,7 +39,9 @@
             title="刪除所選"
           >
             <Trash2 class="create-icon" />
-            <span class="btn-text">刪除所選<span v-if="selectedCount"> ({{ selectedCount }})</span></span>
+            <span class="btn-text"
+              >刪除所選<span v-if="selectedCount"> ({{ selectedCount }})</span></span
+            >
           </button>
           <button @click="refreshUsers" class="refresh-btn" :disabled="loading">
             <RefreshCw class="refresh-icon" :class="{ 'animate-spin': loading }" />
