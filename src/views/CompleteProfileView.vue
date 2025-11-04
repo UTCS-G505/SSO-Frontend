@@ -44,7 +44,7 @@
 
           <div class="row">
             <div class="field full">
-              <label for="privacyAgreedAt">隱私權政策同意時間</label>
+              <label for="privacyAgreedAt">隱私權聲明簽署時間</label>
               <input
                 id="privacyAgreedAt"
                 :value="

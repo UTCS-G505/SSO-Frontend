@@ -99,7 +99,7 @@
               </div>
               <div class="form-group">
                 <label for="privacyAgreedAt" class="icon-label"
-                  ><ShieldCheck class="field-icon" /> <span>隱私權政策同意時間</span></label
+                  ><ShieldCheck class="field-icon" /> <span>隱私權聲明簽屬時間</span></label
                 >
                 <input
                   id="privacyAgreedAt"
