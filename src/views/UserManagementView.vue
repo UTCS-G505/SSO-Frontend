@@ -30,7 +30,7 @@
           </select>
           <button @click="openCreateModal" class="create-btn">
             <UserPlus class="create-icon" />
-            新增用戶
+            <span class="btn-text">新增用戶</span>
           </button>
           <button
             @click="openBulkDeleteModal"
@@ -39,11 +39,11 @@
             title="刪除所選"
           >
             <Trash2 class="create-icon" />
-            刪除所選<span v-if="selectedCount"> ({{ selectedCount }})</span>
+            <span class="btn-text">刪除所選<span v-if="selectedCount"> ({{ selectedCount }})</span></span>
           </button>
           <button @click="refreshUsers" class="refresh-btn" :disabled="loading">
             <RefreshCw class="refresh-icon" :class="{ 'animate-spin': loading }" />
-            刷新
+            <span class="btn-text">刷新</span>
           </button>
         </div>
       </div>
@@ -1701,6 +1701,26 @@ onMounted(() => {
 
   .filters {
     justify-content: space-between;
+  }
+
+  /* Hide button text on mobile, only show icons */
+  .create-btn .btn-text,
+  .bulk-delete-btn .btn-text,
+  .refresh-btn .btn-text {
+    display: none;
+  }
+
+  .create-btn,
+  .bulk-delete-btn,
+  .refresh-btn {
+    padding: 0.75rem;
+    min-width: auto;
+  }
+
+  .create-icon,
+  .refresh-icon {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   /* Adjust table column widths for mobile */
