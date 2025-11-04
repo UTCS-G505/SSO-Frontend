@@ -184,15 +184,33 @@ const { toasts, removeToast } = useToast()
 /* Mobile responsive */
 @media (max-width: 640px) {
   .toast-container {
-    top: 16px;
+    top: max(16px, env(safe-area-inset-top));
     right: 16px;
     left: 16px;
-    max-width: none;
+    max-width: calc(100vw - 32px);
+    padding-top: 8px;
   }
 
   .toast {
     min-width: auto;
-    max-width: none;
+    max-width: 100%;
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+
+  .toast__title {
+    font-size: 13px;
+  }
+
+  .toast__message {
+    font-size: 12px;
+  }
+
+  .toast__content {
+    overflow: hidden;
+    word-break: break-word;
   }
 }
 </style>
