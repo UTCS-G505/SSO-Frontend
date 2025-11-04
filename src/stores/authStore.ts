@@ -144,6 +144,7 @@ export const useAuthStore = defineStore('auth', {
             secondary_email: secondary_email,
             phone_number: phone_number,
             position: position,
+            privacy_agreed_at: new Date().toISOString(),
           },
           {
             headers: {

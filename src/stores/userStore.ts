@@ -13,6 +13,7 @@ interface User {
   position: string | null
   role: UserRoleValue | null
   enabled: boolean | null
+  privacy_agreed_at: string | null
 }
 
 export const useUserStore = defineStore('user', {
@@ -25,6 +26,7 @@ export const useUserStore = defineStore('user', {
     position: null,
     role: null,
     enabled: null,
+    privacy_agreed_at: null,
   }),
 
   getters: {},
@@ -54,7 +56,14 @@ export const useUserStore = defineStore('user', {
 
       const payload = updated ? { ...this.$state, ...updated } : this.$state
 
-      const response = await apiClient.patch<ApiResponse>(`/user/update/${authStore.id}`, payload)
+      const response = await apiClient.patch<ApiResponse>(`/user/update/${authStore.id}`, {
+        name: payload.name,
+        primary_email: payload.primary_email,
+        secondary_email: payload.secondary_email,
+        phone_number: payload.phone_number,
+        position: payload.position,
+        privacy_agreed_at: payload.privacy_agreed_at,
+      })
 
       const result = response.data
       if (result && result.code === 0) {
@@ -76,6 +85,7 @@ export const useUserStore = defineStore('user', {
         position: null,
         role: null,
         enabled: null,
+        privacy_agreed_at: null,
       }
     },
   },
