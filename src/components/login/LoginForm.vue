@@ -148,14 +148,6 @@
           </label>
         </div>
 
-        <div class="form-options" v-if="!isRegisterMode">
-          <label class="remember-me">
-            <input type="checkbox" :checked="formData.rememberMe" @change="updateRememberMe" />
-            記住我
-          </label>
-          <a href="#" class="forgot-password">忘記密碼？</a>
-        </div>
-
         <button type="submit" class="login-btn" :disabled="isLoading">
           {{
             isLoading
@@ -291,7 +283,6 @@ interface LoginFormData {
   secondary_email: string
   phone_number: string
   position: string
-  rememberMe: boolean
   agreedRules: boolean
 }
 
@@ -312,7 +303,6 @@ interface Emits {
   'update:phone-number': [value: string]
   'update:position': [value: string]
   'update:confirm-password': [value: string]
-  'update:rememberMe': [value: boolean]
   'update:agreed-rules': [value: boolean]
   submit: [data: LoginFormData]
   'toggle-mode': []
@@ -354,10 +344,6 @@ const updatePosition = (event: Event) => {
 
 const updateConfirmPassword = (value: string) => {
   emit('update:confirm-password', value)
-}
-
-const updateRememberMe = (event: Event) => {
-  emit('update:rememberMe', (event.target as HTMLInputElement).checked)
 }
 
 const updateAgreedRules = (event: Event) => {
@@ -488,67 +474,9 @@ input:disabled {
   cursor: not-allowed;
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.remember-me {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: #374151;
-  cursor: pointer;
-}
-
-.remember-me input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
-  margin: 0;
-  appearance: none;
-  border: 2px solid #d1d5db;
-  border-radius: 3px;
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-  cursor: pointer;
-  position: relative;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
-}
-
-.remember-me input[type='checkbox']:checked {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  border-color: #3b82f6;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.remember-me input[type='checkbox']:checked::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-}
-
-.forgot-password {
-  color: #9ca3af;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.forgot-password:hover {
-  color: #6b7280;
-  text-decoration: underline;
-}
-
 .login-btn {
   width: 100%;
+  margin-top: 16px;
   padding: 12px 16px;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e40af 100%);
   color: white;
