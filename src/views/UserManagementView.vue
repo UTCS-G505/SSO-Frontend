@@ -325,7 +325,7 @@
           </div>
           <form @submit.prevent="saveUser" class="edit-form">
             <div v-if="editForm.privacy_agreed_at" class="form-group">
-              <div class="privacy-notice">
+              <div class="privacy-notice privacy-agreed">
                 已於
                 {{
                   new Date(editForm.privacy_agreed_at).toLocaleString('zh-TW', {
@@ -339,6 +339,12 @@
                   })
                 }}
                 簽署本系「個人資料保護暨隱私權聲明」
+              </div>
+            </div>
+            <div v-else class="form-group">
+              <div class="privacy-notice privacy-not-agreed">
+                <AlertTriangle class="warning-icon" />
+                用戶尚未簽署「個人資料保護暨隱私權聲明」
               </div>
             </div>
             <div class="form-group">
@@ -1577,12 +1583,31 @@ onMounted(() => {
 /* Privacy notice */
 .privacy-notice {
   padding: 0.75rem;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
   border-radius: 0.5rem;
   font-size: 0.875rem;
-  color: #0c4a6e;
   line-height: 1.5;
+}
+
+.privacy-notice.privacy-agreed {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0c4a6e;
+}
+
+.privacy-notice.privacy-not-agreed {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.privacy-notice .warning-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
 }
 
 .modal-actions {
