@@ -123,8 +123,8 @@ export function useLogin() {
 
         if (authStore.id && authStore.accessToken) {
           await userStore.getProfile()
-          // If user is not enabled, force them to complete profile first
-          if (userStore.enabled === false) {
+          // If user is not enabled or didn't agree, force them to complete profile first
+          if (userStore.enabled === false || !userStore.privacy_agreed_at) {
             router.push({ name: 'complete-profile' })
             return
           }
