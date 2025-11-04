@@ -157,6 +157,9 @@ export const useAdminStore = defineStore('admin', {
           throw new Error('使用者未經過身份驗證')
         }
 
+        const now = new Date()
+        const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000)
+        const last_updated = utc8.toISOString().replace('Z', '+08:00')
         const userIndex = this.users.findIndex((user) => user.id === userId)
         const response = await apiClient.patch<ApiResponse>(`/user/update/${userId}`, {
           id: this.users[userIndex].id,
@@ -167,7 +170,7 @@ export const useAdminStore = defineStore('admin', {
           position: this.users[userIndex].position,
           role: this.users[userIndex].role,
           enabled: false,
-          last_updated: new Date().toISOString(),
+          last_updated: last_updated,
         })
 
         if (response.data.code === 0) {

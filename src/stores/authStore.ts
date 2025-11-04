@@ -134,6 +134,10 @@ export const useAuthStore = defineStore('auth', {
       position: string,
     ): Promise<void> {
       try {
+        const now = new Date()
+        const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000)
+        const privacy_agreed_at = utc8.toISOString().replace('Z', '+08:00')
+
         const response = await apiClient.post<ApiResponse>(
           '/auth/register',
           {
@@ -144,7 +148,7 @@ export const useAuthStore = defineStore('auth', {
             secondary_email: secondary_email,
             phone_number: phone_number,
             position: position,
-            privacy_agreed_at: new Date().toISOString(),
+            privacy_agreed_at: privacy_agreed_at,
           },
           {
             headers: {

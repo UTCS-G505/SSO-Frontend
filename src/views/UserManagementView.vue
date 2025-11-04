@@ -810,6 +810,9 @@ const saveUser = async () => {
 
   saving.value = true
   try {
+    const now = new Date()
+    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000)
+    const last_updated = utc8.toISOString().replace('Z', '+08:00')
     await adminStore.updateUser(editingUser.value.id, {
       id: editForm.value.id,
       name: editForm.value.name,
@@ -818,7 +821,7 @@ const saveUser = async () => {
       position: editForm.value.position || undefined,
       phone_number: editForm.value.phone_number || undefined,
       secondary_email: editForm.value.secondary_email || undefined,
-      last_updated: new Date().toISOString(),
+      last_updated: last_updated,
     })
 
     success('更新成功', '用戶資料已成功更新')
