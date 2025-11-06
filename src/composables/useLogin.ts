@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { PASSWORD_MIN_LENGTH, isValidPassword } from '@/utils/validation'
+import { PASSWORD_MIN_LENGTH, isValidPassword, isValidTaiwanId } from '@/utils/validation'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
@@ -64,6 +64,10 @@ export function useLogin() {
     }
 
     if (isRegisterMode.value) {
+      if (!isValidTaiwanId(formData.value.id)) {
+        error.value = '請輸入有效的身分證字號'
+        return false
+      }
       if (!formData.value.primary_email) {
         error.value = '註冊時必須輸入主要電子郵件'
         return false

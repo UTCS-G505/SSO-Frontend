@@ -22,7 +22,7 @@
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
-          <label v-if="isRegisterMode" for="id">帳號</label>
+          <label v-if="isRegisterMode" for="id">帳號 (身分證字號)</label>
           <label v-else for="id">學號 / 帳號</label>
           <input
             id="id"
@@ -30,9 +30,19 @@
             @input="updateId"
             type="text"
             required
-            placeholder="請輸入帳號"
+            :placeholder="isRegisterMode ? '請輸入身份證字號' : '請輸入帳號'"
             :disabled="isLoading"
+            maxlength="10"
           />
+          <p
+            v-if="isRegisterMode && formData.id && !isIdValid"
+            class="password-hint error id-error"
+          >
+            ✗ 請輸入有效的身分證字號
+          </p>
+          <p v-else-if="isRegisterMode && formData.id && isIdValid" class="password-hint success id-success">
+            ✓ 身分證字號格式正確
+          </p>
         </div>
 
         <div v-if="isRegisterMode" class="form-group">
@@ -271,8 +281,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import PasswordInput from './PasswordInput.vue'
+import { isValidTaiwanId } from '@/utils/validation'
 
 interface LoginFormData {
   id: string
@@ -313,6 +324,15 @@ const emit = defineEmits<Emits>()
 
 // Modal state
 const showRulesModal = ref(false)
+
+// ID validation for registration
+const isIdValid = computed(() => {
+  // Only validate in register mode and when ID is not empty
+  if (!props.isRegisterMode || !props.formData.id) {
+    return true
+  }
+  return isValidTaiwanId(props.formData.id)
+})
 
 const updateId = (event: Event) => {
   emit('update:id', (event.target as HTMLInputElement).value)
@@ -782,5 +802,14 @@ input:disabled {
 }
 .password-hint.error {
   color: #dc2626;
+}
+.password-hint.success {
+  color: #059669;
+}
+.id-success {
+  margin-top: 4px;
+}
+.id-error {
+  margin-top: 4px;
 }
 </style>
