@@ -607,17 +607,26 @@ const normalizedSearchQuery = computed(() => searchQuery.value.trim().toLowerCas
 const filteredUsers = computed(() => {
   const q = normalizedSearchQuery.value
   const roleFilter = selectedRole.value
-  return users.value.filter((user) => {
-    const matchesSearch =
-      !q ||
-      user.name?.toLowerCase().includes(q) ||
-      user.id.toLowerCase().includes(q) ||
-      user.primary_email?.toLowerCase().includes(q)
+  return users.value
+    .filter((user) => {
+      const matchesSearch =
+        !q ||
+        user.name?.toLowerCase().includes(q) ||
+        user.id.toLowerCase().includes(q) ||
+        user.primary_email?.toLowerCase().includes(q)
 
-    const matchesRole = !roleFilter || user.role.toString() === roleFilter
+      const matchesRole = !roleFilter || user.role.toString() === roleFilter
 
-    return matchesSearch && matchesRole
-  })
+      return matchesSearch && matchesRole
+    })
+    .sort((a, b) => {
+      // First sort by role
+      if (a.role !== b.role) {
+        return a.role - b.role
+      }
+      // Then sort by id
+      return a.id.localeCompare(b.id)
+    })
 })
 
 const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage.value))
