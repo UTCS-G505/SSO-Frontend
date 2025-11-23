@@ -122,6 +122,10 @@ onMounted(() => {
   margin-bottom: 1.5rem;
 }
 
+.developer-description {
+  white-space: pre-wrap;
+}
+
 .github-link {
   margin-top: 0.5rem;
 }
