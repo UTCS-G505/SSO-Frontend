@@ -42,7 +42,8 @@ const classroom_borrow = createService('教室借用系統')
 export const developerConfig: DeveloperConfig[] = [
   {
     name: '蔡欣妤',
-    description: '身為偶爾才出現的幽靈（？學姊，看著大家把想法一步步變成畫面，真的覺得你們超棒！從第一行程式碼到現在的成果，都是你們努力（賣肝）換來的。希望我抓 bug 的時候，大家不要想殺我XD',
+    description:
+      '身為偶爾才出現的幽靈（？學姊，看著大家把想法一步步變成畫面，真的覺得你們超棒！從第一行程式碼到現在的成果，都是你們努力（賣肝）換來的。希望我抓 bug 的時候，大家不要想殺我XD',
     avatar: new URL('/src/assets/avatars/U11016038.jpeg', import.meta.url),
     github: 'hsinyu2527',
     jobs: [
@@ -161,7 +162,8 @@ export const developerConfig: DeveloperConfig[] = [
   },
   {
     name: '張哲維',
-    description: '剛剛去麥當勞\n跟店員說我要無鹽的薯條\n結果拿到的竟然是有鹽的\n去跟店員反應後\n店員靠在我耳邊對我說\n「怎麼樣，很無言對吧。」',
+    description:
+      '剛剛去麥當勞\n跟店員說我要無鹽的薯條\n結果拿到的竟然是有鹽的\n去跟店員反應後\n店員靠在我耳邊對我說\n「怎麼樣，很無言對吧。」',
     github: 'cjw931027',
     jobs: [classroom_borrow({ frontend: true })],
   },
