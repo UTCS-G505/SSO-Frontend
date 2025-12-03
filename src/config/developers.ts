@@ -75,7 +75,7 @@ export const developerConfig: DeveloperConfig[] = [
   {
     name: '陳佳筠',
     description: "Don't give up and keep trying💪",
-    avatar: new URL('/src/assets/avatars/U11316010.png', import.meta.url),
+    avatar: new URL('/src/assets/avatars/U11316010.PNG', import.meta.url),
     github: 'Doreen-123',
     jobs: [locker_borrow({ frontend: true })],
   },
