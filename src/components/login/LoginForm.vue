@@ -40,7 +40,10 @@
           >
             ✗ 請輸入有效的身分證字號
           </p>
-          <p v-else-if="isRegisterMode && formData.id && isIdValid" class="password-hint success id-success">
+          <p
+            v-else-if="isRegisterMode && formData.id && isIdValid"
+            class="password-hint success id-success"
+          >
             ✓ 身分證字號格式正確
           </p>
         </div>

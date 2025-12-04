@@ -125,24 +125,92 @@ const goHome = () => {
   background: #2563eb;
 }
 
+/* Tablet and smaller desktop */
+@media (max-width: 768px) {
+  .not-found-content {
+    padding: 2rem 1.5rem;
+    max-width: 100%;
+  }
+
+  .error-title {
+    font-size: 1.75rem;
+  }
+
+  .error-message {
+    font-size: 0.9375rem;
+    max-width: 100%;
+  }
+}
+
+/* Mobile devices */
 @media (max-width: 640px) {
   .not-found-content {
-    padding: 2rem 1rem;
-    margin: 1rem;
+    padding: 1.5rem 1rem;
+    justify-content: flex-start;
+    padding-top: 3rem;
+  }
+
+  .error-icon {
+    margin-bottom: 1.5rem;
+  }
+
+  .info-circle {
+    width: 64px;
+    height: 64px;
+  }
+
+  .info-circle :deep(svg) {
+    width: 28px;
+    height: 28px;
   }
 
   .error-title {
     font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .error-message {
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8125rem;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .error-actions {
+    width: 100%;
+    padding: 0 1rem;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 375px) {
+  .not-found-content {
+    padding: 1rem 0.75rem;
+    padding-top: 2rem;
   }
 
   .info-circle {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
   }
 
   .info-circle :deep(svg) {
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .error-title {
+    font-size: 1.25rem;
+  }
+
+  .error-message {
+    font-size: 0.8125rem;
   }
 }
 </style>
