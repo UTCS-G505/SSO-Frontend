@@ -138,7 +138,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -160,7 +160,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: '', // Missing name
         password: 'password123',
         confirmPassword: 'password123',
@@ -182,7 +182,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: '', // Missing confirm password
@@ -204,7 +204,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'differentpassword', // Mismatched passwords
@@ -226,7 +226,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: 'Test User',
         password: '1234567', // Password too short (7 characters)
         confirmPassword: '1234567',
@@ -248,7 +248,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        id: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',

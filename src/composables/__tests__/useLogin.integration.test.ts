@@ -88,7 +88,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.register.mockResolvedValue(undefined)
 
       // Fill form with valid data
-      updateId('testuser')
+      updateId('T112663836')
       updateName('Test User')
       updatePassword('password123')
       updateConfirmPassword('password123')
@@ -103,7 +103,7 @@ describe('Registration Validation - Integration Tests', () => {
 
       // Verify the register method was called with correct parameters
       expect(mockAuthStore.register).toHaveBeenCalledWith(
-        'testuser',
+        'T112663836',
         'Test User',
         'password123',
         'test@example.com',
@@ -118,7 +118,7 @@ describe('Registration Validation - Integration Tests', () => {
       expect(isRegisterMode.value).toBe(false)
 
       // ID should be preserved for login, other fields cleared
-      expect(formData.value.id).toBe('testuser')
+      expect(formData.value.id).toBe('T112663836')
       expect(formData.value.name).toBe('')
       expect(formData.value.password).toBe('')
     })
@@ -144,7 +144,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.register.mockRejectedValue(new Error('註冊失敗'))
 
       // Fill form with valid data
-      updateId('testuser')
+      updateId('T112663836')
       updateName('Test User')
       updatePassword('password123')
       updateConfirmPassword('password123')
@@ -195,7 +195,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = true
 
       // Test scenario 1: Password too short
-      updateId('testuser')
+      updateId('T112663836')
       updateName('Test User')
       updatePassword('1234567') // 7 characters
       updateConfirmPassword('1234567')
@@ -245,7 +245,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = true
 
       // Fill form with some data, but with a validation error (short password)
-      updateId('testuser')
+      updateId('T112663836')
       updateName('Test User')
       updatePassword('short') // Too short
       updateConfirmPassword('short')
@@ -260,7 +260,7 @@ describe('Registration Validation - Integration Tests', () => {
 
       // Form data should be preserved even after validation error
       expect(error.value).toBe('密碼長度必須至少 8 個字元')
-      expect(formData.value.id).toBe('testuser')
+      expect(formData.value.id).toBe('T112663836')
       expect(formData.value.name).toBe('Test User')
       expect(formData.value.password).toBe('short')
       expect(formData.value.confirmPassword).toBe('short')
