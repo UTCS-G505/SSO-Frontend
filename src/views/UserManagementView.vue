@@ -825,9 +825,7 @@ const saveUser = async () => {
 
   saving.value = true
   try {
-    const now = new Date()
-    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000)
-    const last_updated = utc8.toISOString().replace('Z', '+08:00')
+    const last_updated = new Date().toLocaleString('sv-SE')
     await adminStore.updateUser(editingUser.value.id, {
       id: editForm.value.id,
       name: editForm.value.name,

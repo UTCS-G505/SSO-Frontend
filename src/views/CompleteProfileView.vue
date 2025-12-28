@@ -208,9 +208,7 @@ const validate = () => {
 const agreeToPrivacy = async () => {
   agreeing.value = true
   try {
-    const now = new Date()
-    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000)
-    const privacy_agreed_at = utc8.toISOString().replace('Z', '+08:00')
+    const privacy_agreed_at = new Date().toLocaleString('sv-SE')
     await userStore.updateProfile({
       privacy_agreed_at: privacy_agreed_at,
     })
