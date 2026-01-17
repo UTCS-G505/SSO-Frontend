@@ -233,7 +233,7 @@ const submit = async () => {
   loading.value = true
   try {
     await userStore.updateProfile({
-      id: userStore.id!,
+      account: userStore.account!,
       name: form.name,
       primary_email: form.primary_email,
       secondary_email: form.secondary_email,

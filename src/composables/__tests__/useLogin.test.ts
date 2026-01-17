@@ -32,7 +32,7 @@ vi.mock('vue-router', () => ({
 const mockAuthStore = {
   register: vi.fn(),
   login: vi.fn(),
-  id: null as string | null,
+  account: null as string | null,
   accessToken: null as string | null,
 }
 
@@ -70,7 +70,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Test with empty form
       formData.value = {
-        id: '',
+        account: '',
         name: '',
         password: '',
         confirmPassword: '',
@@ -85,7 +85,7 @@ describe('useLogin - Registration Validation', () => {
       await login()
 
       // Should fail validation for missing required fields
-      expect(formData.value.id).toBe('')
+      expect(formData.value.account).toBe('')
       expect(error.value).toBe('請填寫所有欄位')
     })
 
@@ -94,7 +94,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: '', // Missing id
+        account: '', // Missing id
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -116,7 +116,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         name: 'Test User',
         password: '', // Missing password
         confirmPassword: 'password123',
@@ -138,7 +138,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -160,7 +160,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: '', // Missing name
         password: 'password123',
         confirmPassword: 'password123',
@@ -182,7 +182,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: '', // Missing confirm password
@@ -204,7 +204,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'differentpassword', // Mismatched passwords
@@ -226,7 +226,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: 'Test User',
         password: '1234567', // Password too short (7 characters)
         confirmPassword: '1234567',
@@ -248,7 +248,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'T112663836',
+        account: 'T112663836',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -270,7 +270,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -284,7 +284,7 @@ describe('useLogin - Registration Validation', () => {
 
       // We can't easily test the actual registration process without more complex mocking
       // But we can verify that the form data is set correctly for a valid case
-      expect(formData.value.id).toBe('testuser')
+      expect(formData.value.account).toBe('testuser')
       expect(formData.value.name).toBe('Test User')
       expect(formData.value.password).toBe('password123')
       expect(formData.value.confirmPassword).toBe('password123')
@@ -300,7 +300,7 @@ describe('useLogin - Registration Validation', () => {
 
       isRegisterMode.value = true
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         name: 'Test User',
         password: 'password123',
         confirmPassword: 'password123',
@@ -323,7 +323,7 @@ describe('useLogin - Registration Validation', () => {
     it('should update form data correctly', () => {
       const {
         formData,
-        updateId,
+        updateAccount,
         updateName,
         updatePassword,
         updateConfirmPassword,
@@ -335,8 +335,8 @@ describe('useLogin - Registration Validation', () => {
         updateAgreedRules,
       } = useLogin()
 
-      updateId('newuser')
-      expect(formData.value.id).toBe('newuser')
+      updateAccount('newuser')
+      expect(formData.value.account).toBe('newuser')
 
       updateName('New User')
       expect(formData.value.name).toBe('New User')
@@ -383,17 +383,17 @@ describe('useLogin - Registration Validation', () => {
     })
 
     it('should clear form data when switching modes', () => {
-      const { formData, toggleMode, updateId, updateName } = useLogin()
+      const { formData, toggleMode, updateAccount, updateName } = useLogin()
 
-      updateId('testuser')
+      updateAccount('testuser')
       updateName('Test User')
 
-      expect(formData.value.id).toBe('testuser')
+      expect(formData.value.account).toBe('testuser')
       expect(formData.value.name).toBe('Test User')
 
       toggleMode()
 
-      expect(formData.value.id).toBe('')
+      expect(formData.value.account).toBe('')
       expect(formData.value.name).toBe('')
     })
   })
@@ -415,7 +415,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -450,7 +450,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -484,7 +484,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -519,7 +519,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -554,7 +554,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -586,7 +586,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'wrongpassword',
         name: '',
         confirmPassword: '',
@@ -622,7 +622,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',
@@ -657,7 +657,7 @@ describe('useLogin - Registration Validation', () => {
 
       // Setup valid login form
       formData.value = {
-        id: 'testuser',
+        account: 'testuser',
         password: 'password123',
         name: '',
         confirmPassword: '',

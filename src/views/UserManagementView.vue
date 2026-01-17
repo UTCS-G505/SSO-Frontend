@@ -93,17 +93,17 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="user in paginatedUsers" :key="user.id" class="user-row">
+              <tr v-for="user in paginatedUsers" :key="user.account" class="user-row">
                 <td class="select-cell">
                   <input
                     type="checkbox"
-                    :checked="selectedUserIds.has(user.id)"
+                    :checked="selectedUserIds.has(user.account)"
                     @change="toggleUserSelection(user)"
                     :disabled="!canModify(user)"
                     :title="!canModify(user) ? '只有管理員可以選擇/刪除管理員' : '選擇此用戶'"
                   />
                 </td>
-                <td class="user-id" :title="user.id">{{ user.id }}</td>
+                <td class="user-id" :title="user.account">{{ user.account }}</td>
                 <td class="user-name" :title="user.name || '-'">{{ user.name || '-' }}</td>
                 <td class="user-email" :title="user.primary_email || '-'">
                   {{ user.primary_email || '-' }}
@@ -191,13 +191,13 @@
           </div>
           <form @submit.prevent="createUser" class="edit-form">
             <div class="form-group">
-              <label for="create-id">用戶ID *</label>
+              <label for="create-account">用戶帳號 *</label>
               <input
-                id="create-id"
-                v-model="createForm.id"
+                id="create-account"
+                v-model="createForm.account"
                 type="text"
                 class="form-input"
-                placeholder="請輸入用戶ID"
+                placeholder="請輸入用戶帳號"
                 required
               />
             </div>
@@ -360,10 +360,10 @@
               />
             </div>
             <div class="form-group">
-              <label for="edit-id">用戶ID</label>
+              <label for="edit-account">用戶帳號</label>
               <input
-                id="edit-id"
-                v-model="editForm.id"
+                id="edit-account"
+                v-model="editForm.account"
                 type="text"
                 class="form-input"
                 required
@@ -511,6 +511,7 @@ defineOptions({
 // Types
 interface User {
   id: string
+  account: string
   name: string
   primary_email: string
   secondary_email?: string
@@ -522,7 +523,7 @@ interface User {
 }
 
 interface EditForm {
-  id: string
+  account: string
   name: string
   primary_email: string
   role: UserRoleValue
@@ -533,7 +534,7 @@ interface EditForm {
 }
 
 interface CreateForm {
-  id: string
+  account: string
   name: string
   primary_email: string
   password: string
@@ -564,7 +565,7 @@ const headerCheckbox = ref<HTMLInputElement | null>(null)
 const creatingUser = ref(false)
 const MIN_PASSWORD_LENGTH = 8
 const emptyCreateForm = (): CreateForm => ({
-  id: '',
+  account: '',
   name: '',
   primary_email: '',
   password: '',
@@ -580,7 +581,7 @@ const creating = ref(false)
 // Edit modal
 const editingUser = ref<User | null>(null)
 const editForm = ref<EditForm>({
-  id: '',
+  account: '',
   name: '',
   primary_email: '',
   role: USER_ROLES.GUEST,
@@ -612,7 +613,7 @@ const filteredUsers = computed(() => {
       const matchesSearch =
         !q ||
         user.name?.toLowerCase().includes(q) ||
-        user.id.toLowerCase().includes(q) ||
+        user.account.toLowerCase().includes(q) ||
         user.primary_email?.toLowerCase().includes(q)
 
       const matchesRole = !roleFilter || user.role.toString() === roleFilter
@@ -624,8 +625,8 @@ const filteredUsers = computed(() => {
       if (a.role !== b.role) {
         return a.role - b.role
       }
-      // Then sort by id
-      return a.id.localeCompare(b.id)
+      // Then sort by account
+      return a.account.localeCompare(b.account)
     })
 })
 
@@ -639,7 +640,7 @@ const paginatedUsers = computed(() => {
 
 // Selectable IDs on current page (respect admin restriction)
 const paginatedSelectableIds = computed(() =>
-  paginatedUsers.value.filter((u) => canModify(u)).map((u) => u.id),
+  paginatedUsers.value.filter((u) => canModify(u)).map((u) => u.account),
 )
 const paginatedSelectableCount = computed(() => paginatedSelectableIds.value.length)
 const allSelectableOnPageSelected = computed(
@@ -696,10 +697,10 @@ const refreshUsers = () => {
 
 // Selection handlers
 const toggleUserSelection = (user: User) => {
-  const id = user.id
+  const account = user.account
   const next = new Set(selectedUserIds.value)
-  if (next.has(id)) next.delete(id)
-  else next.add(id)
+  if (next.has(account)) next.delete(account)
+  else next.add(account)
   selectedUserIds.value = next
 }
 
@@ -747,7 +748,7 @@ const closeCreateModal = () => {
 
 const createUser = async () => {
   if (
-    !createForm.value.id ||
+    !createForm.value.account ||
     !createForm.value.name ||
     !createForm.value.primary_email ||
     !createForm.value.password ||
@@ -772,7 +773,7 @@ const createUser = async () => {
   creating.value = true
   try {
     await adminStore.createUser({
-      id: createForm.value.id,
+      account: createForm.value.account,
       name: createForm.value.name,
       primary_email: createForm.value.primary_email,
       password: createForm.value.password,
@@ -795,7 +796,7 @@ const createUser = async () => {
 const editUser = (user: User) => {
   editingUser.value = user
   editForm.value = {
-    id: user.id || '',
+    account: user.account || '',
     name: user.name || '',
     primary_email: user.primary_email || '',
     role: user.role,
@@ -809,7 +810,7 @@ const editUser = (user: User) => {
 const closeEditModal = () => {
   editingUser.value = null
   editForm.value = {
-    id: '',
+    account: '',
     name: '',
     primary_email: '',
     role: USER_ROLES.GUEST,
@@ -827,7 +828,7 @@ const saveUser = async () => {
   try {
     const last_updated = new Date().toLocaleString('sv-SE')
     await adminStore.updateUser(editingUser.value.id, {
-      id: editForm.value.id,
+      account: editForm.value.account,
       name: editForm.value.name,
       primary_email: editForm.value.primary_email,
       role: editForm.value.role,

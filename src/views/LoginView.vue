@@ -8,7 +8,7 @@
         :error="error"
         :success="success"
         :is-register-mode="isRegisterMode"
-        @update:id="updateId"
+        @update:account="updateAccount"
         @update:name="updateName"
         @update:password="updatePassword"
         @update:primary-email="updatePrimaryEmail"
@@ -37,7 +37,7 @@ const {
   isRegisterMode,
   login,
   toggleMode,
-  updateId,
+  updateAccount,
   updateName,
   updatePassword,
   updatePrimaryEmail,

@@ -6,6 +6,7 @@ import type { ApiResponse } from '@/types/api'
 
 interface User {
   id: string
+  account: string
   name: string
   primary_email: string
   secondary_email?: string
@@ -17,7 +18,7 @@ interface User {
 }
 
 interface CreateUserData {
-  id: string
+  account: string
   name: string
   primary_email: string
   password: string
@@ -74,7 +75,7 @@ export const useAdminStore = defineStore('admin', {
       }
     },
 
-    async createUser(newUser: CreateUserData): Promise<User> {
+    async createUser(newUser: CreateUserData): Promise<void> {
       try {
         const authStore = useAuthStore()
 
@@ -85,8 +86,7 @@ export const useAdminStore = defineStore('admin', {
         const response = await apiClient.post<ApiResponse<User>>('/user/create', newUser)
 
         if (response.data.code === 0) {
-          this.users.push(newUser)
-          return newUser
+          await this.getAllUsers()
         } else {
           throw new Error(response.data.message || '創建用戶失敗')
         }
@@ -132,7 +132,6 @@ export const useAdminStore = defineStore('admin', {
         }
 
         const response = await apiClient.post<ApiResponse>(`/user/activate/${userId}`)
-
         if (response.data.code === 0) {
           // Update user status in local state
           const userIndex = this.users.findIndex((user) => user.id === userId)
@@ -160,7 +159,7 @@ export const useAdminStore = defineStore('admin', {
         const last_updated = new Date().toLocaleString('sv-SE')
         const userIndex = this.users.findIndex((user) => user.id === userId)
         const response = await apiClient.patch<ApiResponse>(`/user/update/${userId}`, {
-          id: this.users[userIndex].id,
+          account: this.users[userIndex].account,
           name: this.users[userIndex].name,
           primary_email: this.users[userIndex].primary_email,
           secondary_email: this.users[userIndex].secondary_email,

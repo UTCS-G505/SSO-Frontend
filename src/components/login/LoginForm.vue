@@ -22,12 +22,12 @@
 
       <form @submit.prevent="handleSubmit" class="login-form">
         <div class="form-group">
-          <label v-if="isRegisterMode" for="id">帳號 (身分證字號)</label>
-          <label v-else for="id">學號 / 帳號</label>
+          <label v-if="isRegisterMode" for="account">帳號 (身分證字號)</label>
+          <label v-else for="account">學號 / 帳號</label>
           <input
-            id="id"
-            :value="formData.id"
-            @input="updateId"
+            id="account"
+            :value="formData.account"
+            @input="updateAccount"
             type="text"
             required
             :placeholder="isRegisterMode ? '請輸入身份證字號' : '請輸入帳號'"
@@ -35,13 +35,13 @@
             maxlength="10"
           />
           <p
-            v-if="isRegisterMode && formData.id && !isIdValid"
+            v-if="isRegisterMode && formData.account && !isAccountValid"
             class="password-hint error id-error"
           >
             ✗ 請輸入有效的身分證字號
           </p>
           <p
-            v-else-if="isRegisterMode && formData.id && isIdValid"
+            v-else-if="isRegisterMode && formData.account && isAccountValid"
             class="password-hint success id-success"
           >
             ✓ 身分證字號格式正確
@@ -289,7 +289,7 @@ import PasswordInput from './PasswordInput.vue'
 import { isValidTaiwanId } from '@/utils/validation'
 
 interface LoginFormData {
-  id: string
+  account: string
   name: string
   password: string
   confirmPassword: string
@@ -309,7 +309,7 @@ interface Props {
 }
 
 interface Emits {
-  'update:id': [value: string]
+  'update:account': [value: string]
   'update:name': [value: string]
   'update:password': [value: string]
   'update:primary-email': [value: string]
@@ -329,16 +329,16 @@ const emit = defineEmits<Emits>()
 const showRulesModal = ref(false)
 
 // ID validation for registration
-const isIdValid = computed(() => {
-  // Only validate in register mode and when ID is not empty
-  if (!props.isRegisterMode || !props.formData.id) {
+const isAccountValid = computed(() => {
+  // Only validate in register mode and when account is not empty
+  if (!props.isRegisterMode || !props.formData.account) {
     return true
   }
-  return isValidTaiwanId(props.formData.id)
+  return isValidTaiwanId(props.formData.account)
 })
 
-const updateId = (event: Event) => {
-  emit('update:id', (event.target as HTMLInputElement).value)
+const updateAccount = (event: Event) => {
+  emit('update:account', (event.target as HTMLInputElement).value)
 }
 
 const updateName = (event: Event) => {

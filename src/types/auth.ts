@@ -1,5 +1,5 @@
 export interface LoginFormData {
-  id: string
+  account: string
   name: string
   password: string
   confirmPassword: string

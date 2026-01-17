@@ -6,6 +6,7 @@ import type { ApiResponse } from '@/types/api'
 
 interface User {
   id: string | null
+  account: string | null
   name: string | null
   primary_email: string | null
   secondary_email: string | null
@@ -19,6 +20,7 @@ interface User {
 export const useUserStore = defineStore('user', {
   state: (): User => ({
     id: null,
+    account: null,
     name: null,
     primary_email: null,
     secondary_email: null,
@@ -57,6 +59,7 @@ export const useUserStore = defineStore('user', {
       const payload = updated ? { ...this.$state, ...updated } : this.$state
 
       const response = await apiClient.patch<ApiResponse>(`/user/update/${authStore.id}`, {
+        account: payload.account,
         name: payload.name,
         primary_email: payload.primary_email,
         secondary_email: payload.secondary_email,
@@ -78,6 +81,7 @@ export const useUserStore = defineStore('user', {
     clearProfile(): void {
       this.$state = {
         id: null,
+        account: null,
         name: null,
         primary_email: null,
         secondary_email: null,

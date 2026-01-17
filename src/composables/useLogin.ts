@@ -5,7 +5,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useUserStore } from '@/stores/userStore'
 
 export interface LoginFormData {
-  id: string
+  account: string
   name: string
   password: string
   confirmPassword: string
@@ -24,7 +24,7 @@ export function useLogin() {
   const userStore = useUserStore()
 
   const formData = ref<LoginFormData>({
-    id: '',
+    account: '',
     name: '',
     password: '',
     confirmPassword: '',
@@ -42,9 +42,9 @@ export function useLogin() {
   const isRegisterMode = ref(false)
 
   const resetForm = (keepId = false) => {
-    const id = keepId ? formData.value.id : ''
+    const account = keepId ? formData.value.account : ''
     formData.value = {
-      id,
+      account,
       name: '',
       password: '',
       confirmPassword: '',
@@ -58,13 +58,13 @@ export function useLogin() {
   }
 
   const validateForm = (): boolean => {
-    if (!formData.value.id || !formData.value.password) {
+    if (!formData.value.account || !formData.value.password) {
       error.value = '請填寫所有欄位'
       return false
     }
 
     if (isRegisterMode.value) {
-      if (!isValidTaiwanId(formData.value.id)) {
+      if (!isValidTaiwanId(formData.value.account)) {
         error.value = '請輸入有效的身分證字號'
         return false
       }
@@ -108,7 +108,7 @@ export function useLogin() {
     try {
       if (isRegisterMode.value) {
         await authStore.register(
-          formData.value.id,
+          formData.value.account,
           formData.value.name,
           formData.value.password,
           formData.value.primary_email,
@@ -123,7 +123,7 @@ export function useLogin() {
         // Show success message
         success.value = '註冊成功! 請使用您的帳號密碼登入。'
       } else {
-        await authStore.login(formData.value.id, formData.value.password)
+        await authStore.login(formData.value.account, formData.value.password)
 
         if (authStore.id && authStore.accessToken) {
           await userStore.getProfile()
@@ -166,8 +166,8 @@ export function useLogin() {
     formData.value.password = value
   }
 
-  const updateId = (value: string) => {
-    formData.value.id = value
+  const updateAccount = (value: string) => {
+    formData.value.account = value
   }
 
   const updateName = (value: string) => {
@@ -210,7 +210,7 @@ export function useLogin() {
     isRegisterMode,
     login,
     toggleMode,
-    updateId,
+    updateAccount,
     updateName,
     updatePassword,
     updatePrimaryEmail,

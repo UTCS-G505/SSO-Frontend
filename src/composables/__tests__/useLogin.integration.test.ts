@@ -31,7 +31,7 @@ vi.mock('vue-router', () => ({
 const mockAuthStore = {
   register: vi.fn(),
   login: vi.fn(),
-  id: null as string | null,
+  account: null as string | null,
   accessToken: null as string | null,
 }
 
@@ -70,7 +70,7 @@ describe('Registration Validation - Integration Tests', () => {
         success,
         error,
         login,
-        updateId,
+        updateAccount,
         updateName,
         updatePassword,
         updateConfirmPassword,
@@ -88,7 +88,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.register.mockResolvedValue(undefined)
 
       // Fill form with valid data
-      updateId('T112663836')
+      updateAccount('T112663836')
       updateName('Test User')
       updatePassword('password123')
       updateConfirmPassword('password123')
@@ -118,7 +118,7 @@ describe('Registration Validation - Integration Tests', () => {
       expect(isRegisterMode.value).toBe(false)
 
       // ID should be preserved for login, other fields cleared
-      expect(formData.value.id).toBe('T112663836')
+      expect(formData.value.account).toBe('T112663836')
       expect(formData.value.name).toBe('')
       expect(formData.value.password).toBe('')
     })
@@ -129,7 +129,7 @@ describe('Registration Validation - Integration Tests', () => {
         isRegisterMode,
         error,
         login,
-        updateId,
+        updateAccount,
         updateName,
         updatePassword,
         updateConfirmPassword,
@@ -144,7 +144,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockAuthStore.register.mockRejectedValue(new Error('註冊失敗'))
 
       // Fill form with valid data
-      updateId('T112663836')
+      updateAccount('T112663836')
       updateName('Test User')
       updatePassword('password123')
       updateConfirmPassword('password123')
@@ -161,13 +161,13 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should validate all required fields before API call', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId } = useLogin()
+      const { isRegisterMode, error, login, updateAccount } = useLogin()
 
       // Set to register mode
       isRegisterMode.value = true
 
       // Only fill ID, leave other required fields empty
-      updateId('testuser')
+      updateAccount('testuser')
 
       // Attempt registration
       await login()
@@ -183,7 +183,7 @@ describe('Registration Validation - Integration Tests', () => {
         isRegisterMode,
         error,
         login,
-        updateId,
+        updateAccount,
         updateName,
         updatePassword,
         updateConfirmPassword,
@@ -195,7 +195,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = true
 
       // Test scenario 1: Password too short
-      updateId('T112663836')
+      updateAccount('T112663836')
       updateName('Test User')
       updatePassword('1234567') // 7 characters
       updateConfirmPassword('1234567')
@@ -230,7 +230,7 @@ describe('Registration Validation - Integration Tests', () => {
         isRegisterMode,
         error,
         login,
-        updateId,
+        updateAccount,
         updateName,
         updatePassword,
         updateConfirmPassword,
@@ -245,7 +245,7 @@ describe('Registration Validation - Integration Tests', () => {
       isRegisterMode.value = true
 
       // Fill form with some data, but with a validation error (short password)
-      updateId('T112663836')
+      updateAccount('T112663836')
       updateName('Test User')
       updatePassword('short') // Too short
       updateConfirmPassword('short')
@@ -260,7 +260,7 @@ describe('Registration Validation - Integration Tests', () => {
 
       // Form data should be preserved even after validation error
       expect(error.value).toBe('密碼長度必須至少 8 個字元')
-      expect(formData.value.id).toBe('T112663836')
+      expect(formData.value.account).toBe('T112663836')
       expect(formData.value.name).toBe('Test User')
       expect(formData.value.password).toBe('short')
       expect(formData.value.confirmPassword).toBe('short')
@@ -275,7 +275,7 @@ describe('Registration Validation - Integration Tests', () => {
   describe('Login and Callback Handling - Integration Tests', () => {
     it('should handle complete login flow with external redirect', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -290,7 +290,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = { redirect: 'https://external-app.example.com/sso/callback' }
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('password123')
 
       // Perform login
@@ -308,7 +308,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle complete login flow with internal navigation', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -323,7 +323,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = {} // No redirect parameter
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('password123')
 
       // Perform login
@@ -341,7 +341,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle login flow when user needs profile completion', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -355,7 +355,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
-      updateId('newuser')
+      updateAccount('newuser')
       updatePassword('password123')
 
       // Perform login
@@ -373,7 +373,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle authentication failure gracefully', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -385,7 +385,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('wrongpassword')
 
       // Perform login
@@ -402,7 +402,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle store errors during login', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -412,7 +412,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('password123')
 
       // Perform login
@@ -426,7 +426,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle complex redirect URLs with query parameters', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -443,7 +443,7 @@ describe('Registration Validation - Integration Tests', () => {
       }
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('password123')
 
       // Perform login
@@ -459,7 +459,7 @@ describe('Registration Validation - Integration Tests', () => {
 
     it('should handle getProfile failure during login', async () => {
       const { useLogin } = await import('../useLogin')
-      const { isRegisterMode, error, login, updateId, updatePassword } = useLogin()
+      const { isRegisterMode, error, login, updateAccount, updatePassword } = useLogin()
 
       // Ensure we're in login mode
       isRegisterMode.value = false
@@ -472,7 +472,7 @@ describe('Registration Validation - Integration Tests', () => {
       mockRoute.query = { redirect: 'https://external-app.example.com/callback' }
 
       // Fill login form
-      updateId('testuser')
+      updateAccount('testuser')
       updatePassword('password123')
 
       // Perform login

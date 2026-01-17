@@ -10,6 +10,7 @@ let refreshInFlight: Promise<void> | null = null
 
 interface AuthState {
   id: string | null
+  account: string | null
   accessToken: string | null
   initialized: boolean
   refreshTimerId: number | null
@@ -18,13 +19,14 @@ interface AuthState {
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     id: null,
+    account: null,
     accessToken: null,
     initialized: false,
     refreshTimerId: null,
   }),
 
   getters: {
-    isAuthenticated: (state) => state.accessToken !== null && state.id !== null,
+    isAuthenticated: (state) => state.accessToken !== null,
   },
 
   actions: {
@@ -60,14 +62,14 @@ export const useAuthStore = defineStore('auth', {
       }, delay)
     },
 
-    async login(id: string, password: string): Promise<void> {
+    async login(account: string, password: string): Promise<void> {
       try {
         const response = await apiClient.post<
           ApiResponse<{ access_token: string; token_type: string }>
         >(
           '/auth/login',
           new URLSearchParams({
-            username: id,
+            username: account,
             password: password,
           }),
           {
@@ -80,7 +82,8 @@ export const useAuthStore = defineStore('auth', {
         const data = response.data
         if (data.code == 0 && data.data?.access_token) {
           // prefer backend-issued uid cookie if present
-          this.id = getCookie('uid') || id
+          this.id = getCookie('uid') || null
+          this.account = account
           this.accessToken = data.data.access_token
           this.scheduleTokenRefresh()
         } else {
@@ -125,7 +128,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async register(
-      id: string,
+      account: string,
       name: string,
       password: string,
       primary_email: string,
@@ -138,7 +141,7 @@ export const useAuthStore = defineStore('auth', {
         const response = await apiClient.post<ApiResponse>(
           '/auth/register',
           {
-            id: id,
+            account: account,
             name: name,
             password: password,
             primary_email: primary_email,
@@ -212,6 +215,7 @@ export const useAuthStore = defineStore('auth', {
     // Clear authentication state
     clearAuth(): void {
       this.id = null
+      this.account = null
       this.accessToken = null
       if (this.refreshTimerId) {
         clearTimeout(this.refreshTimerId)
