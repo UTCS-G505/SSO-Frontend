@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import apiClient from '@/utils/api'
 import type { ApiResponse } from '@/types/api'
 import { getCookie } from '@/utils/getCookie'
-import { getJwtExp } from '@/utils/getJwtExp'
+import { getJwtSub, getJwtExp } from '@/utils/getJwtData'
 import type { AxiosError } from 'axios'
 
 // Lock to ensure only one refresh request is in-flight at a time
@@ -82,9 +82,9 @@ export const useAuthStore = defineStore('auth', {
         const data = response.data
         if (data.code == 0 && data.data?.access_token) {
           // prefer backend-issued uid cookie if present
-          this.id = getCookie('uid') || null
-          this.account = account
           this.accessToken = data.data.access_token
+          this.id = getCookie('uid') || getJwtSub(this.accessToken) || null
+          this.account = account
           this.scheduleTokenRefresh()
         } else {
           throw new Error('登入失敗! 請檢查您的帳號和密碼。')
@@ -194,8 +194,8 @@ export const useAuthStore = defineStore('auth', {
           >('/auth/refresh', null)
 
           if (response.data.code === 0 && response.data.data) {
-            this.id = getCookie('uid')
             this.accessToken = response.data.data.access_token
+            this.id = getCookie('uid') || getJwtSub(this.accessToken) || null
             this.scheduleTokenRefresh()
           } else {
             this.clearAuth()
