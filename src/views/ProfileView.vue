@@ -74,10 +74,27 @@
                 />
               </div>
               <div class="form-group">
-                <label for="position" class="icon-label"
+                <label
+                  for="position-student"
+                  v-if="userStore.role === USER_ROLES.STUDENT"
+                  class="icon-label"
+                  ><Briefcase class="field-icon" /> <span>年級</span></label
+                >
+                <label for="position" class="icon-label" v-else
                   ><Briefcase class="field-icon" /> <span>職稱 / 身分</span></label
                 >
+                <select
+                  id="position-student"
+                  v-model="userProfile.position"
+                  v-if="userStore.role === USER_ROLES.STUDENT"
+                  required
+                  :disabled="!isEditing"
+                  :class="{ editable: isEditing }"
+                >
+                  <StudentPositionOptions :account="userStore.account || ''" />
+                </select>
                 <input
+                  v-else
                   id="position"
                   v-model="userProfile.position"
                   type="text"
@@ -134,7 +151,7 @@ import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/composables/useToast'
-import { getRoleName } from '@/types/userRoles'
+import { getRoleName, USER_ROLES } from '@/types/userRoles'
 import {
   Edit,
   Save,
@@ -147,6 +164,7 @@ import {
   ShieldCheck,
 } from 'lucide-vue-next'
 import AppHeader from '@/components/common/Header.vue'
+import StudentPositionOptions from '@/components/StudentPositionOptions.vue'
 
 const userStore = useUserStore()
 const authStore = useAuthStore()
