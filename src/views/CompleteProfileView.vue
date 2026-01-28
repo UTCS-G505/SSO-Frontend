@@ -31,7 +31,9 @@
               <input id="phone" v-model.trim="form.phone_number" type="tel" required />
             </div>
             <div class="field">
-              <label for="position-student" v-if="userStore.role === USER_ROLES.STUDENT">年級</label>
+              <label for="position-student" v-if="userStore.role === USER_ROLES.STUDENT"
+                >年級</label
+              >
               <label for="position" v-else>職稱 / 身分</label>
               <select
                 id="position-student"

@@ -22,6 +22,6 @@
 
 <script setup lang="ts">
 defineProps({
-  account: String
+  account: String,
 })
 </script>

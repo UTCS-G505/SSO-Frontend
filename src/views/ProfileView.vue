@@ -74,7 +74,10 @@
                 />
               </div>
               <div class="form-group">
-                <label for="position-student" v-if="userStore.role === USER_ROLES.STUDENT" class="icon-label"
+                <label
+                  for="position-student"
+                  v-if="userStore.role === USER_ROLES.STUDENT"
+                  class="icon-label"
                   ><Briefcase class="field-icon" /> <span>年級</span></label
                 >
                 <label for="position" class="icon-label" v-else
