@@ -31,8 +31,18 @@
               <input id="phone" v-model.trim="form.phone_number" type="tel" required />
             </div>
             <div class="field">
-              <label for="position">職稱 / 身分</label>
+              <label for="position-student" v-if="userStore.role === USER_ROLES.STUDENT">年級</label>
+              <label for="position" v-else>職稱 / 身分</label>
+              <select
+                id="position-student"
+                v-model="form.position"
+                v-if="userStore.role === USER_ROLES.STUDENT"
+                required
+              >
+                <StudentPositionOptions :account="userStore.account || ''" />
+              </select>
               <input
+                v-else
                 id="position"
                 v-model.trim="form.position"
                 type="text"
@@ -176,6 +186,8 @@ import { useUserStore } from '@/stores/userStore'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/composables/useToast'
 import AppHeader from '@/components/common/Header.vue'
+import { USER_ROLES } from '@/types/userRoles'
+import StudentPositionOptions from '@/components/StudentPositionOptions.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -338,6 +350,12 @@ label {
   font-size: 0.9rem;
 }
 input {
+  padding: 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+}
+select {
   padding: 0.7rem;
   border: 1px solid #d1d5db;
   border-radius: 8px;
