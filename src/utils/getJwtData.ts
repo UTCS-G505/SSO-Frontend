@@ -13,3 +13,17 @@ export function getJwtExp(accessToken: string | null): number | null {
     return null
   }
 }
+
+// Decode a JWT and return sub if present
+export function getJwtSub(accessToken: string | null): string | null {
+  if (!accessToken) return null
+  const parts = accessToken.split('.')
+  if (parts.length < 2) return null
+  try {
+    // Handle base64url
+    const payload = JSON.parse(atob(parts[1])) as { sub?: string }
+    return typeof payload.sub === 'string' ? payload.sub : null
+  } catch {
+    return null
+  }
+}
